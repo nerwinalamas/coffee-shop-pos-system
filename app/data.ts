@@ -1,0 +1,88 @@
+import { Product } from "@/types/product.types";
+
+export const PRODUCTS: Product[] = [
+  {
+    id: 1,
+    name: "Espresso",
+    price: 3.99,
+    image: "https://picsum.photos/300/300?random=1",
+    category: "Coffee",
+  },
+  {
+    id: 2,
+    name: "Cappuccino",
+    price: 4.49,
+    image: "https://picsum.photos/300/300?random=2",
+    category: "Coffee",
+  },
+  {
+    id: 3,
+    name: "Latte",
+    price: 4.29,
+    image: "https://picsum.photos/300/300?random=3",
+    category: "Coffee",
+  },
+  {
+    id: 4,
+    name: "Americano",
+    price: 3.49,
+    image: "https://picsum.photos/300/300?random=4",
+    category: "Coffee",
+  },
+  {
+    id: 5,
+    name: "Mocha",
+    price: 4.79,
+    image: "https://picsum.photos/300/300?random=5",
+    category: "Coffee",
+  },
+  {
+    id: 6,
+    name: "Croissant",
+    price: 2.99,
+    image: "https://picsum.photos/300/300?random=6",
+    category: "Food",
+  },
+  {
+    id: 7,
+    name: "Blueberry Muffin",
+    price: 3.29,
+    image: "https://picsum.photos/300/300?random=7",
+    category: "Dessert",
+  },
+  {
+    id: 8,
+    name: "Iced Coffee",
+    price: 4.19,
+    image: "https://picsum.photos/300/300?random=8",
+    category: "Coffee",
+  },
+  {
+    id: 9,
+    name: "Chai Latte",
+    price: 4.59,
+    image: "https://picsum.photos/300/300?random=9",
+    category: "Coffee",
+  },
+  {
+    id: 10,
+    name: "Bagel with Cream Cheese",
+    price: 3.99,
+    image: "https://picsum.photos/300/300?random=10",
+    category: "Food",
+  },
+  {
+    id: 11,
+    name: "Matcha Latte",
+    price: 4.89,
+    image: "https://picsum.photos/300/300?random=11",
+    category: "Coffee",
+  },
+  {
+    id: 12,
+    name: "Chocolate Chip Cookie",
+    price: 2.49,
+    image: "https://picsum.photos/300/300?random=12",
+    category: "Dessert",
+  },
+];
