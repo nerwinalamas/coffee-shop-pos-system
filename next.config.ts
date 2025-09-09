@@ -4,7 +4,20 @@ const nextConfig: NextConfig = {
   /* config options here */
 
   images: {
-    domains: ["picsum.photos", "via.placeholder.com"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "picsum.photos",
+        port: "",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "via.placeholder.com",
+        port: "",
+        pathname: "/**",
+      },
+    ],
   },
 };
 
