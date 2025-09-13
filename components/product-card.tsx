@@ -3,12 +3,19 @@
 import { Button } from "@/components/ui/button";
 import { Product } from "@/types/product.types";
 import ReusableImage from "@/components/reusable-image";
+import { useOrderStore } from "@/store/order";
 
 interface ProductCardProps {
   product: Product;
 }
 
 const ProductCard = ({ product }: ProductCardProps) => {
+  const addItem = useOrderStore((state) => state.addItem);
+
+  const handleAddToOrder = (product: Product) => {
+    addItem(product);
+  };
+
   return (
     <div className="p-2 aspect-square flex flex-col justify-between bg-white border rounded-lg">
       <ReusableImage
@@ -23,7 +30,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
         <div className="text-lg font-semibold text-gray-900">
           ${product.price.toFixed(2)}
         </div>
-        <Button>Add</Button>
+        <Button onClick={() => handleAddToOrder(product)}>Add</Button>
       </div>
     </div>
   );
