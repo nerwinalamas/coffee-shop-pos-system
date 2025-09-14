@@ -56,7 +56,7 @@ const ReusableImage = ({
   }[objectFit];
 
   return (
-    <div className={`relative ${className}`}>
+    <div className={`relative shrink-0 ${className}`}>
       {/* Loading state */}
       {imageLoading && showLoadingState && (
         <div
