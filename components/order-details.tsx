@@ -10,11 +10,11 @@ const OrderDetails = () => {
   const { items, subtotal, tax, total, clearOrder } = useOrderStore();
 
   return (
-    <div className="hidden col-span-4 xl:col-span-3 md:flex flex-col bg-white rounded-lg shadow-sm h-full p-4 space-y-4">
+    <div className="hidden col-span-4 xl:col-span-3 md:flex flex-col bg-white rounded-lg shadow-sm h-full p-4 space-y-4 max-h-screen">
       <Heading title="Order Details" />
 
       {/* Order items */}
-      <div className="flex-1 space-y-2">
+      <div className="flex-1 space-y-2 overflow-y-auto pr-2">
         {items.length > 0 ? (
           items.map((item) => (
             <OrderItems
