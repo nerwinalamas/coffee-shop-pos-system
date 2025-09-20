@@ -3,7 +3,6 @@
 import { useState, useMemo } from "react";
 import { ProductCategory } from "@/types/product.types";
 import { PRODUCTS } from "@/app/data";
-import Heading from "@/components/heading";
 import CategoryTabs from "@/components/category-tabs";
 import MenuItems from "@/components/menu-items";
 import SearchInput from "@/components/search-input";
@@ -36,8 +35,6 @@ const Menu = () => {
 
   return (
     <div className="col-span-12 md:col-span-8 xl:col-span-9 bg-white rounded-lg shadow-sm h-full p-4 space-y-4">
-      <Heading title="Menu" />
-
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <CategoryTabs
           selectedCategory={selectedCategory}
