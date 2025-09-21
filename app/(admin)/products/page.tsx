@@ -1,5 +1,11 @@
+import ProductTable from "./_components/product-table";
+
 const ProductsPage = () => {
-  return <div>Products Page</div>;
+  return (
+    <div>
+      <ProductTable />
+    </div>
+  );
 };
 
 export default ProductsPage;
