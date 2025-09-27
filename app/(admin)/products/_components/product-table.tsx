@@ -1,14 +1,7 @@
 "use client";
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { useState } from "react";
+import Image from "next/image";
 import {
   ColumnDef,
   flexRender,
@@ -18,7 +11,20 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { PRODUCTS } from "@/app/data";
+import { Product } from "@/types/product.types";
+import SearchInput from "@/components/search-input";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import {
   Select,
   SelectContent,
@@ -26,7 +32,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
 import {
   ChevronLeft,
   ChevronRight,
@@ -34,11 +39,8 @@ import {
   ChevronsRight,
   Edit2,
   Trash2,
+  Plus,
 } from "lucide-react";
-import { Product } from "@/types/product.types";
-import { PRODUCTS } from "@/app/data";
-import ReusableImage from "@/components/reusable-image";
-import { Badge } from "@/components/ui/badge";
 
 const ProductTable = () => {
   const [globalFilter, setGlobalFilter] = useState("");
@@ -48,11 +50,12 @@ const ProductTable = () => {
       accessorKey: "image",
       header: "Image",
       cell: ({ row }) => (
-        <ReusableImage
+        <Image
           src={row.original.image}
           alt={row.original.name}
           className="w-14 h-14"
-          fallbackText={row.original.name}
+          width={1000}
+          height={1000}
           priority
         />
       ),
@@ -122,6 +125,17 @@ const ProductTable = () => {
 
   return (
     <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <SearchInput
+          searchQuery={globalFilter}
+          setSearchQuery={setGlobalFilter}
+        />
+
+        <Button className="gap-2">
+          <Plus className="w-4 h-4" />
+          Add Product
+        </Button>
+      </div>
       <div className="flex-1 overflow-auto rounded-md border">
         <Table className="whitespace-nowrap">
           <TableHeader className="bg-accent">
@@ -161,7 +175,12 @@ const ProductTable = () => {
               ))
             ) : (
               <TableRow>
-                <TableCell className="h-24 text-center">No results.</TableCell>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  No results found.
+                </TableCell>
               </TableRow>
             )}
           </TableBody>
