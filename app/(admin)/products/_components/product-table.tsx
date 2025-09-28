@@ -13,6 +13,7 @@ import {
 } from "@tanstack/react-table";
 import { PRODUCTS } from "@/app/data";
 import { Product } from "@/types/product.types";
+import { getCategoryVariant } from "@/lib/utils";
 import SearchInput from "@/components/search-input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -49,11 +50,12 @@ const ProductTable = () => {
     {
       accessorKey: "image",
       header: "Image",
+      size: 80,
       cell: ({ row }) => (
         <Image
           src={row.original.image}
           alt={row.original.name}
-          className="w-14 h-14"
+          className="w-14 h-14 rounded-lg"
           width={1000}
           height={1000}
           priority
@@ -64,6 +66,7 @@ const ProductTable = () => {
     {
       accessorKey: "name",
       header: "Name",
+      size: 200,
       cell: ({ row }) => (
         <div className="font-normal text-sm">{row.original.name}</div>
       ),
@@ -71,6 +74,7 @@ const ProductTable = () => {
     {
       accessorKey: "price",
       header: "Price",
+      size: 120,
       cell: ({ row }) => (
         <div className="font-normal text-sm">
           ${row.original.price.toFixed(2)}
@@ -80,15 +84,21 @@ const ProductTable = () => {
     {
       accessorKey: "category",
       header: "Category",
+      size: 150,
       cell: ({ row }) => {
         const category = row.original.category;
 
-        return <Badge className="rounded-full">{category}</Badge>;
+        return (
+          <Badge className={`rounded-full ${getCategoryVariant(category)}`}>
+            {category}
+          </Badge>
+        );
       },
     },
     {
       id: "actions",
       header: "",
+      size: 120,
       cell: () => {
         return (
           <div className="flex items-center justify-center gap-x-2">
@@ -109,6 +119,8 @@ const ProductTable = () => {
   const table = useReactTable({
     data: PRODUCTS,
     columns,
+    columnResizeMode: "onChange",
+    enableColumnResizing: false,
     state: {
       globalFilter,
     },
@@ -142,7 +154,11 @@ const ProductTable = () => {
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id} className="h-10">
+                  <TableHead
+                    key={header.id}
+                    className="h-10"
+                    style={{ width: header.getSize() }}
+                  >
                     {header.isPlaceholder
                       ? null
                       : flexRender(
