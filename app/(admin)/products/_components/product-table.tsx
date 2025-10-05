@@ -66,10 +66,20 @@ const ProductTable = () => {
       cell: () => {
         return (
           <div className="flex items-center justify-center gap-x-2">
-            <Button variant="outline" size="icon" aria-label="Edit">
+            <Button
+              variant="outline"
+              size="icon"
+              aria-label="Edit"
+              title="Edit Product"
+            >
               <Edit2 className="w-4 h-4" />
             </Button>
-            <Button variant="destructive" size="icon" aria-label="Remove">
+            <Button
+              variant="destructive"
+              size="icon"
+              aria-label="Remove"
+              title="Delete Product"
+            >
               <Trash2 className="w-4 h-4" />
             </Button>
           </div>
