@@ -6,6 +6,7 @@ import { INVENTORY } from "@/app/data";
 import { InventoryItem } from "@/types/inventory.types";
 import { getCategoryVariant } from "@/lib/utils";
 import { DataTable } from "@/components/data-table";
+import ActionsDropdown, { ActionItem } from "@/components/actions-dropdown";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Package, RotateCw, Plus } from "lucide-react";
@@ -120,29 +121,22 @@ const InventoryTable = () => {
     {
       id: "actions",
       header: "",
-      size: 120,
-      cell: () => {
-        return (
-          <div className="flex items-center justify-center gap-x-2">
-            <Button
-              variant="outline"
-              size="icon"
-              aria-label="Restock"
-              title="Restock Item"
-            >
-              <RotateCw className="w-4 h-4" />
-            </Button>
+      size: 60,
+      cell: ({ row }) => {
+        const actions: ActionItem[] = [
+          {
+            label: "Restock",
+            icon: RotateCw,
+            onClick: () => console.log("Restock", row.original.sku),
+          },
+          {
+            label: "View Details",
+            icon: Package,
+            onClick: () => console.log("View Details", row.original.sku),
+          },
+        ];
 
-            <Button
-              variant="outline"
-              size="icon"
-              aria-label="View Details"
-              title="View Details"
-            >
-              <Package className="w-4 h-4" />
-            </Button>
-          </div>
-        );
+        return <ActionsDropdown actions={actions} />;
       },
       enableSorting: false,
     },

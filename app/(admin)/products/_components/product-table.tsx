@@ -6,6 +6,7 @@ import { PRODUCTS } from "@/app/data";
 import { Product } from "@/types/product.types";
 import { getCategoryVariant } from "@/lib/utils";
 import { DataTable } from "@/components/data-table";
+import ActionsDropdown, { ActionItem } from "@/components/actions-dropdown";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Edit2, Trash2, Plus } from "lucide-react";
@@ -62,28 +63,23 @@ const ProductTable = () => {
     {
       id: "actions",
       header: "",
-      size: 120,
-      cell: () => {
-        return (
-          <div className="flex items-center justify-center gap-x-2">
-            <Button
-              variant="outline"
-              size="icon"
-              aria-label="Edit"
-              title="Edit Product"
-            >
-              <Edit2 className="w-4 h-4" />
-            </Button>
-            <Button
-              variant="destructive"
-              size="icon"
-              aria-label="Remove"
-              title="Delete Product"
-            >
-              <Trash2 className="w-4 h-4" />
-            </Button>
-          </div>
-        );
+      size: 60,
+      cell: ({ row }) => {
+        const actions: ActionItem[] = [
+          {
+            label: "Edit",
+            icon: Edit2,
+            onClick: () => console.log("Edit", row.original.id),
+          },
+          {
+            label: "Delete",
+            icon: Trash2,
+            onClick: () => console.log("Delete", row.original.id),
+            variant: "destructive",
+          },
+        ];
+
+        return <ActionsDropdown actions={actions} />;
       },
       enableSorting: false,
     },
