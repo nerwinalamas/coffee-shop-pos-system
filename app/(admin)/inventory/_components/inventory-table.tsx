@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useMemo } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import Image from "next/image";
 import { INVENTORY } from "@/app/data";
@@ -7,11 +8,20 @@ import { InventoryItem } from "@/types/inventory.types";
 import { getCategoryVariant } from "@/lib/utils";
 import { DataTable } from "@/components/data-table";
 import ActionsDropdown, { ActionItem } from "@/components/actions-dropdown";
+import DataTableFilter from "@/components/data-table-filter";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Package, RotateCw, Plus } from "lucide-react";
 
 const InventoryTable = () => {
+  const [filters, setFilters] = useState<{
+    categories: string[];
+    statuses: string[];
+  }>({
+    categories: [],
+    statuses: [],
+  });
+
   const getStatusVariant = (status: string) => {
     switch (status) {
       case "In Stock":
@@ -24,6 +34,24 @@ const InventoryTable = () => {
         return "";
     }
   };
+
+  const filteredData = useMemo(() => {
+    let filtered = [...INVENTORY];
+
+    if (filters.categories.length > 0) {
+      filtered = filtered.filter((item) =>
+        filters.categories.includes(item.category)
+      );
+    }
+
+    if (filters.statuses.length > 0) {
+      filtered = filtered.filter((item) =>
+        filters.statuses.includes(item.status)
+      );
+    }
+
+    return filtered;
+  }, [filters]);
 
   const columns: ColumnDef<InventoryItem>[] = [
     {
@@ -145,12 +173,15 @@ const InventoryTable = () => {
   return (
     <DataTable
       columns={columns}
-      data={INVENTORY}
+      data={filteredData}
       headerActions={
-        <Button className="gap-2">
-          <Plus className="w-4 h-4" />
-          Add Item
-        </Button>
+        <div className="flex gap-2">
+          <DataTableFilter onFilterChange={setFilters} />
+          <Button className="gap-2">
+            <Plus className="w-4 h-4" />
+            Add Item
+          </Button>
+        </div>
       }
       emptyMessage="No inventory items found."
     />
