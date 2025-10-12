@@ -174,14 +174,12 @@ const InventoryTable = () => {
     <DataTable
       columns={columns}
       data={filteredData}
+      filterComponent={<DataTableFilter onFilterChange={setFilters} />}
       headerActions={
-        <div className="flex gap-2">
-          <DataTableFilter onFilterChange={setFilters} />
-          <Button className="gap-2">
-            <Plus className="w-4 h-4" />
-            Add Item
-          </Button>
-        </div>
+        <Button className="gap-2">
+          <Plus className="w-4 h-4" />
+          Add Item
+        </Button>
       }
       emptyMessage="No inventory items found."
     />
