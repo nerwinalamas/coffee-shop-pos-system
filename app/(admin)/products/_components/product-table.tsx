@@ -9,12 +9,20 @@ import { getCategoryVariant } from "@/lib/utils";
 import { DataTable } from "@/components/data-table";
 import ActionsDropdown, { ActionItem } from "@/components/actions-dropdown";
 import AddProductModal from "@/components/modals/add-product-modal";
+import EditProductModal from "@/components/modals/edit-product-modal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Edit2, Trash2, Plus } from "lucide-react";
 
 const ProductTable = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+
+  const handleEdit = (product: Product) => {
+    setSelectedProduct(product);
+    setIsEditModalOpen(true);
+  };
 
   const columns: ColumnDef<Product>[] = [
     {
@@ -73,7 +81,7 @@ const ProductTable = () => {
           {
             label: "Edit",
             icon: Edit2,
-            onClick: () => console.log("Edit", row.original.id),
+            onClick: () => handleEdit(row.original),
           },
           {
             label: "Delete",
@@ -104,6 +112,11 @@ const ProductTable = () => {
       />
 
       <AddProductModal open={isAddModalOpen} onOpenChange={setIsAddModalOpen} />
+      <EditProductModal
+        open={isEditModalOpen}
+        onOpenChange={setIsEditModalOpen}
+        product={selectedProduct}
+      />
     </>
   );
 };
