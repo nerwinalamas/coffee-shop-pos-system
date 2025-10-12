@@ -47,6 +47,7 @@ interface DataTableProps<TData, TValue> {
   defaultPageSize?: number;
   pageSizeOptions?: number[];
   headerActions?: ReactNode;
+  filterComponent?: ReactNode;
   emptyMessage?: string;
   onRowClick?: (row: TData) => void;
 }
@@ -61,6 +62,7 @@ export function DataTable<TData, TValue>({
   defaultPageSize = 10,
   pageSizeOptions = [10, 20, 30, 40, 50],
   headerActions,
+  filterComponent,
   emptyMessage = "No results found.",
   onRowClick,
 }: DataTableProps<TData, TValue>) {
@@ -98,14 +100,17 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="flex flex-col gap-4">
-      {(showSearch || headerActions) && (
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          {showSearch && (
-            <SearchInput
-              searchQuery={globalFilter}
-              setSearchQuery={setGlobalFilter}
-            />
-          )}
+      {(showSearch || filterComponent || headerActions) && (
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            {showSearch && (
+              <SearchInput
+                searchQuery={globalFilter}
+                setSearchQuery={setGlobalFilter}
+              />
+            )}
+            {filterComponent && <div>{filterComponent}</div>}
+          </div>
           {headerActions && <div>{headerActions}</div>}
         </div>
       )}
