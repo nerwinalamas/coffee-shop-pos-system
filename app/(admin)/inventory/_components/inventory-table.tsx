@@ -5,7 +5,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import Image from "next/image";
 import { INVENTORY } from "@/app/data";
 import { InventoryItem } from "@/types/inventory.types";
-import { getCategoryVariant } from "@/lib/utils";
+import { getCategoryVariant, getStatusVariant } from "@/lib/utils";
 import { DataTable } from "@/components/data-table";
 import ActionsDropdown, { ActionItem } from "@/components/actions-dropdown";
 import DataTableFilter from "@/components/data-table-filter";
@@ -27,19 +27,6 @@ const InventoryTable = () => {
     categories: [],
     statuses: [],
   });
-
-  const getStatusVariant = (status: string) => {
-    switch (status) {
-      case "In Stock":
-        return "bg-green-100 text-green-700 hover:bg-green-100";
-      case "Low Stock":
-        return "bg-yellow-100 text-yellow-700 hover:bg-yellow-100";
-      case "Out of Stock":
-        return "bg-red-100 text-red-700 hover:bg-red-100";
-      default:
-        return "";
-    }
-  };
 
   const handleRestock = (item: InventoryItem) => {
     setSelectedItem(item);
