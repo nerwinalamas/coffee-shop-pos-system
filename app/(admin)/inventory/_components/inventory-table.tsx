@@ -9,6 +9,7 @@ import { getCategoryVariant } from "@/lib/utils";
 import { DataTable } from "@/components/data-table";
 import ActionsDropdown, { ActionItem } from "@/components/actions-dropdown";
 import DataTableFilter from "@/components/data-table-filter";
+import AddItemModal from "@/components/modals/add-item-modal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Package, RotateCw, Plus } from "lucide-react";
@@ -21,6 +22,8 @@ const InventoryTable = () => {
     categories: [],
     statuses: [],
   });
+
+  const [isAddItemModalOpen, setIsAddItemModalOpen] = useState(false);
 
   const getStatusVariant = (status: string) => {
     switch (status) {
@@ -171,18 +174,25 @@ const InventoryTable = () => {
   ];
 
   return (
-    <DataTable
-      columns={columns}
-      data={filteredData}
-      filterComponent={<DataTableFilter onFilterChange={setFilters} />}
-      headerActions={
-        <Button className="gap-2">
-          <Plus className="w-4 h-4" />
-          Add Item
-        </Button>
-      }
-      emptyMessage="No inventory items found."
-    />
+    <>
+      <DataTable
+        columns={columns}
+        data={filteredData}
+        filterComponent={<DataTableFilter onFilterChange={setFilters} />}
+        headerActions={
+          <Button className="gap-2" onClick={() => setIsAddItemModalOpen(true)}>
+            <Plus className="w-4 h-4" />
+            Add Item
+          </Button>
+        }
+        emptyMessage="No inventory items found."
+      />
+
+      <AddItemModal
+        open={isAddItemModalOpen}
+        onOpenChange={setIsAddItemModalOpen}
+      />
+    </>
   );
 };
 
