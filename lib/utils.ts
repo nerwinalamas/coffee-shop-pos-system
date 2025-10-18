@@ -30,3 +30,17 @@ export const getStatusVariant = (status: string) => {
       return "";
   }
 };
+
+export const getPageName = (pathname: string) => {
+  const segments = pathname.split("/").filter(Boolean);
+  const lastSegment = segments[segments.length - 1];
+
+  const pageNames: Record<string, string> = {
+    dashboard: "Dashboard",
+    products: "Products",
+    sales: "Sales",
+    inventory: "Inventory",
+  };
+
+  return pageNames[lastSegment] || "Admin";
+};
