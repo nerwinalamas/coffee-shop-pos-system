@@ -11,6 +11,7 @@ import ActionsDropdown, { ActionItem } from "@/components/actions-dropdown";
 import DataTableFilter from "@/components/data-table-filter";
 import AddItemModal from "@/components/modals/add-item-modal";
 import RestockModal from "@/components/modals/restock-modal";
+import ViewItemDetailsModal from "@/components/modals/view-item-details-modal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Package, RotateCw, Plus } from "lucide-react";
@@ -18,6 +19,7 @@ import { Package, RotateCw, Plus } from "lucide-react";
 const InventoryTable = () => {
   const [isAddItemModalOpen, setIsAddItemModalOpen] = useState(false);
   const [isRestockModalOpen, setIsRestockModalOpen] = useState(false);
+  const [isViewDetailsModalOpen, setIsViewDetailsModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
 
   const [filters, setFilters] = useState<{
@@ -31,6 +33,11 @@ const InventoryTable = () => {
   const handleRestock = (item: InventoryItem) => {
     setSelectedItem(item);
     setIsRestockModalOpen(true);
+  };
+
+  const handleViewDetails = (item: InventoryItem) => {
+    setSelectedItem(item);
+    setIsViewDetailsModalOpen(true);
   };
 
   const filteredData = useMemo(() => {
@@ -158,7 +165,7 @@ const InventoryTable = () => {
           {
             label: "View Details",
             icon: Package,
-            onClick: () => console.log("View Details", row.original.sku),
+            onClick: () => handleViewDetails(row.original),
           },
         ];
 
@@ -191,6 +198,12 @@ const InventoryTable = () => {
       <RestockModal
         open={isRestockModalOpen}
         onOpenChange={setIsRestockModalOpen}
+        item={selectedItem}
+      />
+
+      <ViewItemDetailsModal
+        open={isViewDetailsModalOpen}
+        onOpenChange={setIsViewDetailsModalOpen}
         item={selectedItem}
       />
     </>
