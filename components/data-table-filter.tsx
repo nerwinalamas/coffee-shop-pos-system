@@ -25,13 +25,17 @@ const CATEGORIES = ["Coffee", "Food", "Dessert"];
 const STATUS = ["In Stock", "Low Stock", "Out of Stock"];
 
 interface DataTableFilterProps {
+  showStatus?: boolean;
   onFilterChange?: (filters: {
     categories: string[];
     statuses: string[];
   }) => void;
 }
 
-const DataTableFilter = ({ onFilterChange }: DataTableFilterProps) => {
+const DataTableFilter = ({
+  showStatus = true,
+  onFilterChange,
+}: DataTableFilterProps) => {
   const [categoryFilter, setCategoryFilter] = useState<string[]>([]);
   const [statusFilter, setStatusFilter] = useState<string[]>([]);
 
@@ -77,7 +81,7 @@ const DataTableFilter = ({ onFilterChange }: DataTableFilterProps) => {
       </PopoverTrigger>
       <PopoverContent className="w-[280px] p-0" align="start">
         <Command>
-          <CommandInput placeholder="Filter inventory..." />
+          <CommandInput placeholder="Filter..." />
           <CommandList>
             <CommandEmpty>No results found.</CommandEmpty>
             <CommandGroup heading="Category">
@@ -97,24 +101,28 @@ const DataTableFilter = ({ onFilterChange }: DataTableFilterProps) => {
                 </CommandItem>
               ))}
             </CommandGroup>
-            <CommandSeparator />
-            <CommandGroup heading="Status">
-              {STATUS.map((status) => (
-                <CommandItem
-                  key={status}
-                  onSelect={() => handleStatusChange(status)}
-                  className="capitalize"
-                >
-                  <div className="flex items-center gap-2">
-                    <Checkbox
-                      checked={statusFilter.includes(status)}
-                      onCheckedChange={() => handleStatusChange(status)}
-                    />
-                    <span>{status}</span>
-                  </div>
-                </CommandItem>
-              ))}
-            </CommandGroup>
+            {showStatus && (
+              <>
+                <CommandSeparator />
+                <CommandGroup heading="Status">
+                  {STATUS.map((status) => (
+                    <CommandItem
+                      key={status}
+                      onSelect={() => handleStatusChange(status)}
+                      className="capitalize"
+                    >
+                      <div className="flex items-center gap-2">
+                        <Checkbox
+                          checked={statusFilter.includes(status)}
+                          onCheckedChange={() => handleStatusChange(status)}
+                        />
+                        <span>{status}</span>
+                      </div>
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              </>
+            )}
           </CommandList>
         </Command>
         <div className="p-2 border-t border-border">
