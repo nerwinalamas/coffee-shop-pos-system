@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import Image from "next/image";
 import { PRODUCTS } from "@/app/data";
@@ -14,12 +14,19 @@ import DeleteProductModal from "@/components/modals/delete-product-modal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Edit2, Trash2, Plus } from "lucide-react";
+import DataTableFilter from "@/components/data-table-filter";
 
 const ProductTable = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+
+  const [filters, setFilters] = useState<{
+    categories: string[];
+  }>({
+    categories: [],
+  });
 
   const handleEdit = (product: Product) => {
     setSelectedProduct(product);
@@ -30,6 +37,18 @@ const ProductTable = () => {
     setSelectedProduct(product);
     setIsDeleteModalOpen(true);
   };
+
+  const filteredData = useMemo(() => {
+    let filtered = [...PRODUCTS];
+
+    if (filters.categories.length > 0) {
+      filtered = filtered.filter((item) =>
+        filters.categories.includes(item.category)
+      );
+    }
+
+    return filtered;
+  }, [filters]);
 
   const columns: ColumnDef<Product>[] = [
     {
@@ -108,7 +127,10 @@ const ProductTable = () => {
     <>
       <DataTable
         columns={columns}
-        data={PRODUCTS}
+        data={filteredData}
+        filterComponent={
+          <DataTableFilter showStatus={false} onFilterChange={setFilters} />
+        }
         headerActions={
           <Button className="gap-2" onClick={() => setIsAddModalOpen(true)}>
             <Plus className="w-4 h-4" />
