@@ -1,7 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import { z } from "zod";
 import { UseFormReturn } from "react-hook-form";
+import { cn } from "@/lib/utils";
+import { PRODUCTS } from "@/app/data";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -13,13 +16,19 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { PRODUCTS } from "@/app/data";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import { Check, ChevronsUpDown } from "lucide-react";
 
 export const itemSchema = z.object({
   productId: z.number().min(1, "Please select a product"),
@@ -45,6 +54,7 @@ const ItemForm = ({
   submitLoadingLabel,
 }: ItemFormProps) => {
   const isSubmitting = form.formState.isSubmitting;
+  const [open, setOpen] = useState(false);
 
   return (
     <Form {...form}>
@@ -53,26 +63,60 @@ const ItemForm = ({
           control={form.control}
           name="productId"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="flex flex-col">
               <FormLabel>Product</FormLabel>
-              <Select
-                onValueChange={(value) => field.onChange(parseInt(value))}
-                value={field.value?.toString()}
-                disabled={isSubmitting}
-              >
-                <FormControl>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select a product" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent className="max-h-[300px]">
-                  {PRODUCTS.map((product) => (
-                    <SelectItem key={product.id} value={product.id.toString()}>
-                      {product.name} - {product.category}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Popover open={open} onOpenChange={setOpen}>
+                <PopoverTrigger asChild>
+                  <FormControl>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={open}
+                      disabled={isSubmitting}
+                      className={cn(
+                        "w-full justify-between",
+                        !field.value && "text-muted-foreground"
+                      )}
+                    >
+                      {field.value
+                        ? PRODUCTS.find((product) => product.id === field.value)
+                            ?.name
+                        : "Select a product"}
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </FormControl>
+                </PopoverTrigger>
+                <PopoverContent className="w-full p-0" align="start">
+                  <Command>
+                    <CommandInput placeholder="Search product..." />
+                    <CommandList>
+                      <CommandEmpty>No product found.</CommandEmpty>
+                      <CommandGroup>
+                        {PRODUCTS.map((product) => (
+                          <CommandItem
+                            key={product.id}
+                            value={`${product.name} ${product.category}`}
+                            onSelect={() => {
+                              field.onChange(product.id);
+                              setOpen(false);
+                            }}
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                field.value === product.id
+                                  ? "opacity-100"
+                                  : "opacity-0"
+                              )}
+                            />
+                            {product.name} - {product.category}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
               <FormMessage />
             </FormItem>
           )}
