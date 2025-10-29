@@ -57,6 +57,25 @@ const items = [
   },
 ];
 
+const menuItems = [
+  {
+    icon: User2,
+    label: "Profile Settings",
+  },
+  {
+    icon: CreditCard,
+    label: "Billing",
+  },
+  {
+    icon: Bell,
+    label: "Notifications",
+  },
+  {
+    icon: Settings,
+    label: "Settings",
+  },
+];
+
 export const AppSidebar = () => {
   return (
     <Sidebar>
@@ -123,22 +142,15 @@ export const AppSidebar = () => {
                   <p className="text-xs text-gray-500">admin@coffeeshop.com</p>
                 </div>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <User2 className="mr-2 h-4 w-4" />
-                  <span>Profile Settings</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <CreditCard className="mr-2 h-4 w-4" />
-                  <span>Billing</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Bell className="mr-2 h-4 w-4" />
-                  <span>Notifications</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Settings className="mr-2 h-4 w-4" />
-                  <span>Settings</span>
-                </DropdownMenuItem>
+                {menuItems.map((item, index) => {
+                  const Icon = item.icon;
+                  return (
+                    <DropdownMenuItem key={index}>
+                      <Icon className="mr-2 h-4 w-4" />
+                      <span>{item.label}</span>
+                    </DropdownMenuItem>
+                  );
+                })}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem className="text-red-600">
                   <LogOut className="mr-2 h-4 w-4" />
