@@ -6,13 +6,12 @@ import {
   Package,
   User2,
   ChevronUp,
-  Coffee,
   Settings,
   LogOut,
   CreditCard,
   Bell,
 } from "lucide-react";
-
+import SidebarLogo from "@/components/sidebar-logo";
 import {
   Sidebar,
   SidebarContent,
@@ -82,17 +81,7 @@ export const AppSidebar = () => {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <div className="flex items-center gap-3 px-2 py-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-100">
-                <Coffee className="h-6 w-6 text-amber-600" />
-              </div>
-              <div className="flex flex-col">
-                <span className="font-semibold text-lg text-gray-900">
-                  CafeAdmin
-                </span>
-                <span className="text-xs text-gray-500">Coffee Shop POS</span>
-              </div>
-            </div>
+            <SidebarLogo />
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
@@ -152,7 +141,7 @@ export const AppSidebar = () => {
                   );
                 })}
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-red-600">
+                <DropdownMenuItem variant="destructive">
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>Sign out</span>
                 </DropdownMenuItem>
