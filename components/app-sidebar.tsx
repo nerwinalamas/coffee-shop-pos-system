@@ -54,6 +54,11 @@ const items = [
     url: "/inventory",
     icon: Package,
   },
+  {
+    title: "Users",
+    url: "/users",
+    icon: User2,
+  },
 ];
 
 const menuItems = [
