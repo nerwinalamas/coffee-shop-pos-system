@@ -2,7 +2,6 @@ import Link from "next/link";
 import {
   Home,
   ShoppingBag,
-  BarChart3,
   Package,
   User2,
   ChevronUp,
@@ -43,11 +42,6 @@ const items = [
     title: "Products",
     url: "/products",
     icon: ShoppingBag,
-  },
-  {
-    title: "Sales",
-    url: "/sales",
-    icon: BarChart3,
   },
   {
     title: "Inventory",
