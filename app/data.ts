@@ -1,5 +1,6 @@
 import { Product } from "@/types/product.types";
 import { InventoryItem } from "@/types/inventory.types";
+import { User } from "@/types/user.types";
 
 export const PRODUCTS: Product[] = [
   {
@@ -464,5 +465,48 @@ export const INVENTORY: InventoryItem[] = [
     status: "In Stock",
     lastRestocked: "2024-10-01",
     image: "https://picsum.photos/300/300?random=21",
+  },
+];
+
+export const INITIAL_USERS: User[] = [
+  {
+    id: "1",
+    name: "John Smith",
+    email: "john.smith@coffeeshop.com",
+    phone: "+1 (555) 123-4567",
+    role: "Admin",
+    status: "Active",
+  },
+  {
+    id: "2",
+    name: "Sarah Johnson",
+    email: "sarah.j@coffeeshop.com",
+    phone: "+1 (555) 234-5678",
+    role: "Manager",
+    status: "Active",
+  },
+  {
+    id: "3",
+    name: "Mike Davis",
+    email: "mike.d@coffeeshop.com",
+    phone: "+1 (555) 345-6789",
+    role: "Staff",
+    status: "Active",
+  },
+  {
+    id: "4",
+    name: "Emily Chen",
+    email: "emily.chen@coffeeshop.com",
+    phone: "+1 (555) 456-7890",
+    role: "Staff",
+    status: "Inactive",
+  },
+  {
+    id: "5",
+    name: "David Wilson",
+    email: "d.wilson@coffeeshop.com",
+    phone: "+1 (555) 567-8901",
+    role: "Manager",
+    status: "Active",
   },
 ];
