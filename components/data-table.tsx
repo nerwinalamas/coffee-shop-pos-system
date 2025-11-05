@@ -49,6 +49,7 @@ interface DataTableProps<TData, TValue> {
   headerActions?: ReactNode;
   filterComponent?: ReactNode;
   emptyMessage?: string;
+  searchPlaceholder?: string;
   onRowClick?: (row: TData) => void;
 }
 
@@ -64,6 +65,7 @@ export function DataTable<TData, TValue>({
   headerActions,
   filterComponent,
   emptyMessage = "No results found.",
+  searchPlaceholder = "Search...",
   onRowClick,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -107,6 +109,7 @@ export function DataTable<TData, TValue>({
               <SearchInput
                 searchQuery={globalFilter}
                 setSearchQuery={setGlobalFilter}
+                placeholder={searchPlaceholder}
               />
             )}
             {filterComponent && <div>{filterComponent}</div>}
