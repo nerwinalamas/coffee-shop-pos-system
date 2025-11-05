@@ -138,6 +138,7 @@ const ProductTable = () => {
           </Button>
         }
         emptyMessage="No products found."
+        searchPlaceholder="Search products"
       />
 
       <AddProductModal open={isAddModalOpen} onOpenChange={setIsAddModalOpen} />

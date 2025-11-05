@@ -56,6 +56,7 @@ const UserTable = () => {
         columns={columns}
         data={INITIAL_USERS}
         emptyMessage="No users found."
+        searchPlaceholder="Search users"
       />
     </>
   );

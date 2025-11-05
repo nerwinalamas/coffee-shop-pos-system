@@ -188,6 +188,7 @@ const InventoryTable = () => {
           </Button>
         }
         emptyMessage="No inventory items found."
+        searchPlaceholder="Search products"
       />
 
       <AddItemModal
