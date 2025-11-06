@@ -5,6 +5,16 @@ import { INITIAL_USERS } from "@/app/data";
 import { DataTable } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
 import { User } from "@/types/user.types";
+import ActionsDropdown, { ActionItem } from "@/components/actions-dropdown";
+import {
+  Edit2,
+  Eye,
+  KeyRound,
+  Trash2,
+  UserCheck,
+  UserCog,
+  UserX,
+} from "lucide-react";
 
 const UserTable = () => {
   const columns: ColumnDef<User>[] = [
@@ -47,6 +57,50 @@ const UserTable = () => {
       cell: ({ row }) => (
         <Badge className="rounded-full">{row.original.status}</Badge>
       ),
+    },
+    {
+      id: "actions",
+      header: "",
+      size: 60,
+      cell: ({ row }) => {
+        const user = row.original;
+        const actions: ActionItem[] = [
+          {
+            label: "View Details",
+            icon: Eye,
+            onClick: () => console.log("View details:", user),
+          },
+          {
+            label: "Edit",
+            icon: Edit2,
+            onClick: () => console.log("Edit user:", user),
+          },
+          {
+            label: "Change Role",
+            icon: UserCog,
+            onClick: () => console.log("Change role:", user),
+          },
+          {
+            label: "Reset Password",
+            icon: KeyRound,
+            onClick: () => console.log("Reset password:", user),
+          },
+          {
+            label: user.status === "Active" ? "Deactivate" : "Activate",
+            icon: user.status === "Active" ? UserX : UserCheck,
+            onClick: () => console.log("Toggle status:", user),
+          },
+          {
+            label: "Delete",
+            icon: Trash2,
+            variant: "destructive",
+            onClick: () => console.log("Delete user:", user),
+          },
+        ];
+
+        return <ActionsDropdown actions={actions} />;
+      },
+      enableSorting: false,
     },
   ];
 
