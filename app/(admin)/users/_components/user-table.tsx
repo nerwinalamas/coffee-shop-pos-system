@@ -2,6 +2,7 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { INITIAL_USERS } from "@/app/data";
+import { cn } from "@/lib/utils";
 import { DataTable } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
 import { User } from "@/types/user.types";
@@ -54,9 +55,18 @@ const UserTable = () => {
       accessorKey: "status",
       header: "Status",
       size: 120,
-      cell: ({ row }) => (
-        <Badge className="rounded-full">{row.original.status}</Badge>
-      ),
+      cell: ({ row }) => {
+        const isActive = row.original.status === "Active";
+
+        return (
+          <Badge
+            variant="secondary"
+            className={cn("rounded-full", !isActive && "text-destructive")}
+          >
+            {row.original.status}
+          </Badge>
+        );
+      },
     },
     {
       id: "actions",
