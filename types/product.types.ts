@@ -1,5 +1,3 @@
-export type ProductCategory = "Coffee" | "Food" | "Dessert";
-
 export type Product = {
   id: number;
   name: string;
@@ -7,3 +5,9 @@ export type Product = {
   image: string;
   category: ProductCategory;
 };
+
+export enum ProductCategory {
+  COFFEE = "Coffee",
+  FOOD = "Food",
+  DESSERT = "Dessert",
+}
