@@ -1,6 +1,6 @@
 import { Product } from "@/types/product.types";
 import { InventoryItem } from "@/types/inventory.types";
-import { User } from "@/types/user.types";
+import { User, UserRole, UserStatus } from "@/types/user.types";
 
 export const PRODUCTS: Product[] = [
   {
@@ -474,39 +474,39 @@ export const INITIAL_USERS: User[] = [
     name: "John Smith",
     email: "john.smith@coffeeshop.com",
     phone: "+1 (555) 123-4567",
-    role: "Admin",
-    status: "Active",
+    role: UserRole.ADMIN,
+    status: UserStatus.ACTIVE,
   },
   {
     id: "2",
     name: "Sarah Johnson",
     email: "sarah.j@coffeeshop.com",
     phone: "+1 (555) 234-5678",
-    role: "Manager",
-    status: "Active",
+    role: UserRole.MANAGER,
+    status: UserStatus.ACTIVE,
   },
   {
     id: "3",
     name: "Mike Davis",
     email: "mike.d@coffeeshop.com",
     phone: "+1 (555) 345-6789",
-    role: "Staff",
-    status: "Active",
+    role: UserRole.STAFF,
+    status: UserStatus.ACTIVE,
   },
   {
     id: "4",
     name: "Emily Chen",
     email: "emily.chen@coffeeshop.com",
     phone: "+1 (555) 456-7890",
-    role: "Staff",
-    status: "Inactive",
+    role: UserRole.STAFF,
+    status: UserStatus.INACTIVE,
   },
   {
     id: "5",
     name: "David Wilson",
     email: "d.wilson@coffeeshop.com",
     phone: "+1 (555) 567-8901",
-    role: "Manager",
-    status: "Active",
+    role: UserRole.MANAGER,
+    status: UserStatus.ACTIVE,
   },
 ];
