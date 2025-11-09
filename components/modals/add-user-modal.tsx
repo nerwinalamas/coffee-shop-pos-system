@@ -25,6 +25,7 @@ const AddUserModal = ({ open, onOpenChange }: AddProductModalProps) => {
       email: "",
       phone: "",
       role: undefined,
+      status: "Active",
     },
   });
 
