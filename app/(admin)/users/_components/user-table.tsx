@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { INITIAL_USERS } from "@/app/data";
 import { cn } from "@/lib/utils";
@@ -7,10 +8,13 @@ import { DataTable } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
 import { User } from "@/types/user.types";
 import ActionsDropdown, { ActionItem } from "@/components/actions-dropdown";
+import AddUserModal from "@/components/modals/add-user-modal";
+import { Button } from "@/components/ui/button";
 import {
   Edit2,
   Eye,
   KeyRound,
+  Plus,
   Trash2,
   UserCheck,
   UserCog,
@@ -18,6 +22,8 @@ import {
 } from "lucide-react";
 
 const UserTable = () => {
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
   const columns: ColumnDef<User>[] = [
     {
       accessorKey: "name",
@@ -119,9 +125,17 @@ const UserTable = () => {
       <DataTable
         columns={columns}
         data={INITIAL_USERS}
+        headerActions={
+          <Button className="gap-2" onClick={() => setIsAddModalOpen(true)}>
+            <Plus className="w-4 h-4" />
+            Add User
+          </Button>
+        }
         emptyMessage="No users found."
         searchPlaceholder="Search users"
       />
+
+      <AddUserModal open={isAddModalOpen} onOpenChange={setIsAddModalOpen} />
     </>
   );
 };
