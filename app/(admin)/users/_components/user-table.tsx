@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { User } from "@/types/user.types";
 import ActionsDropdown, { ActionItem } from "@/components/actions-dropdown";
 import AddUserModal from "@/components/modals/add-user-modal";
+import EditUserModal from "@/components/modals/edit-user-modal";
 import { Button } from "@/components/ui/button";
 import {
   Edit2,
@@ -23,6 +24,13 @@ import {
 
 const UserTable = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editUser, setEditUser] = useState<User | null>(null);
+
+  const handleEdit = (user: User) => {
+    setEditUser(user);
+    setIsEditModalOpen(true);
+  };
 
   const columns: ColumnDef<User>[] = [
     {
@@ -89,7 +97,7 @@ const UserTable = () => {
           {
             label: "Edit",
             icon: Edit2,
-            onClick: () => console.log("Edit user:", user),
+            onClick: () => handleEdit(row.original),
           },
           {
             label: "Change Role",
@@ -136,6 +144,11 @@ const UserTable = () => {
       />
 
       <AddUserModal open={isAddModalOpen} onOpenChange={setIsAddModalOpen} />
+      <EditUserModal
+        open={isEditModalOpen}
+        onOpenChange={setIsEditModalOpen}
+        user={editUser}
+      />
     </>
   );
 };
