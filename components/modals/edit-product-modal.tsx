@@ -17,17 +17,17 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 
-interface AddProductModalProps {
+interface EditProductModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   product: Product | null;
 }
 
-const AddProductModal = ({
+const EditProductModal = ({
   open,
   onOpenChange,
   product,
-}: AddProductModalProps) => {
+}: EditProductModalProps) => {
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(productSchema),
     defaultValues: {
@@ -92,4 +92,4 @@ const AddProductModal = ({
   );
 };
 
-export default AddProductModal;
+export default EditProductModal;
