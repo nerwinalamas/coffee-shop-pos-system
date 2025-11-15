@@ -28,7 +28,7 @@ const EditUserModal = ({ open, onOpenChange, user }: EditUserModalProps) => {
       email: "",
       phone: "",
       role: undefined,
-      status: "Active",
+      status: undefined,
     },
   });
 
@@ -38,8 +38,6 @@ const EditUserModal = ({ open, onOpenChange, user }: EditUserModalProps) => {
         name: user.name,
         email: user.email,
         phone: user.phone,
-        role: user.role,
-        status: user.status,
       });
     }
   }, [user, open, form]);
@@ -81,6 +79,8 @@ const EditUserModal = ({ open, onOpenChange, user }: EditUserModalProps) => {
           handleCancel={handleDialogChange}
           submitLabel="Update User"
           submitLoadingLabel="Updating User..."
+          showRoleField={false}
+          showStatusField={false}
         />
       </DialogContent>
     </Dialog>
