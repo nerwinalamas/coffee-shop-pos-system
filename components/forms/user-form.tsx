@@ -21,7 +21,8 @@ import {
 } from "@/components/ui/select";
 
 export const userSchema = z.object({
-  name: z.string().min(1, "Name is required"),
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
   email: z.string().email("Must be a valid email"),
   phone: z.string().min(1, "Phone is required"),
   role: z
@@ -64,15 +65,33 @@ const UserForm = ({
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
-          name="name"
+          name="firstName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Name</FormLabel>
+              <FormLabel>First Name</FormLabel>
               <FormControl>
                 <Input
                   {...field}
                   disabled={isSubmitting}
-                  placeholder="Enter name"
+                  placeholder="Enter first name"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="lastName"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Last Name</FormLabel>
+              <FormControl>
+                <Input
+                  {...field}
+                  disabled={isSubmitting}
+                  placeholder="Enter last name"
                 />
               </FormControl>
               <FormMessage />
