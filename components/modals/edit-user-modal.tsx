@@ -24,7 +24,8 @@ const EditUserModal = ({ open, onOpenChange, user }: EditUserModalProps) => {
   const form = useForm<UserFormValues>({
     resolver: zodResolver(userSchema),
     defaultValues: {
-      name: "",
+      firstName: "",
+      lastName: "",
       email: "",
       phone: "",
       role: undefined,
@@ -35,7 +36,8 @@ const EditUserModal = ({ open, onOpenChange, user }: EditUserModalProps) => {
   useEffect(() => {
     if (user && open) {
       form.reset({
-        name: user.name,
+        firstName: user.firstName,
+        lastName: user.lastName,
         email: user.email,
         phone: user.phone,
       });

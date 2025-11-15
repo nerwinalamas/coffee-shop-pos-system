@@ -21,7 +21,8 @@ const AddUserModal = ({ open, onOpenChange }: AddProductModalProps) => {
   const form = useForm<UserFormValues>({
     resolver: zodResolver(userSchema),
     defaultValues: {
-      name: "",
+      firstName: "",
+      lastName: "",
       email: "",
       phone: "",
       role: undefined,

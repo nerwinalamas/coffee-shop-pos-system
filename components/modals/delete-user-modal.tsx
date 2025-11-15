@@ -53,8 +53,11 @@ const DeleteUserModal = ({
         <AlertDialogHeader>
           <AlertDialogTitle>Delete User</AlertDialogTitle>
           <AlertDialogDescription>
-            Are you sure you want to delete <strong>{user.name}</strong>? This
-            action cannot be undone and all user data will be permanently
+            Are you sure you want to delete{" "}
+            <strong>
+              {user.firstName} {user.lastName}
+            </strong>
+            ? This action cannot be undone and all user data will be permanently
             removed.
           </AlertDialogDescription>
         </AlertDialogHeader>
