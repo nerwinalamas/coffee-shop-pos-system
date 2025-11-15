@@ -471,7 +471,8 @@ export const INVENTORY: InventoryItem[] = [
 export const INITIAL_USERS: User[] = [
   {
     id: "1",
-    name: "John Smith",
+    firstName: "John",
+    lastName: "Smith",
     email: "john.smith@coffeeshop.com",
     phone: "+1 (555) 123-4567",
     role: UserRole.ADMIN,
@@ -479,7 +480,8 @@ export const INITIAL_USERS: User[] = [
   },
   {
     id: "2",
-    name: "Sarah Johnson",
+    firstName: "Sarah",
+    lastName: "Johnson",
     email: "sarah.j@coffeeshop.com",
     phone: "+1 (555) 234-5678",
     role: UserRole.MANAGER,
@@ -487,7 +489,8 @@ export const INITIAL_USERS: User[] = [
   },
   {
     id: "3",
-    name: "Mike Davis",
+    firstName: "Mike",
+    lastName: "Davis",
     email: "mike.d@coffeeshop.com",
     phone: "+1 (555) 345-6789",
     role: UserRole.STAFF,
@@ -495,7 +498,8 @@ export const INITIAL_USERS: User[] = [
   },
   {
     id: "4",
-    name: "Emily Chen",
+    firstName: "Emily",
+    lastName: "Chen",
     email: "emily.chen@coffeeshop.com",
     phone: "+1 (555) 456-7890",
     role: UserRole.STAFF,
@@ -503,7 +507,8 @@ export const INITIAL_USERS: User[] = [
   },
   {
     id: "5",
-    name: "David Wilson",
+    firstName: "David",
+    lastName: "Wilson",
     email: "d.wilson@coffeeshop.com",
     phone: "+1 (555) 567-8901",
     role: UserRole.MANAGER,
