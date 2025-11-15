@@ -24,12 +24,16 @@ export const userSchema = z.object({
   name: z.string().min(1, "Name is required"),
   email: z.string().email("Must be a valid email"),
   phone: z.string().min(1, "Phone is required"),
-  role: z.enum(["Admin", "Manager", "Staff"], {
-    message: "Role is required",
-  }),
-  status: z.enum(["Active", "Inactive"], {
-    message: "Status is required",
-  }),
+  role: z
+    .enum(["Admin", "Manager", "Staff"], {
+      message: "Role is required",
+    })
+    .optional(),
+  status: z
+    .enum(["Active", "Inactive"], {
+      message: "Status is required",
+    })
+    .optional(),
 });
 
 export type UserFormValues = z.infer<typeof userSchema>;
@@ -40,6 +44,8 @@ interface UserFormProps {
   handleCancel: () => void;
   submitLabel: string;
   submitLoadingLabel: string;
+  showRoleField?: boolean;
+  showStatusField?: boolean;
 }
 
 const UserForm = ({
@@ -48,6 +54,8 @@ const UserForm = ({
   handleCancel,
   submitLabel,
   submitLoadingLabel,
+  showRoleField = true,
+  showStatusField = true,
 }: UserFormProps) => {
   const isSubmitting = form.formState.isSubmitting;
 
@@ -109,58 +117,62 @@ const UserForm = ({
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="role"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Role</FormLabel>
-              <Select
-                onValueChange={field.onChange}
-                defaultValue={field.value}
-                disabled={isSubmitting}
-              >
-                <FormControl>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select Role" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="Admin">Admin</SelectItem>
-                  <SelectItem value="Manager">Manager</SelectItem>
-                  <SelectItem value="Staff">Staff</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {showRoleField && (
+          <FormField
+            control={form.control}
+            name="role"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Role</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  disabled={isSubmitting}
+                >
+                  <FormControl>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select Role" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="Admin">Admin</SelectItem>
+                    <SelectItem value="Manager">Manager</SelectItem>
+                    <SelectItem value="Staff">Staff</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
 
-        <FormField
-          control={form.control}
-          name="status"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Status</FormLabel>
-              <Select
-                onValueChange={field.onChange}
-                defaultValue={field.value}
-                disabled={isSubmitting}
-              >
-                <FormControl>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select Status" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="Active">Active</SelectItem>
-                  <SelectItem value="Inactive">Inactive</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {showStatusField && (
+          <FormField
+            control={form.control}
+            name="status"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Status</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  disabled={isSubmitting}
+                >
+                  <FormControl>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select Status" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="Active">Active</SelectItem>
+                    <SelectItem value="Inactive">Inactive</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
 
         <div className="w-full flex items-center gap-2 justify-end">
           <Button
