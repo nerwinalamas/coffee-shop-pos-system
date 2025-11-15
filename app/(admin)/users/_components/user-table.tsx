@@ -21,15 +21,22 @@ import {
   UserCog,
   UserX,
 } from "lucide-react";
+import DeleteUserModal from "@/components/modals/delete-user-modal";
 
 const UserTable = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [editUser, setEditUser] = useState<User | null>(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
 
   const handleEdit = (user: User) => {
-    setEditUser(user);
+    setUser(user);
     setIsEditModalOpen(true);
+  };
+
+  const handleDelete = (user: User) => {
+    setUser(user);
+    setIsDeleteModalOpen(true);
   };
 
   const columns: ColumnDef<User>[] = [
@@ -118,7 +125,7 @@ const UserTable = () => {
             label: "Delete",
             icon: Trash2,
             variant: "destructive",
-            onClick: () => console.log("Delete user:", user),
+            onClick: () => handleDelete(row.original),
           },
         ];
 
@@ -147,7 +154,12 @@ const UserTable = () => {
       <EditUserModal
         open={isEditModalOpen}
         onOpenChange={setIsEditModalOpen}
-        user={editUser}
+        user={user}
+      />
+      <DeleteUserModal
+        open={isDeleteModalOpen}
+        onOpenChange={setIsDeleteModalOpen}
+        user={user}
       />
     </>
   );
