@@ -10,10 +10,10 @@ import { User } from "@/types/user.types";
 import ActionsDropdown, { ActionItem } from "@/components/actions-dropdown";
 import AddUserModal from "@/components/modals/add-user-modal";
 import EditUserModal from "@/components/modals/edit-user-modal";
+import DeleteUserModal from "@/components/modals/delete-user-modal";
 import { Button } from "@/components/ui/button";
 import {
   Edit2,
-  Eye,
   KeyRound,
   Plus,
   Trash2,
@@ -21,7 +21,6 @@ import {
   UserCog,
   UserX,
 } from "lucide-react";
-import DeleteUserModal from "@/components/modals/delete-user-modal";
 
 const UserTable = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -96,11 +95,6 @@ const UserTable = () => {
       cell: ({ row }) => {
         const user = row.original;
         const actions: ActionItem[] = [
-          {
-            label: "View Details",
-            icon: Eye,
-            onClick: () => console.log("View details:", user),
-          },
           {
             label: "Edit",
             icon: Edit2,
