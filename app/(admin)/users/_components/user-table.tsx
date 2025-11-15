@@ -42,7 +42,7 @@ const UserTable = () => {
     {
       accessorKey: "firstName",
       header: "First Name",
-      size: 200,
+      size: 150,
       cell: ({ row }) => (
         <div className="font-normal text-sm">{row.original.firstName}</div>
       ),
@@ -50,7 +50,7 @@ const UserTable = () => {
     {
       accessorKey: "lastName",
       header: "Last Name",
-      size: 200,
+      size: 150,
       cell: ({ row }) => (
         <div className="font-normal text-sm">{row.original.lastName}</div>
       ),
