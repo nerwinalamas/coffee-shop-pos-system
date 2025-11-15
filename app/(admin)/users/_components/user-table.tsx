@@ -40,11 +40,19 @@ const UserTable = () => {
 
   const columns: ColumnDef<User>[] = [
     {
-      accessorKey: "name",
-      header: "Name",
+      accessorKey: "firstName",
+      header: "First Name",
       size: 200,
       cell: ({ row }) => (
-        <div className="font-normal text-sm">{row.original.name}</div>
+        <div className="font-normal text-sm">{row.original.firstName}</div>
+      ),
+    },
+    {
+      accessorKey: "lastName",
+      header: "Last Name",
+      size: 200,
+      cell: ({ row }) => (
+        <div className="font-normal text-sm">{row.original.lastName}</div>
       ),
     },
     {
