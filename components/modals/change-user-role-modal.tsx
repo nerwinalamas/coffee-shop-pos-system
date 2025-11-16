@@ -73,8 +73,11 @@ const ChangeUserRoleModal = ({
         <DialogHeader>
           <DialogTitle>Change Role</DialogTitle>
           <DialogDescription>
-            Change the role for {user.firstName} {user.lastName}. Current role:{" "}
-            <strong>{user.role}</strong>
+            Change the role for{" "}
+            <strong>
+              {user.firstName} {user.lastName}
+            </strong>
+            . Current role: <strong>{user.role}</strong>
           </DialogDescription>
         </DialogHeader>
         <UserRoleForm
