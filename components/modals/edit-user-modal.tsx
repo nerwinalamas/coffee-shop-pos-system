@@ -83,6 +83,7 @@ const EditUserModal = ({ open, onOpenChange, user }: EditUserModalProps) => {
           submitLoadingLabel="Updating User..."
           showRoleField={false}
           showStatusField={false}
+          showPasswordField={false}
         />
       </DialogContent>
     </Dialog>
