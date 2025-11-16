@@ -25,6 +25,10 @@ export const userSchema = z.object({
   lastName: z.string().min(1, "Last name is required"),
   email: z.string().email("Must be a valid email"),
   phone: z.string().min(1, "Phone is required"),
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters")
+    .optional(),
   role: z
     .enum(["Admin", "Manager", "Staff"], {
       message: "Role is required",
@@ -47,6 +51,7 @@ interface UserFormProps {
   submitLoadingLabel: string;
   showRoleField?: boolean;
   showStatusField?: boolean;
+  showPasswordField?: boolean;
 }
 
 const UserForm = ({
@@ -57,6 +62,7 @@ const UserForm = ({
   submitLoadingLabel,
   showRoleField = true,
   showStatusField = true,
+  showPasswordField = true,
 }: UserFormProps) => {
   const isSubmitting = form.formState.isSubmitting;
 
@@ -135,6 +141,27 @@ const UserForm = ({
             </FormItem>
           )}
         />
+
+        {showPasswordField && (
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    type="password"
+                    disabled={isSubmitting}
+                    placeholder="Enter password"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
 
         {showRoleField && (
           <FormField
