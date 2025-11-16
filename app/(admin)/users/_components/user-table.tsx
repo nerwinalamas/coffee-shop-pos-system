@@ -10,6 +10,7 @@ import { User } from "@/types/user.types";
 import ActionsDropdown, { ActionItem } from "@/components/actions-dropdown";
 import AddUserModal from "@/components/modals/add-user-modal";
 import EditUserModal from "@/components/modals/edit-user-modal";
+import ChangeUserRoleModal from "@/components/modals/change-user-role-modal";
 import DeleteUserModal from "@/components/modals/delete-user-modal";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,12 +26,18 @@ import {
 const UserTable = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isChangeRoleModalOpen, setIsChangeRoleModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
 
   const handleEdit = (user: User) => {
     setUser(user);
     setIsEditModalOpen(true);
+  };
+
+  const handleChangeRole = (user: User) => {
+    setUser(user);
+    setIsChangeRoleModalOpen(true);
   };
 
   const handleDelete = (user: User) => {
@@ -111,7 +118,7 @@ const UserTable = () => {
           {
             label: "Change Role",
             icon: UserCog,
-            onClick: () => console.log("Change role:", user),
+            onClick: () => handleChangeRole(row.original),
           },
           {
             label: "Reset Password",
@@ -156,6 +163,11 @@ const UserTable = () => {
       <EditUserModal
         open={isEditModalOpen}
         onOpenChange={setIsEditModalOpen}
+        user={user}
+      />
+      <ChangeUserRoleModal
+        open={isChangeRoleModalOpen}
+        onOpenChange={setIsChangeRoleModalOpen}
         user={user}
       />
       <DeleteUserModal
