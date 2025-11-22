@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { Product } from "@/types/product.types";
 import ProductCard from "./product-card";
 import { Button } from "@/components/ui/button";
@@ -10,11 +9,11 @@ const PAGE_SIZE = 12;
 
 interface MenuItemsProps {
   data: Product[];
+  currentPage: number;
+  setCurrentPage: (page: number) => void;
 }
 
-const MenuItems = ({ data }: MenuItemsProps) => {
-  const [currentPage, setCurrentPage] = useState(0);
-
+const MenuItems = ({ data, currentPage, setCurrentPage }: MenuItemsProps) => {
   // Calculate pagination
   const totalPages = Math.ceil(data.length / PAGE_SIZE);
   const startIndex = currentPage * PAGE_SIZE;
@@ -22,11 +21,11 @@ const MenuItems = ({ data }: MenuItemsProps) => {
   const currentData = data.slice(startIndex, endIndex);
 
   const goToPreviousPage = () => {
-    setCurrentPage((prev) => Math.max(0, prev - 1));
+    setCurrentPage(Math.max(0, currentPage - 1));
   };
 
   const goToNextPage = () => {
-    setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1));
+    setCurrentPage(Math.min(totalPages - 1, currentPage + 1));
   };
 
   if (!data || data.length === 0) {
