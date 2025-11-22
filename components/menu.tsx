@@ -12,6 +12,7 @@ const Menu = () => {
     ProductCategory | "All"
   >("All");
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(0);
 
   const filteredProducts = useMemo(() => {
     let filtered = PRODUCTS;
@@ -30,6 +31,8 @@ const Menu = () => {
       );
     }
 
+    setCurrentPage(0);
+
     return filtered;
   }, [selectedCategory, searchQuery]);
 
@@ -46,7 +49,11 @@ const Menu = () => {
         />
       </div>
 
-      <MenuItems data={filteredProducts} />
+      <MenuItems
+        data={filteredProducts}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+      />
     </div>
   );
 };
