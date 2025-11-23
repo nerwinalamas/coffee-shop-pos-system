@@ -11,6 +11,7 @@ import ActionsDropdown, { ActionItem } from "@/components/actions-dropdown";
 import AddUserModal from "@/components/modals/add-user-modal";
 import EditUserModal from "@/components/modals/edit-user-modal";
 import ChangeUserRoleModal from "@/components/modals/change-user-role-modal";
+import ResetPasswordModal from "@/components/modals/reset-password";
 import DeleteUserModal from "@/components/modals/delete-user-modal";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,6 +28,8 @@ const UserTable = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isChangeRoleModalOpen, setIsChangeRoleModalOpen] = useState(false);
+  const [isResetPasswordModalOpen, setIsResetPasswordModalOpen] =
+    useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
 
@@ -38,6 +41,11 @@ const UserTable = () => {
   const handleChangeRole = (user: User) => {
     setUser(user);
     setIsChangeRoleModalOpen(true);
+  };
+
+  const handleResetPassword = (user: User) => {
+    setUser(user);
+    setIsResetPasswordModalOpen(true);
   };
 
   const handleDelete = (user: User) => {
@@ -123,7 +131,7 @@ const UserTable = () => {
           {
             label: "Reset Password",
             icon: KeyRound,
-            onClick: () => console.log("Reset password:", user),
+            onClick: () => handleResetPassword(row.original),
           },
           {
             label: user.status === "Active" ? "Deactivate" : "Activate",
@@ -168,6 +176,11 @@ const UserTable = () => {
       <ChangeUserRoleModal
         open={isChangeRoleModalOpen}
         onOpenChange={setIsChangeRoleModalOpen}
+        user={user}
+      />
+      <ResetPasswordModal
+        open={isResetPasswordModalOpen}
+        onOpenChange={setIsResetPasswordModalOpen}
         user={user}
       />
       <DeleteUserModal
