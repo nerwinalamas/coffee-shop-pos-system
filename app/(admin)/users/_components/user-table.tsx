@@ -12,6 +12,7 @@ import AddUserModal from "@/components/modals/add-user-modal";
 import EditUserModal from "@/components/modals/edit-user-modal";
 import ChangeUserRoleModal from "@/components/modals/change-user-role-modal";
 import ResetPasswordModal from "@/components/modals/reset-password";
+import UserStatusModal from "@/components/modals/user-status-modal";
 import DeleteUserModal from "@/components/modals/delete-user-modal";
 import { Button } from "@/components/ui/button";
 import {
@@ -30,6 +31,7 @@ const UserTable = () => {
   const [isChangeRoleModalOpen, setIsChangeRoleModalOpen] = useState(false);
   const [isResetPasswordModalOpen, setIsResetPasswordModalOpen] =
     useState(false);
+  const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
 
@@ -46,6 +48,11 @@ const UserTable = () => {
   const handleResetPassword = (user: User) => {
     setUser(user);
     setIsResetPasswordModalOpen(true);
+  };
+
+  const handleStatus = (user: User) => {
+    setUser(user);
+    setIsStatusModalOpen(true);
   };
 
   const handleDelete = (user: User) => {
@@ -136,7 +143,7 @@ const UserTable = () => {
           {
             label: user.status === "Active" ? "Deactivate" : "Activate",
             icon: user.status === "Active" ? UserX : UserCheck,
-            onClick: () => console.log("Toggle status:", user),
+            onClick: () => handleStatus(row.original),
           },
           {
             label: "Delete",
@@ -181,6 +188,11 @@ const UserTable = () => {
       <ResetPasswordModal
         open={isResetPasswordModalOpen}
         onOpenChange={setIsResetPasswordModalOpen}
+        user={user}
+      />
+      <UserStatusModal
+        open={isStatusModalOpen}
+        onOpenChange={setIsStatusModalOpen}
         user={user}
       />
       <DeleteUserModal
