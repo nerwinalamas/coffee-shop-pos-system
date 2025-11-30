@@ -180,7 +180,9 @@ const InventoryTable = () => {
       <DataTable
         columns={columns}
         data={filteredData}
-        filterComponent={<DataTableFilter onFilterChange={setFilters} />}
+        filterComponent={
+          <DataTableFilter filterType="product" onFilterChange={setFilters} />
+        }
         headerActions={
           <Button className="gap-2" onClick={() => setIsAddItemModalOpen(true)}>
             <Plus className="w-4 h-4" />

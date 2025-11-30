@@ -129,7 +129,7 @@ const ProductTable = () => {
         columns={columns}
         data={filteredData}
         filterComponent={
-          <DataTableFilter showStatus={false} onFilterChange={setFilters} />
+          <DataTableFilter filterType="product" onFilterChange={setFilters} />
         }
         headerActions={
           <Button className="gap-2" onClick={() => setIsAddModalOpen(true)}>
