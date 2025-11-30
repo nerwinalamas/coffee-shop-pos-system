@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { INITIAL_USERS } from "@/app/data";
 import { cn } from "@/lib/utils";
@@ -14,6 +14,7 @@ import ChangeUserRoleModal from "@/components/modals/change-user-role-modal";
 import ResetPasswordModal from "@/components/modals/reset-password";
 import UserStatusModal from "@/components/modals/user-status-modal";
 import DeleteUserModal from "@/components/modals/delete-user-modal";
+import DataTableFilter from "@/components/data-table-filter";
 import { Button } from "@/components/ui/button";
 import {
   Edit2,
@@ -34,6 +35,12 @@ const UserTable = () => {
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+
+  const [filters, setFilters] = useState<{
+    statuses: string[];
+  }>({
+    statuses: [],
+  });
 
   const handleEdit = (user: User) => {
     setUser(user);
@@ -59,6 +66,18 @@ const UserTable = () => {
     setUser(user);
     setIsDeleteModalOpen(true);
   };
+
+  const filteredData = useMemo(() => {
+    let filtered = [...INITIAL_USERS];
+
+    if (filters.statuses.length > 0) {
+      filtered = filtered.filter((item) =>
+        filters.statuses.includes(item.status)
+      );
+    }
+
+    return filtered;
+  }, [filters]);
 
   const columns: ColumnDef<User>[] = [
     {
@@ -163,7 +182,10 @@ const UserTable = () => {
     <>
       <DataTable
         columns={columns}
-        data={INITIAL_USERS}
+        data={filteredData}
+        filterComponent={
+          <DataTableFilter filterType="user" onFilterChange={setFilters} />
+        }
         headerActions={
           <Button className="gap-2" onClick={() => setIsAddModalOpen(true)}>
             <Plus className="w-4 h-4" />
