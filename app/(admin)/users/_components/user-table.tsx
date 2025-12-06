@@ -3,7 +3,6 @@
 import { useMemo, useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { INITIAL_USERS } from "@/app/data";
-import { cn } from "@/lib/utils";
 import { DataTable } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
 import { User } from "@/types/user.types";
@@ -83,7 +82,7 @@ const UserTable = () => {
     {
       accessorKey: "firstName",
       header: "First Name",
-      size: 150,
+      size: 140,
       cell: ({ row }) => (
         <div className="font-normal text-sm">{row.original.firstName}</div>
       ),
@@ -91,7 +90,7 @@ const UserTable = () => {
     {
       accessorKey: "lastName",
       header: "Last Name",
-      size: 150,
+      size: 140,
       cell: ({ row }) => (
         <div className="font-normal text-sm">{row.original.lastName}</div>
       ),
@@ -99,7 +98,7 @@ const UserTable = () => {
     {
       accessorKey: "email",
       header: "Email",
-      size: 250,
+      size: 200,
       cell: ({ row }) => (
         <div className="font-normal text-sm">{row.original.email}</div>
       ),
@@ -107,7 +106,7 @@ const UserTable = () => {
     {
       accessorKey: "phone",
       header: "Phone",
-      size: 150,
+      size: 140,
       cell: ({ row }) => (
         <div className="font-normal text-sm">{row.original.phone}</div>
       ),
@@ -116,25 +115,31 @@ const UserTable = () => {
       accessorKey: "role",
       header: "Role",
       size: 120,
-      cell: ({ row }) => (
-        <Badge className="rounded-full">{row.original.role}</Badge>
-      ),
+      cell: ({ row }) => {
+        const role = row.original.role;
+
+        const roleColors = {
+          Admin: "bg-purple-100 text-purple-800",
+          Manager: "bg-blue-100 text-blue-800",
+          Staff: "bg-gray-100 text-gray-800",
+        } as const;
+
+        return <Badge className={roleColors[role]}>{role}</Badge>;
+      },
     },
     {
       accessorKey: "status",
       header: "Status",
       size: 120,
       cell: ({ row }) => {
-        const isActive = row.original.status === "Active";
+        const status = row.original.status;
 
-        return (
-          <Badge
-            variant="secondary"
-            className={cn("rounded-full", !isActive && "text-destructive")}
-          >
-            {row.original.status}
-          </Badge>
-        );
+        const statusColors = {
+          Active: "bg-green-100 text-green-800",
+          Inactive: "bg-red-100 text-red-800",
+        } as const;
+
+        return <Badge className={statusColors[status]}>{status}</Badge>;
       },
     },
     {
