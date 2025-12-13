@@ -51,6 +51,10 @@ interface DataTableProps<TData, TValue> {
   emptyMessage?: string;
   searchPlaceholder?: string;
   onRowClick?: (row: TData) => void;
+  isLoading: boolean;
+  loadingText: string;
+  error: Error | null;
+  errorText: string;
 }
 
 export function DataTable<TData, TValue>({
@@ -67,6 +71,10 @@ export function DataTable<TData, TValue>({
   emptyMessage = "No results found.",
   searchPlaceholder = "Search...",
   onRowClick,
+  isLoading,
+  loadingText,
+  error,
+  errorText,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -142,7 +150,25 @@ export function DataTable<TData, TValue>({
           </TableHeader>
 
           <TableBody>
-            {table.getRowModel().rows.length ? (
+            {isLoading ? (
+              <TableRow className="h-12 text-center">
+                <TableCell
+                  colSpan={columns.length}
+                  className="text-muted-foreground"
+                >
+                  {loadingText}
+                </TableCell>
+              </TableRow>
+            ) : error ? (
+              <TableRow className="h-12 text-center">
+                <TableCell
+                  colSpan={columns.length}
+                  className="text-red-500 font-medium"
+                >
+                  {errorText}
+                </TableCell>
+              </TableRow>
+            ) : table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
@@ -174,7 +200,7 @@ export function DataTable<TData, TValue>({
         </Table>
       </div>
 
-      {showPagination && (
+      {showPagination && !isLoading && !error && (
         <div className="flex items-center justify-between px-4">
           {showSelectedCount && (
             <div className="text-muted-foreground hidden flex-1 text-sm lg:flex">
