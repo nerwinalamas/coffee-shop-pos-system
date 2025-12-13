@@ -191,6 +191,10 @@ const InventoryTable = () => {
         }
         emptyMessage="No inventory items found."
         searchPlaceholder="Search products"
+        isLoading={false}
+        loadingText="Loading inventory..."
+        error={null}
+        errorText="Error loading inventory"
       />
 
       <AddItemModal

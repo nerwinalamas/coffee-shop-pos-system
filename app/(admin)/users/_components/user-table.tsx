@@ -199,6 +199,10 @@ const UserTable = () => {
         }
         emptyMessage="No users found."
         searchPlaceholder="Search users"
+        isLoading={false}
+        loadingText="Loading users..."
+        error={null}
+        errorText="Error loading users"
       />
 
       <AddUserModal open={isAddModalOpen} onOpenChange={setIsAddModalOpen} />
