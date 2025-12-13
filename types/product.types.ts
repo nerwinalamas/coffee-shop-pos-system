@@ -1,3 +1,5 @@
+import { Database } from "./supabase";
+
 export type Product = {
   id: number;
   name: string;
@@ -11,3 +13,5 @@ export enum ProductCategory {
   FOOD = "Food",
   DESSERT = "Dessert",
 }
+
+export type Products = Database["public"]["Tables"]["products"]["Row"];
