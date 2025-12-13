@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Product } from "@/types/product.types";
+import { Products } from "@/types/product.types";
 import ProductForm, {
   ProductFormValues,
   productSchema,
@@ -20,7 +20,7 @@ import { toast } from "sonner";
 interface EditProductModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  product: Product | null;
+  product: Products | null;
 }
 
 const EditProductModal = ({
@@ -43,7 +43,7 @@ const EditProductModal = ({
       form.reset({
         name: product.name,
         price: product.price,
-        image: product.image,
+        image: product.image || "",
         category: product.category,
       });
     }

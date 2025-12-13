@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Product } from "@/types/product.types";
+import { Products } from "@/types/product.types";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,7 +17,7 @@ import { toast } from "sonner";
 interface DeleteProductModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  product: Product | null;
+  product: Products | null;
 }
 
 const DeleteProductModal = ({
