@@ -3,8 +3,7 @@
 import { useMemo, useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import Image from "next/image";
-import { PRODUCTS } from "@/app/data";
-import { Product } from "@/types/product.types";
+import { Products } from "@/types/product.types";
 import { getCategoryVariant } from "@/lib/utils";
 import { DataTable } from "@/components/data-table";
 import ActionsDropdown, { ActionItem } from "@/components/actions-dropdown";
@@ -15,12 +14,15 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Edit2, Trash2, Plus } from "lucide-react";
 import DataTableFilter from "@/components/data-table-filter";
+import { useProducts } from "@/hooks/useProducts";
 
 const ProductTable = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<Products | null>(null);
+
+  const { data: products, isLoading, error } = useProducts();
 
   const [filters, setFilters] = useState<{
     categories: string[];
@@ -28,18 +30,20 @@ const ProductTable = () => {
     categories: [],
   });
 
-  const handleEdit = (product: Product) => {
+  const handleEdit = (product: Products) => {
     setSelectedProduct(product);
     setIsEditModalOpen(true);
   };
 
-  const handleDelete = (product: Product) => {
+  const handleDelete = (product: Products) => {
     setSelectedProduct(product);
     setIsDeleteModalOpen(true);
   };
 
   const filteredData = useMemo(() => {
-    let filtered = [...PRODUCTS];
+    if (!products) return [];
+
+    let filtered = [...products];
 
     if (filters.categories.length > 0) {
       filtered = filtered.filter((item) =>
@@ -48,23 +52,28 @@ const ProductTable = () => {
     }
 
     return filtered;
-  }, [filters]);
+  }, [products, filters]);
 
-  const columns: ColumnDef<Product>[] = [
+  const columns: ColumnDef<Products>[] = [
     {
       accessorKey: "image",
       header: "Image",
       size: 80,
-      cell: ({ row }) => (
-        <Image
-          src={row.original.image}
-          alt={row.original.name}
-          className="w-14 h-14 rounded-lg"
-          width={1000}
-          height={1000}
-          priority
-        />
-      ),
+      cell: ({ row }) =>
+        row.original.image ? (
+          <Image
+            src={row.original.image}
+            alt={row.original.name}
+            className="w-14 h-14 rounded-lg object-cover"
+            width={56}
+            height={56}
+            priority
+          />
+        ) : (
+          <div className="w-14 h-14 rounded-lg bg-gray-200 flex items-center justify-center">
+            <span className="text-xs text-gray-500">No image</span>
+          </div>
+        ),
       enableSorting: false,
     },
     {
@@ -139,6 +148,10 @@ const ProductTable = () => {
         }
         emptyMessage="No products found."
         searchPlaceholder="Search products"
+        isLoading={isLoading}
+        loadingText="Loading products..."
+        error={error}
+        errorText="Error loading products"
       />
 
       <AddProductModal open={isAddModalOpen} onOpenChange={setIsAddModalOpen} />
