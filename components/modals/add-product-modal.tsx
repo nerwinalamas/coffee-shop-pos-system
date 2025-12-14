@@ -14,6 +14,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { supabase } from "@/lib/supabase";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface AddProductModalProps {
   open: boolean;
@@ -21,6 +23,8 @@ interface AddProductModalProps {
 }
 
 const AddProductModal = ({ open, onOpenChange }: AddProductModalProps) => {
+  const queryClient = useQueryClient();
+
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(productSchema),
     defaultValues: {
@@ -38,12 +42,15 @@ const AddProductModal = ({ open, onOpenChange }: AddProductModalProps) => {
 
   const onSubmit = async (values: ProductFormValues) => {
     try {
-      // TODO: Replace with your actual API call
-      console.log("Adding product:", values);
+      const { error } = await supabase
+        .from("products")
+        .insert([values])
+        .select()
+        .single();
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      if (error) throw error;
 
+      queryClient.invalidateQueries({ queryKey: ["products"] });
       toast.success("Product added successfully");
       onOpenChange(false);
       form.reset();
