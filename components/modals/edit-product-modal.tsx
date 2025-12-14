@@ -16,6 +16,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { supabase } from "@/lib/supabase";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface EditProductModalProps {
   open: boolean;
@@ -28,6 +30,8 @@ const EditProductModal = ({
   onOpenChange,
   product,
 }: EditProductModalProps) => {
+  const queryClient = useQueryClient();
+
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(productSchema),
     defaultValues: {
@@ -58,12 +62,16 @@ const EditProductModal = ({
     if (!product) return;
 
     try {
-      // TODO: Replace with your actual API call
-      console.log("Editing product:", product.id, values);
+      const { error } = await supabase
+        .from("products")
+        .update(values)
+        .eq("id", product.id)
+        .select()
+        .single();
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      if (error) throw error;
 
+      queryClient.invalidateQueries({ queryKey: ["products"] });
       toast.success("Product updated successfully");
       onOpenChange(false);
       form.reset();
