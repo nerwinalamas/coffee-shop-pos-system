@@ -79,6 +79,9 @@ const ProductForm = ({
                   type="number"
                   disabled={isSubmitting}
                   placeholder="0.00"
+                  onChange={(e) =>
+                    field.onChange(parseFloat(e.target.value) || 0)
+                  }
                 />
               </FormControl>
               <FormMessage />
