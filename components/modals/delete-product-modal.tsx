@@ -13,6 +13,8 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
+import { supabase } from "@/lib/supabase";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface DeleteProductModalProps {
   open: boolean;
@@ -26,18 +28,21 @@ const DeleteProductModal = ({
   product,
 }: DeleteProductModalProps) => {
   const [isDeleting, setIsDeleting] = useState(false);
+  const queryClient = useQueryClient();
 
   const handleDelete = async () => {
     if (!product) return;
 
     setIsDeleting(true);
     try {
-      // TODO: Replace with your actual API call
-      console.log("Deleting product:", product.id);
+      const { error } = await supabase
+        .from("products")
+        .delete()
+        .eq("id", product.id);
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      if (error) throw error;
 
+      queryClient.invalidateQueries({ queryKey: ["products"] });
       toast.success("Product deleted successfully");
       onOpenChange(false);
     } catch (error) {
