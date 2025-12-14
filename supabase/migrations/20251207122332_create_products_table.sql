@@ -43,21 +43,20 @@ create policy "Anyone can view products"
   to authenticated, anon
   using (true);
 
--- Allow authenticated users to insert products (adjust to admin-only if needed)
-create policy "Authenticated users can insert products"
+-- Allow anyone to insert products (for development - change later!)
+create policy "Anyone can insert products"
   on products for insert
-  to authenticated
+  to authenticated, anon
   with check (true);
 
--- Allow authenticated users to update products (adjust to admin-only if needed)
-create policy "Authenticated users can update products"
+-- Allow anyone to update products (for development - change later!)
+create policy "Anyone can update products"
   on products for update
-  to authenticated
+  to authenticated, anon
   using (true);
 
--- Allow authenticated users to delete products (adjust to admin-only if needed)
-create policy "Authenticated users can delete products"
+-- Allow anyone to delete products (for development - change later!)
+create policy "Anyone can delete products"
   on products for delete
-  to authenticated
+  to authenticated, anon
   using (true);
-  
