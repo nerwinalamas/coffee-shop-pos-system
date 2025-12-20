@@ -34,6 +34,50 @@ export type Database = {
   }
   public: {
     Tables: {
+      inventory: {
+        Row: {
+          created_at: string | null
+          id: string
+          last_restocked: string | null
+          product_id: string
+          quantity: number
+          reorder_level: number
+          sku: string
+          status: Database["public"]["Enums"]["inventory_status"]
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          last_restocked?: string | null
+          product_id: string
+          quantity?: number
+          reorder_level?: number
+          sku: string
+          status?: Database["public"]["Enums"]["inventory_status"]
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          last_restocked?: string | null
+          product_id?: string
+          quantity?: number
+          reorder_level?: number
+          sku?: string
+          status?: Database["public"]["Enums"]["inventory_status"]
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       products: {
         Row: {
           category: Database["public"]["Enums"]["product_category"]
@@ -105,6 +149,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      inventory_status: "In Stock" | "Low Stock" | "Out of Stock"
       product_category: "Coffee" | "Food" | "Dessert"
       user_role: "Admin" | "Manager" | "Staff"
       user_status: "Active" | "Inactive"
@@ -238,6 +283,7 @@ export const Constants = {
   },
   public: {
     Enums: {
+      inventory_status: ["In Stock", "Low Stock", "Out of Stock"],
       product_category: ["Coffee", "Food", "Dessert"],
       user_role: ["Admin", "Manager", "Staff"],
       user_status: ["Active", "Inactive"],
