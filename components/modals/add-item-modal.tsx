@@ -21,7 +21,7 @@ const AddItemModal = ({ open, onOpenChange }: AddItemModalProps) => {
   const form = useForm<ItemFormValues>({
     resolver: zodResolver(itemSchema),
     defaultValues: {
-      productId: 0,
+      productId: "",
       quantity: 0,
       reorderLevel: 0,
     },
