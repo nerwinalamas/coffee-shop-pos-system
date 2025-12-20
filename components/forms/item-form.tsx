@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { z } from "zod";
 import { UseFormReturn } from "react-hook-form";
+import { useProducts } from "@/hooks/useProducts";
 import { cn } from "@/lib/utils";
-import { PRODUCTS } from "@/app/data";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -28,10 +28,10 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Check, ChevronsUpDown, Loader2 } from "lucide-react";
 
 export const itemSchema = z.object({
-  productId: z.number().min(1, "Please select a product"),
+  productId: z.string().min(1, "Please select a product"),
   quantity: z.number().min(0, "Quantity must be 0 or greater"),
   reorderLevel: z.number().min(0, "Reorder level must be 0 or greater"),
 });
@@ -55,6 +55,7 @@ const ItemForm = ({
 }: ItemFormProps) => {
   const isSubmitting = form.formState.isSubmitting;
   const [open, setOpen] = useState(false);
+  const { data: products, isLoading, error } = useProducts();
 
   return (
     <Form {...form}>
@@ -72,15 +73,16 @@ const ItemForm = ({
                       variant="outline"
                       role="combobox"
                       aria-expanded={open}
-                      disabled={isSubmitting}
+                      disabled={isSubmitting || isLoading}
                       className={cn(
                         "w-full justify-between",
                         !field.value && "text-muted-foreground"
                       )}
                     >
                       {field.value
-                        ? PRODUCTS.find((product) => product.id === field.value)
-                            ?.name
+                        ? products?.find(
+                            (product) => product.id === field.value
+                          )?.name
                         : "Select a product"}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
@@ -92,26 +94,40 @@ const ItemForm = ({
                     <CommandList>
                       <CommandEmpty>No product found.</CommandEmpty>
                       <CommandGroup>
-                        {PRODUCTS.map((product) => (
-                          <CommandItem
-                            key={product.id}
-                            value={`${product.name} ${product.category}`}
-                            onSelect={() => {
-                              field.onChange(product.id);
-                              setOpen(false);
-                            }}
-                          >
-                            <Check
-                              className={cn(
-                                "mr-2 h-4 w-4",
-                                field.value === product.id
-                                  ? "opacity-100"
-                                  : "opacity-0"
-                              )}
-                            />
-                            {product.name} - {product.category}
-                          </CommandItem>
-                        ))}
+                        {isLoading && (
+                          <div className="flex items-center justify-center py-6">
+                            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                          </div>
+                        )}
+
+                        {error && (
+                          <div className="px-2 py-6 text-center text-sm text-destructive">
+                            Error loading products. Please try again.
+                          </div>
+                        )}
+
+                        {!isLoading &&
+                          !error &&
+                          products?.map((product) => (
+                            <CommandItem
+                              key={product.id}
+                              value={`${product.name} ${product.category}`}
+                              onSelect={() => {
+                                field.onChange(product.id);
+                                setOpen(false);
+                              }}
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4",
+                                  field.value === product.id
+                                    ? "opacity-100"
+                                    : "opacity-0"
+                                )}
+                              />
+                              {product.name} - {product.category}
+                            </CommandItem>
+                          ))}
                       </CommandGroup>
                     </CommandList>
                   </Command>
