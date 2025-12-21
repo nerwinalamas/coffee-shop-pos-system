@@ -3,8 +3,7 @@
 import { useState, useMemo } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import Image from "next/image";
-import { INVENTORY } from "@/app/data";
-import { InventoryItem } from "@/types/inventory.types";
+import { InventoryWithProduct } from "@/types/inventory.types";
 import { getCategoryVariant, getStatusVariant } from "@/lib/utils";
 import { DataTable } from "@/components/data-table";
 import ActionsDropdown, { ActionItem } from "@/components/actions-dropdown";
@@ -15,12 +14,17 @@ import ViewItemDetailsModal from "@/components/modals/view-item-details-modal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Package, RotateCw, Plus } from "lucide-react";
+import { useInventory } from "@/hooks/useInventory";
 
 const InventoryTable = () => {
   const [isAddItemModalOpen, setIsAddItemModalOpen] = useState(false);
   const [isRestockModalOpen, setIsRestockModalOpen] = useState(false);
   const [isViewDetailsModalOpen, setIsViewDetailsModalOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
+  const [selectedItem, setSelectedItem] = useState<InventoryWithProduct | null>(
+    null
+  );
+
+  const { data: inventory, isLoading, error } = useInventory();
 
   const [filters, setFilters] = useState<{
     categories: string[];
@@ -30,22 +34,24 @@ const InventoryTable = () => {
     statuses: [],
   });
 
-  const handleRestock = (item: InventoryItem) => {
+  const handleRestock = (item: InventoryWithProduct) => {
     setSelectedItem(item);
     setIsRestockModalOpen(true);
   };
 
-  const handleViewDetails = (item: InventoryItem) => {
+  const handleViewDetails = (item: InventoryWithProduct) => {
     setSelectedItem(item);
     setIsViewDetailsModalOpen(true);
   };
 
   const filteredData = useMemo(() => {
-    let filtered = [...INVENTORY];
+    if (!inventory) return [];
+
+    let filtered = [...inventory];
 
     if (filters.categories.length > 0) {
       filtered = filtered.filter((item) =>
-        filters.categories.includes(item.category)
+        filters.categories.includes(item.products?.category || "Unknown")
       );
     }
 
@@ -56,17 +62,17 @@ const InventoryTable = () => {
     }
 
     return filtered;
-  }, [filters]);
+  }, [filters, inventory]);
 
-  const columns: ColumnDef<InventoryItem>[] = [
+  const columns: ColumnDef<InventoryWithProduct>[] = [
     {
       accessorKey: "image",
       header: "Image",
       size: 80,
       cell: ({ row }) => (
         <Image
-          src={row.original.image}
-          alt={row.original.productName}
+          src={row.original.products?.image || ""}
+          alt={row.original.products?.name || "Product Image"}
           className="w-14 h-14 rounded-lg"
           width={1000}
           height={1000}
@@ -80,7 +86,7 @@ const InventoryTable = () => {
       header: "Product Name",
       size: 200,
       cell: ({ row }) => (
-        <div className="font-normal text-sm">{row.original.productName}</div>
+        <div className="font-normal text-sm">{row.original.products?.name}</div>
       ),
     },
     {
@@ -98,7 +104,7 @@ const InventoryTable = () => {
       header: "Category",
       size: 120,
       cell: ({ row }) => {
-        const category = row.original.category;
+        const category = row.original.products?.category || "Unknown";
         return (
           <Badge className={`rounded-full ${getCategoryVariant(category)}`}>
             {category}
@@ -120,7 +126,7 @@ const InventoryTable = () => {
       size: 120,
       cell: ({ row }) => (
         <div className="text-sm text-muted-foreground">
-          {row.original.reorderLevel}
+          {row.original.reorder_level}
         </div>
       ),
     },
@@ -138,16 +144,21 @@ const InventoryTable = () => {
       },
     },
     {
-      accessorKey: "lastRestocked",
+      accessorKey: "last_restocked",
       header: "Last Restocked",
       size: 140,
       cell: ({ row }) => (
         <div className="text-sm text-muted-foreground">
-          {new Date(row.original.lastRestocked).toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-            year: "numeric",
-          })}
+          {row.original.last_restocked
+            ? new Date(row.original.last_restocked).toLocaleDateString(
+                "en-US",
+                {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                }
+              )
+            : "Never"}
         </div>
       ),
     },
@@ -191,9 +202,9 @@ const InventoryTable = () => {
         }
         emptyMessage="No inventory items found."
         searchPlaceholder="Search products"
-        isLoading={false}
+        isLoading={isLoading}
         loadingText="Loading inventory..."
-        error={null}
+        error={error}
         errorText="Error loading inventory"
       />
 
