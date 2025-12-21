@@ -1,4 +1,4 @@
-import { ProductCategory } from "./product.types";
+import { ProductCategory, Products } from "./product.types";
 import { Database } from "./supabase";
 
 export type InventoryItem = {
@@ -20,3 +20,7 @@ export enum StockStatus {
 }
 
 export type Inventory = Database["public"]["Tables"]["inventory"]["Row"];
+
+export type InventoryWithProduct = Inventory & {
+  products: Products | null;
+};
