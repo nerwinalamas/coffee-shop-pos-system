@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { InventoryItem } from "@/types/inventory.types";
+import { InventoryWithProduct } from "@/types/inventory.types";
 import RestockForm, {
   RestockFormValues,
   restockSchema,
@@ -20,7 +20,7 @@ import { toast } from "sonner";
 interface RestockModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  item: InventoryItem | null;
+  item: InventoryWithProduct | null;
 }
 
 const RestockModal = ({ open, onOpenChange, item }: RestockModalProps) => {
@@ -63,7 +63,7 @@ const RestockModal = ({ open, onOpenChange, item }: RestockModalProps) => {
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      toast.success(`Successfully restocked ${item.productName}`);
+      toast.success(`Successfully restocked ${item.products?.name}`);
       onOpenChange(false);
       form.reset();
     } catch (error) {
@@ -80,7 +80,7 @@ const RestockModal = ({ open, onOpenChange, item }: RestockModalProps) => {
         <DialogHeader>
           <DialogTitle>Restock Item</DialogTitle>
           <DialogDescription>
-            Add stock for {item.productName}
+            Add stock for {item.products?.name}
           </DialogDescription>
         </DialogHeader>
         <RestockForm

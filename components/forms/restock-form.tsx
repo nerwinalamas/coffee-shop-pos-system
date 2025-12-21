@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import { UseFormReturn } from "react-hook-form";
-import { InventoryItem } from "@/types/inventory.types";
+import { InventoryWithProduct } from "@/types/inventory.types";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,7 +26,7 @@ interface RestockFormProps {
   handleCancel: () => void;
   submitLabel: string;
   submitLoadingLabel: string;
-  item: InventoryItem;
+  item: InventoryWithProduct;
   newTotal: number;
 }
 
@@ -51,7 +51,7 @@ const RestockForm = ({
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">Reorder Level:</span>
-            <span className="font-medium">{item.reorderLevel}</span>
+            <span className="font-medium">{item.reorder_level}</span>
           </div>
         </div>
 

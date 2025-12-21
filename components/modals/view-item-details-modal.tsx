@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { InventoryItem } from "@/types/inventory.types";
+import { InventoryWithProduct } from "@/types/inventory.types";
 import { getCategoryVariant, getStatusVariant } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -16,7 +16,7 @@ import {
 interface ViewItemDetailsModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  item: InventoryItem | null;
+  item: InventoryWithProduct | null;
 }
 
 const ViewItemDetailsModal = ({
@@ -26,8 +26,14 @@ const ViewItemDetailsModal = ({
 }: ViewItemDetailsModalProps) => {
   if (!item) return null;
 
-  const stockPercentage = (item.quantity / item.reorderLevel) * 100;
-  const isLowStock = item.quantity <= item.reorderLevel;
+  const stockPercentage = (item.quantity / item.reorder_level) * 100;
+  const isLowStock = item.quantity <= item.reorder_level;
+  const daysSinceRestock = item.last_restocked
+    ? Math.floor(
+        (new Date().getTime() - new Date(item.last_restocked).getTime()) /
+          (1000 * 60 * 60 * 24)
+      )
+    : null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -35,7 +41,7 @@ const ViewItemDetailsModal = ({
         <DialogHeader>
           <DialogTitle>Item Details</DialogTitle>
           <DialogDescription>
-            Complete information for {item.productName}
+            Complete information for {item.products?.name}
           </DialogDescription>
         </DialogHeader>
 
@@ -43,8 +49,8 @@ const ViewItemDetailsModal = ({
           {/* Product Image and Basic Info */}
           <div className="flex gap-6">
             <Image
-              src={item.image}
-              alt={item.productName}
+              src={item.products?.image || "/placeholder.png"}
+              alt={item.products?.name || "Product Image"}
               className="w-32 h-32 rounded-lg object-cover"
               width={200}
               height={200}
@@ -52,7 +58,9 @@ const ViewItemDetailsModal = ({
             />
             <div className="flex-1 space-y-3">
               <div>
-                <h3 className="text-2xl font-semibold">{item.productName}</h3>
+                <h3 className="text-2xl font-semibold">
+                  {item.products?.name}
+                </h3>
                 <p className="text-sm text-muted-foreground font-mono">
                   {item.sku}
                 </p>
@@ -60,10 +68,10 @@ const ViewItemDetailsModal = ({
               <div className="flex gap-2">
                 <Badge
                   className={`rounded-full ${getCategoryVariant(
-                    item.category
+                    item.products?.category || "Unknown"
                   )}`}
                 >
-                  {item.category}
+                  {item.products?.category || "Unknown"}
                 </Badge>
                 <Badge
                   className={`rounded-full ${getStatusVariant(item.status)}`}
@@ -92,7 +100,7 @@ const ViewItemDetailsModal = ({
               <div className="space-y-1">
                 <p className="text-sm text-muted-foreground">Reorder Level</p>
                 <p className="text-3xl font-bold text-muted-foreground">
-                  {item.reorderLevel}
+                  {item.reorder_level}
                 </p>
               </div>
             </div>
@@ -138,11 +146,16 @@ const ViewItemDetailsModal = ({
               <div className="space-y-1">
                 <p className="text-sm text-muted-foreground">Last Restocked</p>
                 <p className="text-base font-medium">
-                  {new Date(item.lastRestocked).toLocaleDateString("en-US", {
-                    month: "long",
-                    day: "numeric",
-                    year: "numeric",
-                  })}
+                  {item.last_restocked
+                    ? new Date(item.last_restocked).toLocaleDateString(
+                        "en-US",
+                        {
+                          month: "long",
+                          day: "numeric",
+                          year: "numeric",
+                        }
+                      )
+                    : "Never"}
                 </p>
               </div>
               <div className="space-y-1">
@@ -150,12 +163,9 @@ const ViewItemDetailsModal = ({
                   Days Since Restock
                 </p>
                 <p className="text-base font-medium">
-                  {Math.floor(
-                    (new Date().getTime() -
-                      new Date(item.lastRestocked).getTime()) /
-                      (1000 * 60 * 60 * 24)
-                  )}{" "}
-                  days
+                  {daysSinceRestock !== null
+                    ? `${daysSinceRestock} days`
+                    : "N/A"}
                 </p>
               </div>
             </div>
