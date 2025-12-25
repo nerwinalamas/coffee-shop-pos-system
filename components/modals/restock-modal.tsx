@@ -3,6 +3,8 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/lib/supabase";
 import { InventoryWithProduct } from "@/types/inventory.types";
 import RestockForm, {
   RestockFormValues,
@@ -24,6 +26,8 @@ interface RestockModalProps {
 }
 
 const RestockModal = ({ open, onOpenChange, item }: RestockModalProps) => {
+  const queryClient = useQueryClient();
+
   const form = useForm<RestockFormValues>({
     resolver: zodResolver(restockSchema),
     defaultValues: {
@@ -49,21 +53,20 @@ const RestockModal = ({ open, onOpenChange, item }: RestockModalProps) => {
     if (!item) return;
 
     try {
-      console.log("Restocking item:", {
-        itemId: item.id,
-        sku: item.sku,
-        previousQuantity: item.quantity,
-        addQuantity: values.addQuantity,
-        newQuantity: newTotal,
-      });
+      const newQuantity = item.quantity + values.addQuantity;
 
-      // TODO: Replace with your actual API call
-      // await restockInventoryItem(item.id, values.addQuantity);
+      const { error: updateError } = await supabase
+        .from("inventory")
+        .update({
+          quantity: newQuantity,
+          last_restocked: new Date().toISOString(),
+        })
+        .eq("id", item.id);
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      if (updateError) throw updateError;
 
       toast.success(`Successfully restocked ${item.products?.name}`);
+      await queryClient.invalidateQueries({ queryKey: ["inventory"] });
       onOpenChange(false);
       form.reset();
     } catch (error) {
