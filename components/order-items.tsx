@@ -4,7 +4,7 @@ import { Minus, Plus } from "lucide-react";
 import { useOrderStore } from "@/store/order";
 
 interface OrderItemsProps {
-  id: number;
+  id: string;
   imageUrl: string;
   name: string;
   price: number;

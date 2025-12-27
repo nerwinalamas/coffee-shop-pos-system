@@ -1,7 +1,7 @@
 import { create } from "zustand";
-import { Product } from "@/types/product.types";
+import { Products } from "@/types/product.types";
 
-export interface OrderItem extends Product {
+export interface OrderItem extends Products {
   quantity: number;
 }
 
@@ -10,9 +10,9 @@ interface OrderStore {
   subtotal: number;
   tax: number;
   total: number;
-  addItem: (product: Product) => void;
-  removeItem: (id: number) => void;
-  updateQuantity: (id: number, quantity: number) => void;
+  addItem: (product: Products) => void;
+  removeItem: (id: string) => void;
+  updateQuantity: (id: string, quantity: number) => void;
   clearOrder: () => void;
 }
 
@@ -35,7 +35,7 @@ export const useOrderStore = create<OrderStore>((set, get) => ({
   tax: 0,
   total: 0,
 
-  addItem: (product: Product) => {
+  addItem: (product: Products) => {
     const { items } = get();
     const existingItem = items.find((item) => item.id === product.id);
 
@@ -52,14 +52,14 @@ export const useOrderStore = create<OrderStore>((set, get) => ({
     set({ items: newItems, ...totals });
   },
 
-  removeItem: (id: number) => {
+  removeItem: (id: string) => {
     const { items } = get();
     const newItems = items.filter((item) => item.id !== id);
     const totals = calculateTotals(newItems);
     set({ items: newItems, ...totals });
   },
 
-  updateQuantity: (id: number, quantity: number) => {
+  updateQuantity: (id: string, quantity: number) => {
     const { items } = get();
 
     if (quantity <= 0) {

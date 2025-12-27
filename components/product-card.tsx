@@ -1,28 +1,27 @@
 "use client";
 
+import { Products } from "@/types/product.types";
 import { Button } from "@/components/ui/button";
-import { Product } from "@/types/product.types";
 import ReusableImage from "@/components/reusable-image";
 import { useOrderStore } from "@/store/order";
 
 interface ProductCardProps {
-  product: Product;
+  product: Products;
 }
 
 const ProductCard = ({ product }: ProductCardProps) => {
   const addItem = useOrderStore((state) => state.addItem);
 
-  const handleAddToOrder = (product: Product) => {
+  const handleAddToOrder = (product: Products) => {
     addItem(product);
   };
 
   return (
     <div className="p-2 aspect-square flex flex-col justify-between bg-white border rounded-lg">
       <ReusableImage
-        src={product.image}
+        src={product.image || ""}
         alt={product.name}
         className="w-full h-2/3 mb-2"
-        priority={product.id <= 4} // Prioritize first 4 images
         fallbackText={product.name}
       />
       <div className="text-sm font-medium">{product.name}</div>
