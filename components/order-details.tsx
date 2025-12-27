@@ -20,7 +20,7 @@ const OrderDetails = () => {
             <OrderItems
               key={item.id}
               id={item.id}
-              imageUrl={item.image}
+              imageUrl={item.image || ""}
               name={item.name}
               price={item.price}
               quantity={item.quantity}
