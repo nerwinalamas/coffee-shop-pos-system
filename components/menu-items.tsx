@@ -1,6 +1,6 @@
 "use client";
 
-import { Product } from "@/types/product.types";
+import { InventoryWithProduct } from "@/types/inventory.types";
 import ProductCard from "./product-card";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -8,12 +8,20 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 const PAGE_SIZE = 12;
 
 interface MenuItemsProps {
-  data: Product[];
+  data: InventoryWithProduct[] | undefined;
   currentPage: number;
   setCurrentPage: (page: number) => void;
 }
 
 const MenuItems = ({ data, currentPage, setCurrentPage }: MenuItemsProps) => {
+  if (!data || data.length === 0) {
+    return (
+      <div className="text-gray-500 text-center text-sm py-8">
+        <p>No products found.</p>
+      </div>
+    );
+  }
+
   // Calculate pagination
   const totalPages = Math.ceil(data.length / PAGE_SIZE);
   const startIndex = currentPage * PAGE_SIZE;
@@ -39,9 +47,11 @@ const MenuItems = ({ data, currentPage, setCurrentPage }: MenuItemsProps) => {
   return (
     <div>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pb-4">
-        {currentData.map((product) => (
-          <ProductCard key={product.id} product={product} />
-        ))}
+        {currentData
+          .filter((p) => p.products !== null)
+          .map((p) => (
+            <ProductCard key={p.id} product={p.products!} />
+          ))}
       </div>
 
       {totalPages > 1 && (
