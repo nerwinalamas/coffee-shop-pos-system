@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState } from "react";
+import { useInventory } from "@/hooks/useInventory";
 import { ProductCategory } from "@/types/product.types";
-import { PRODUCTS } from "@/app/data";
 import CategoryTabs from "@/components/category-tabs";
 import MenuItems from "@/components/menu-items";
 import SearchInput from "@/components/search-input";
@@ -14,27 +14,47 @@ const Menu = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
 
-  const filteredProducts = useMemo(() => {
-    let filtered = PRODUCTS;
+  const { data: inventory, isLoading, error } = useInventory();
 
-    // Filter by category
-    if (selectedCategory !== "All") {
-      filtered = filtered.filter(
-        (product) => product.category === selectedCategory
-      );
-    }
+  // const filteredProducts = useMemo(() => {
+  //   let filtered = PRODUCTS;
 
-    // Filter by search query
-    if (searchQuery.trim()) {
-      filtered = filtered.filter((product) =>
-        product.name.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
+  //   // Filter by category
+  //   if (selectedCategory !== "All") {
+  //     filtered = filtered.filter(
+  //       (product) => product.category === selectedCategory
+  //     );
+  //   }
 
-    setCurrentPage(0);
+  //   // Filter by search query
+  //   if (searchQuery.trim()) {
+  //     filtered = filtered.filter((product) =>
+  //       product.name.toLowerCase().includes(searchQuery.toLowerCase())
+  //     );
+  //   }
 
-    return filtered;
-  }, [selectedCategory, searchQuery]);
+  //   setCurrentPage(0);
+
+  //   return filtered;
+  // }, [selectedCategory, searchQuery]);
+
+  if (isLoading) {
+    return (
+      <div className="col-span-12 md:col-span-8 xl:col-span-9 bg-white rounded-lg shadow-sm h-full p-4 flex items-center justify-center">
+        <div className="text-gray-500">Loading products...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="col-span-12 md:col-span-8 xl:col-span-9 bg-white rounded-lg shadow-sm h-full p-4 flex items-center justify-center">
+        <div className="text-red-500">
+          Error loading products. Please try again.
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="col-span-12 md:col-span-8 xl:col-span-9 bg-white rounded-lg shadow-sm h-full p-4 space-y-4">
@@ -50,7 +70,7 @@ const Menu = () => {
       </div>
 
       <MenuItems
-        data={filteredProducts}
+        data={inventory}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
       />
