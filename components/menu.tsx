@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useInventory } from "@/hooks/useInventory";
 import { ProductCategory } from "@/types/product.types";
 import CategoryTabs from "@/components/category-tabs";
@@ -16,27 +16,30 @@ const Menu = () => {
 
   const { data: inventory, isLoading, error } = useInventory();
 
-  // const filteredProducts = useMemo(() => {
-  //   let filtered = PRODUCTS;
+  const filteredProducts = useMemo(() => {
+    if (!inventory) return [];
 
-  //   // Filter by category
-  //   if (selectedCategory !== "All") {
-  //     filtered = filtered.filter(
-  //       (product) => product.category === selectedCategory
-  //     );
-  //   }
+    let filtered = inventory;
 
-  //   // Filter by search query
-  //   if (searchQuery.trim()) {
-  //     filtered = filtered.filter((product) =>
-  //       product.name.toLowerCase().includes(searchQuery.toLowerCase())
-  //     );
-  //   }
+    // Filter by category
+    if (selectedCategory !== "All") {
+      filtered = filtered.filter(
+        (item) => item.products?.category === selectedCategory
+      );
+    }
 
-  //   setCurrentPage(0);
+    // Filter by search query
+    if (searchQuery.trim()) {
+      filtered = filtered.filter((item) =>
+        item.products?.name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
 
-  //   return filtered;
-  // }, [selectedCategory, searchQuery]);
+    // Reset to first page when filters change
+    setCurrentPage(0);
+
+    return filtered;
+  }, [inventory, selectedCategory, searchQuery]);
 
   if (isLoading) {
     return (
@@ -70,7 +73,7 @@ const Menu = () => {
       </div>
 
       <MenuItems
-        data={inventory}
+        data={filteredProducts}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
       />
