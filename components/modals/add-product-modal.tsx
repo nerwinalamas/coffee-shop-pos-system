@@ -40,6 +40,37 @@ const AddProductModal = ({ open, onOpenChange }: AddProductModalProps) => {
     form.reset();
   };
 
+  const handleImageUpload = async (file: File): Promise<string> => {
+    try {
+      // Create unique filename
+      const fileExt = file.name.split(".").pop();
+      const fileName = `${Date.now()}-${Math.random()
+        .toString(36)
+        .substring(7)}.${fileExt}`;
+      const filePath = fileName;
+
+      // Upload to Supabase Storage
+      const { data, error } = await supabase.storage
+        .from("product_images")
+        .upload(filePath, file, {
+          cacheControl: "3600",
+          upsert: false,
+        });
+
+      if (error) throw error;
+
+      // Get public URL
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("product_images").getPublicUrl(data.path);
+
+      return publicUrl;
+    } catch (error) {
+      console.error("Upload error:", error);
+      throw new Error("Failed to upload image");
+    }
+  };
+
   const onSubmit = async (values: ProductFormValues) => {
     try {
       const { error } = await supabase
@@ -75,6 +106,7 @@ const AddProductModal = ({ open, onOpenChange }: AddProductModalProps) => {
           handleCancel={handleDialogChange}
           submitLabel="Add Product"
           submitLoadingLabel="Adding Product..."
+          onImageUpload={handleImageUpload}
         />
       </DialogContent>
     </Dialog>
