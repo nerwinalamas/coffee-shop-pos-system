@@ -19,11 +19,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useState } from "react";
+import { X, Upload } from "lucide-react";
+import Image from "next/image";
 
 export const productSchema = z.object({
   name: z.string().min(1, "Product name is required"),
   price: z.number().positive("Price must be greater than 0"),
-  image: z.string().url("Must be a valid URL"),
+  image: z.string().min(1, "Image is required"),
   category: z.string().min(1, "Category is required"),
 });
 
@@ -35,6 +38,7 @@ interface ProductFormProps {
   handleCancel: () => void;
   submitLabel: string;
   submitLoadingLabel: string;
+  onImageUpload: (file: File) => Promise<string>;
 }
 
 const ProductForm = ({
@@ -43,8 +47,55 @@ const ProductForm = ({
   handleCancel,
   submitLabel,
   submitLoadingLabel,
+  onImageUpload,
 }: ProductFormProps) => {
   const isSubmitting = form.formState.isSubmitting;
+  const [imagePreview, setImagePreview] = useState<string>("");
+  const [isUploading, setIsUploading] = useState(false);
+
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      form.setError("image", { message: "Please select a valid image file" });
+      return;
+    }
+
+    // Validate file size (5MB max)
+    if (file.size > 5 * 1024 * 1024) {
+      form.setError("image", { message: "Image must be less than 5MB" });
+      return;
+    }
+
+    try {
+      setIsUploading(true);
+
+      // Create preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+
+      // Upload to Supabase
+      const imageUrl = await onImageUpload(file);
+      form.setValue("image", imageUrl);
+      form.clearErrors("image");
+    } catch (error) {
+      console.error("Image upload error:", error);
+      form.setError("image", { message: "Failed to upload image" });
+      setImagePreview("");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setImagePreview("");
+    form.setValue("image", "");
+  };
 
   return (
     <Form {...form}>
@@ -77,6 +128,7 @@ const ProductForm = ({
                 <Input
                   {...field}
                   type="number"
+                  step="0.01"
                   disabled={isSubmitting}
                   placeholder="0.00"
                   onChange={(e) =>
@@ -119,15 +171,45 @@ const ProductForm = ({
         <FormField
           control={form.control}
           name="image"
-          render={({ field }) => (
+          render={() => (
             <FormItem>
-              <FormLabel>Image URL</FormLabel>
+              <FormLabel>Product Image</FormLabel>
               <FormControl>
-                <Input
-                  {...field}
-                  disabled={isSubmitting}
-                  placeholder="https://example.com/image.jpg"
-                />
+                <div className="space-y-2">
+                  {!imagePreview ? (
+                    <div className="flex items-center gap-2">
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        disabled={isSubmitting || isUploading}
+                        onChange={handleImageChange}
+                        className="cursor-pointer"
+                      />
+                      {isUploading && (
+                        <Upload className="animate-pulse h-5 w-5 text-muted-foreground" />
+                      )}
+                    </div>
+                  ) : (
+                    <div className="relative w-full h-48 rounded-lg overflow-hidden border">
+                      <Image
+                        src={imagePreview}
+                        alt="Preview"
+                        fill
+                        className="object-cover"
+                      />
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="icon"
+                        className="absolute top-2 right-2"
+                        onClick={handleRemoveImage}
+                        disabled={isSubmitting}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  )}
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -143,7 +225,7 @@ const ProductForm = ({
           >
             Cancel
           </Button>
-          <Button type="submit" disabled={isSubmitting}>
+          <Button type="submit" disabled={isSubmitting || isUploading}>
             {isSubmitting ? submitLoadingLabel : submitLabel}
           </Button>
         </div>
