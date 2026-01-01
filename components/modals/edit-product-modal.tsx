@@ -58,6 +58,45 @@ const EditProductModal = ({
     form.reset();
   };
 
+  const handleImageUpload = async (file: File): Promise<string> => {
+    try {
+      // Delete old image if exists
+      if (product?.image) {
+        const oldImagePath = product.image.split("/").pop();
+        if (oldImagePath) {
+          await supabase.storage.from("product_images").remove([oldImagePath]);
+        }
+      }
+
+      // Create unique filename
+      const fileExt = file.name.split(".").pop();
+      const fileName = `${Date.now()}-${Math.random()
+        .toString(36)
+        .substring(7)}.${fileExt}`;
+      const filePath = fileName;
+
+      // Upload to Supabase Storage
+      const { data, error } = await supabase.storage
+        .from("product_images")
+        .upload(filePath, file, {
+          cacheControl: "3600",
+          upsert: false,
+        });
+
+      if (error) throw error;
+
+      // Get public URL
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("product_images").getPublicUrl(data.path);
+
+      return publicUrl;
+    } catch (error) {
+      console.error("Upload error:", error);
+      throw new Error("Failed to upload image");
+    }
+  };
+
   const onSubmit = async (values: ProductFormValues) => {
     if (!product) return;
 
@@ -94,6 +133,7 @@ const EditProductModal = ({
           handleCancel={handleDialogChange}
           submitLabel="Update Product"
           submitLoadingLabel="Updating Product..."
+          onImageUpload={handleImageUpload}
         />
       </DialogContent>
     </Dialog>
