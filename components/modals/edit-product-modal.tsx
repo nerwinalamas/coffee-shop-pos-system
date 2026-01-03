@@ -134,6 +134,7 @@ const EditProductModal = ({
           submitLabel="Update Product"
           submitLoadingLabel="Updating Product..."
           onImageUpload={handleImageUpload}
+          initialImageUrl={product?.image || ""}
         />
       </DialogContent>
     </Dialog>
