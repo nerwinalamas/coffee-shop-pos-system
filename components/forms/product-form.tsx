@@ -19,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X, Upload } from "lucide-react";
 import Image from "next/image";
 
@@ -39,6 +39,7 @@ interface ProductFormProps {
   submitLabel: string;
   submitLoadingLabel: string;
   onImageUpload: (file: File) => Promise<string>;
+  initialImageUrl?: string;
 }
 
 const ProductForm = ({
@@ -48,10 +49,19 @@ const ProductForm = ({
   submitLabel,
   submitLoadingLabel,
   onImageUpload,
+  initialImageUrl,
 }: ProductFormProps) => {
   const isSubmitting = form.formState.isSubmitting;
   const [imagePreview, setImagePreview] = useState<string>("");
   const [isUploading, setIsUploading] = useState(false);
+
+  useEffect(() => {
+    if (initialImageUrl) {
+      setImagePreview(initialImageUrl);
+    } else {
+      setImagePreview("");
+    }
+  }, [initialImageUrl]);
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -86,7 +96,7 @@ const ProductForm = ({
     } catch (error) {
       console.error("Image upload error:", error);
       form.setError("image", { message: "Failed to upload image" });
-      setImagePreview("");
+      setImagePreview(initialImageUrl || "");
     } finally {
       setIsUploading(false);
     }
