@@ -13,11 +13,18 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { supabase } from "@/lib/supabase";
 
 const formSchema = z
   .object({
     businessName: z.string().min(2, {
       message: "Business name must be at least 2 characters.",
+    }),
+    firstName: z.string().min(2, {
+      message: "First name must be at least 2 characters.",
+    }),
+    lastName: z.string().min(2, {
+      message: "Last name must be at least 2 characters.",
     }),
     email: z.string().email({
       message: "Please enter a valid email address.",
@@ -40,6 +47,8 @@ const SignUpForm = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       businessName: "",
+      firstName: "",
+      lastName: "",
       email: "",
       phone: "",
       password: "",
@@ -47,7 +56,31 @@ const SignUpForm = () => {
     },
   });
 
-  const onSubmit = () => {};
+  const isSubmitting = form.formState.isSubmitting;
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      const { error } = await supabase.auth.signUp({
+        email: values.email,
+        password: values.password,
+        options: {
+          data: {
+            business_name: values.businessName,
+            first_name: values.firstName,
+            last_name: values.lastName,
+            phone: values.phone,
+            role: "Admin",
+          },
+        },
+      });
+
+      if (error) throw error;
+
+      form.reset();
+    } catch (error) {
+      console.error("Error signing up:", error);
+    }
+  };
 
   return (
     <Form {...form}>
@@ -65,6 +98,36 @@ const SignUpForm = () => {
             </FormItem>
           )}
         />
+
+        <div className="grid grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="firstName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>First Name</FormLabel>
+                <FormControl>
+                  <Input placeholder="Juan" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="lastName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Last Name</FormLabel>
+                <FormControl>
+                  <Input placeholder="Dela Cruz" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
         <FormField
           control={form.control}
@@ -137,9 +200,10 @@ const SignUpForm = () => {
         <Button
           type="button"
           onClick={form.handleSubmit(onSubmit)}
+          disabled={isSubmitting}
           className="w-full bg-amber-600 hover:bg-amber-700 mt-6"
         >
-          Create Account
+          {isSubmitting ? "Creating Account..." : "Create Account"}
         </Button>
       </div>
     </Form>
