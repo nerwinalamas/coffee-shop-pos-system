@@ -5,6 +5,7 @@ create type user_status as enum ('Active', 'Inactive');
 -- Create profiles table (linked to auth.users)
 create table if not exists profiles (
   id uuid primary key references auth.users(id) on delete cascade,
+  business_name text not null,
   first_name text not null,
   last_name text not null,
   phone text not null,
@@ -37,9 +38,10 @@ create trigger update_profiles_updated_at
 create or replace function handle_new_user()
 returns trigger as $$
 begin
-  insert into public.profiles (id, first_name, last_name, phone, role, status)
+  insert into public.profiles (id, business_name, first_name, last_name, phone, role, status)
   values (
     new.id,
+    coalesce(new.raw_user_meta_data->>'business_name', ''),
     coalesce(new.raw_user_meta_data->>'first_name', ''),
     coalesce(new.raw_user_meta_data->>'last_name', ''),
     coalesce(new.raw_user_meta_data->>'phone', ''),
