@@ -21,12 +21,14 @@ create index if not exists profiles_role_idx on profiles(role);
 
 -- Create function to update updated_at timestamp
 create or replace function update_updated_at_column()
-returns trigger as $$
+returns trigger
+language plpgsql
+as $$
 begin
   new.updated_at = now();
   return new;
 end;
-$$ language plpgsql;
+$$;
 
 -- Create trigger to automatically update updated_at
 create trigger update_profiles_updated_at
@@ -34,62 +36,67 @@ create trigger update_profiles_updated_at
   for each row
   execute function update_updated_at_column();
 
--- Create function to automatically create user profile when auth user is created
-create or replace function handle_new_user()
-returns trigger as $$
+-- Function to auto-create profile when user signs up
+create or replace function public.handle_new_user()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
 begin
-  insert into public.profiles (id, business_name, first_name, last_name, phone, role, status)
+  insert into public.profiles (
+    id,
+    business_name,
+    first_name,
+    last_name,
+    phone,
+    role,
+    status
+  )
   values (
     new.id,
     coalesce(new.raw_user_meta_data->>'business_name', ''),
     coalesce(new.raw_user_meta_data->>'first_name', ''),
     coalesce(new.raw_user_meta_data->>'last_name', ''),
     coalesce(new.raw_user_meta_data->>'phone', ''),
-    coalesce((new.raw_user_meta_data->>'role')::user_role, 'Staff'),
-    'Active'
+    'Admin'::user_role,
+    'Active'::user_status
   );
   return new;
+exception
+  when others then
+    raise log 'Error in handle_new_user: %', sqlerrm;
+    return new;
 end;
-$$ language plpgsql security definer;
+$$;
 
--- Create trigger to auto-create profile on auth.users insert
+-- Trigger that fires after user is created in auth.users
 create trigger on_auth_user_created
   after insert on auth.users
   for each row
-  execute function handle_new_user();
+  execute function public.handle_new_user();
 
--- Enable Row Level Security (RLS)
+-- Enable RLS on profiles table
 alter table profiles enable row level security;
 
--- Create policies
--- Allow authenticated users to read all profiles
-create policy "Users can view all profiles"
+-- Policy: Users can read their own profile
+create policy "Users can view own profile"
   on profiles for select
-  to authenticated
-  using (true);
-
--- Allow users to update their own profile
-create policy "Users can update own profile"
-  on profiles for update
-  to authenticated
   using (auth.uid() = id);
 
--- Allow admins to update any profile
-create policy "Admins can update all profiles"
+-- Policy: Users can update their own profile
+create policy "Users can update own profile"
   on profiles for update
-  to authenticated
-  using (
-    exists (
-      select 1 from profiles
-      where id = auth.uid()
-      and role = 'Admin'
-    )
-  );
+  using (auth.uid() = id);
 
--- Allow admins to delete profiles
-create policy "Admins can delete profiles"
-  on profiles for delete
-  to authenticated
+-- Policy: Allow insert during signup (needed for trigger)
+create policy "Enable insert during signup"
+  on profiles for insert
+  with check (true);
+
+-- Policy: Admins can view all profiles
+create policy "Admins can view all profiles"
+  on profiles for select
   using (
     exists (
       select 1 from profiles
