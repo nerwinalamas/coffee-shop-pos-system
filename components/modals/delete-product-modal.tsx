@@ -13,7 +13,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 
 interface DeleteProductModalProps {
@@ -27,8 +27,10 @@ const DeleteProductModal = ({
   onOpenChange,
   product,
 }: DeleteProductModalProps) => {
-  const [isDeleting, setIsDeleting] = useState(false);
+  const supabase = createClient();
   const queryClient = useQueryClient();
+
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleDelete = async () => {
     if (!product) return;

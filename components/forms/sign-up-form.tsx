@@ -13,7 +13,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase/client";
 
 const formSchema = z
   .object({
@@ -43,6 +43,8 @@ const formSchema = z
   });
 
 const SignUpForm = () => {
+  const supabase = createClient();
+
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {

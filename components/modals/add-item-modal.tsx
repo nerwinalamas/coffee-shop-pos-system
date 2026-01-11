@@ -2,7 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import ItemForm, { ItemFormValues, itemSchema } from "../forms/item-form";
 import {
@@ -20,6 +20,7 @@ interface AddItemModalProps {
 }
 
 const AddItemModal = ({ open, onOpenChange }: AddItemModalProps) => {
+  const supabase = createClient();
   const queryClient = useQueryClient();
 
   const form = useForm<ItemFormValues>({

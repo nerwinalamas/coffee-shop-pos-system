@@ -1,8 +1,10 @@
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase/client";
 import { InventoryWithProduct } from "@/types/inventory.types";
 import { useQuery } from "@tanstack/react-query";
 
 export const useInventory = () => {
+  const supabase = createClient();
+
   return useQuery<InventoryWithProduct[]>({
     queryKey: ["inventory"],
     queryFn: async () => {

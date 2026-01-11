@@ -16,7 +16,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 
 interface EditProductModalProps {
@@ -30,6 +30,7 @@ const EditProductModal = ({
   onOpenChange,
   product,
 }: EditProductModalProps) => {
+  const supabase = createClient();
   const queryClient = useQueryClient();
 
   const form = useForm<ProductFormValues>({
