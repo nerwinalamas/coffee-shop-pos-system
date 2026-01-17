@@ -22,8 +22,8 @@ const AdminLayout = async ({ children }: { children: React.ReactNode }) => {
     .eq("id", user.id)
     .single();
 
-  // Redirect if not Admin
-  if (!profile || profile.role !== "Admin") {
+  // Redirect if not Owner or Admin
+  if (!profile || !["Owner", "Admin"].includes(profile.role)) {
     await supabase.auth.signOut();
     redirect("/auth/sign-in?error=admin_only");
   }
