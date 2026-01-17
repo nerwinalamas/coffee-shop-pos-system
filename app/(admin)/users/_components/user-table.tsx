@@ -2,38 +2,16 @@
 
 import { useMemo, useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
-import { INITIAL_USERS } from "@/app/data";
 import { DataTable } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
-import { User } from "@/types/user.types";
-import ActionsDropdown, { ActionItem } from "@/components/actions-dropdown";
-import AddUserModal from "@/components/modals/add-user-modal";
-import EditUserModal from "@/components/modals/edit-user-modal";
-import ChangeUserRoleModal from "@/components/modals/change-user-role-modal";
-import ResetPasswordModal from "@/components/modals/reset-password";
-import UserStatusModal from "@/components/modals/user-status-modal";
-import DeleteUserModal from "@/components/modals/delete-user-modal";
 import DataTableFilter from "@/components/data-table-filter";
 import { Button } from "@/components/ui/button";
-import {
-  Edit2,
-  KeyRound,
-  Plus,
-  Trash2,
-  UserCheck,
-  UserCog,
-  UserX,
-} from "lucide-react";
+import { Plus } from "lucide-react";
+import { useProfiles } from "@/hooks/useProfiles";
+import { Profiles } from "@/types/profiles.types";
 
 const UserTable = () => {
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isChangeRoleModalOpen, setIsChangeRoleModalOpen] = useState(false);
-  const [isResetPasswordModalOpen, setIsResetPasswordModalOpen] =
-    useState(false);
-  const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
+  const { data, isLoading, error } = useProfiles();
 
   const [filters, setFilters] = useState<{
     statuses: string[];
@@ -41,33 +19,10 @@ const UserTable = () => {
     statuses: [],
   });
 
-  const handleEdit = (user: User) => {
-    setUser(user);
-    setIsEditModalOpen(true);
-  };
-
-  const handleChangeRole = (user: User) => {
-    setUser(user);
-    setIsChangeRoleModalOpen(true);
-  };
-
-  const handleResetPassword = (user: User) => {
-    setUser(user);
-    setIsResetPasswordModalOpen(true);
-  };
-
-  const handleStatus = (user: User) => {
-    setUser(user);
-    setIsStatusModalOpen(true);
-  };
-
-  const handleDelete = (user: User) => {
-    setUser(user);
-    setIsDeleteModalOpen(true);
-  };
-
   const filteredData = useMemo(() => {
-    let filtered = [...INITIAL_USERS];
+    if (!data) return [];
+
+    let filtered = [...data];
 
     if (filters.statuses.length > 0) {
       filtered = filtered.filter((item) =>
@@ -76,23 +31,23 @@ const UserTable = () => {
     }
 
     return filtered;
-  }, [filters]);
+  }, [data, filters]);
 
-  const columns: ColumnDef<User>[] = [
+  const columns: ColumnDef<Profiles>[] = [
     {
-      accessorKey: "firstName",
+      accessorKey: "first_name",
       header: "First Name",
       size: 140,
       cell: ({ row }) => (
-        <div className="font-normal text-sm">{row.original.firstName}</div>
+        <div className="font-normal text-sm">{row.original.first_name}</div>
       ),
     },
     {
-      accessorKey: "lastName",
+      accessorKey: "last_name",
       header: "Last Name",
       size: 140,
       cell: ({ row }) => (
-        <div className="font-normal text-sm">{row.original.lastName}</div>
+        <div className="font-normal text-sm">{row.original.last_name}</div>
       ),
     },
     {
@@ -119,6 +74,7 @@ const UserTable = () => {
         const role = row.original.role;
 
         const roleColors = {
+          Owner: "bg-amber-100 text-amber-800",
           Admin: "bg-purple-100 text-purple-800",
           Manager: "bg-blue-100 text-blue-800",
           Staff: "bg-gray-100 text-gray-800",
@@ -142,45 +98,6 @@ const UserTable = () => {
         return <Badge className={statusColors[status]}>{status}</Badge>;
       },
     },
-    {
-      id: "actions",
-      header: "",
-      size: 60,
-      cell: ({ row }) => {
-        const user = row.original;
-        const actions: ActionItem[] = [
-          {
-            label: "Edit",
-            icon: Edit2,
-            onClick: () => handleEdit(row.original),
-          },
-          {
-            label: "Change Role",
-            icon: UserCog,
-            onClick: () => handleChangeRole(row.original),
-          },
-          {
-            label: "Reset Password",
-            icon: KeyRound,
-            onClick: () => handleResetPassword(row.original),
-          },
-          {
-            label: user.status === "Active" ? "Deactivate" : "Activate",
-            icon: user.status === "Active" ? UserX : UserCheck,
-            onClick: () => handleStatus(row.original),
-          },
-          {
-            label: "Delete",
-            icon: Trash2,
-            variant: "destructive",
-            onClick: () => handleDelete(row.original),
-          },
-        ];
-
-        return <ActionsDropdown actions={actions} />;
-      },
-      enableSorting: false,
-    },
   ];
 
   return (
@@ -192,44 +109,17 @@ const UserTable = () => {
           <DataTableFilter filterType="user" onFilterChange={setFilters} />
         }
         headerActions={
-          <Button className="gap-2" onClick={() => setIsAddModalOpen(true)}>
+          <Button className="gap-2">
             <Plus className="w-4 h-4" />
             Add User
           </Button>
         }
         emptyMessage="No users found."
         searchPlaceholder="Search users"
-        isLoading={false}
+        isLoading={isLoading}
         loadingText="Loading users..."
-        error={null}
+        error={error}
         errorText="Error loading users"
-      />
-
-      <AddUserModal open={isAddModalOpen} onOpenChange={setIsAddModalOpen} />
-      <EditUserModal
-        open={isEditModalOpen}
-        onOpenChange={setIsEditModalOpen}
-        user={user}
-      />
-      <ChangeUserRoleModal
-        open={isChangeRoleModalOpen}
-        onOpenChange={setIsChangeRoleModalOpen}
-        user={user}
-      />
-      <ResetPasswordModal
-        open={isResetPasswordModalOpen}
-        onOpenChange={setIsResetPasswordModalOpen}
-        user={user}
-      />
-      <UserStatusModal
-        open={isStatusModalOpen}
-        onOpenChange={setIsStatusModalOpen}
-        user={user}
-      />
-      <DeleteUserModal
-        open={isDeleteModalOpen}
-        onOpenChange={setIsDeleteModalOpen}
-        user={user}
       />
     </>
   );
