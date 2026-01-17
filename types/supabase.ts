@@ -112,6 +112,7 @@ export type Database = {
         Row: {
           business_name: string
           created_at: string | null
+          email: string
           first_name: string
           id: string
           last_name: string
@@ -123,6 +124,7 @@ export type Database = {
         Insert: {
           business_name: string
           created_at?: string | null
+          email: string
           first_name: string
           id: string
           last_name: string
@@ -134,6 +136,7 @@ export type Database = {
         Update: {
           business_name?: string
           created_at?: string | null
+          email?: string
           first_name?: string
           id?: string
           last_name?: string
@@ -149,12 +152,12 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_admin_or_owner: { Args: never; Returns: boolean }
     }
     Enums: {
       inventory_status: "In Stock" | "Low Stock" | "Out of Stock"
       product_category: "Coffee" | "Food" | "Dessert"
-      user_role: "Admin" | "Manager" | "Staff"
+      user_role: "Owner" | "Admin" | "Manager" | "Staff"
       user_status: "Active" | "Inactive"
     }
     CompositeTypes: {
@@ -288,7 +291,7 @@ export const Constants = {
     Enums: {
       inventory_status: ["In Stock", "Low Stock", "Out of Stock"],
       product_category: ["Coffee", "Food", "Dessert"],
-      user_role: ["Admin", "Manager", "Staff"],
+      user_role: ["Owner", "Admin", "Manager", "Staff"],
       user_status: ["Active", "Inactive"],
     },
   },
