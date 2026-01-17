@@ -4,7 +4,13 @@ import SignInForm from "@/components/forms/sign-in-form";
 import CopyRight from "@/components/copy-right";
 import AppName from "@/components/app-name";
 
-const SignInPage = ({ searchParams }: { searchParams: { error?: string } }) => {
+const SignInPage = async ({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string }>;
+}) => {
+  const params = await searchParams;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
@@ -17,13 +23,13 @@ const SignInPage = ({ searchParams }: { searchParams: { error?: string } }) => {
             </p>
           </div>
 
-          {searchParams.error === "admin_only" && (
+          {params.error === "admin_only" && (
             <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md mb-4 text-sm">
               Access denied. Admin login only.
             </div>
           )}
 
-          {searchParams.error === "account_inactive" && (
+          {params.error === "account_inactive" && (
             <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md mb-4 text-sm">
               Your account is inactive. Please contact support.
             </div>
