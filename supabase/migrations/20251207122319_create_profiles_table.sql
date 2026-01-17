@@ -5,6 +5,7 @@ create type user_status as enum ('Active', 'Inactive');
 -- Create profiles table (linked to auth.users)
 create table if not exists profiles (
   id uuid primary key references auth.users(id) on delete cascade,
+  email text not null,
   business_name text not null,
   first_name text not null,
   last_name text not null,
@@ -18,6 +19,7 @@ create table if not exists profiles (
 -- Create indexes for faster lookups
 create index if not exists profiles_status_idx on profiles(status);
 create index if not exists profiles_role_idx on profiles(role);
+create index if not exists profiles_email_idx on profiles(email);
 
 -- Create function to update updated_at timestamp
 create or replace function update_updated_at_column()
@@ -46,6 +48,7 @@ as $$
 begin
   insert into public.profiles (
     id,
+    email,
     business_name,
     first_name,
     last_name,
@@ -55,6 +58,7 @@ begin
   )
   values (
     new.id,
+    new.email,
     coalesce(new.raw_user_meta_data->>'business_name', ''),
     coalesce(new.raw_user_meta_data->>'first_name', ''),
     coalesce(new.raw_user_meta_data->>'last_name', ''),
