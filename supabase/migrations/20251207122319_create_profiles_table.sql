@@ -1,5 +1,5 @@
 -- Create enum types for role and status
-create type user_role as enum ('Admin', 'Manager', 'Staff');
+create type user_role as enum ('Owner', 'Admin', 'Manager', 'Staff');
 create type user_status as enum ('Active', 'Inactive');
 
 -- Create profiles table (linked to auth.users)
@@ -59,7 +59,7 @@ begin
     coalesce(new.raw_user_meta_data->>'first_name', ''),
     coalesce(new.raw_user_meta_data->>'last_name', ''),
     coalesce(new.raw_user_meta_data->>'phone', ''),
-    'Admin'::user_role,
+    'Owner'::user_role,
     'Active'::user_status
   );
   return new;
@@ -79,28 +79,35 @@ create trigger on_auth_user_created
 -- Enable RLS on profiles table
 alter table profiles enable row level security;
 
--- Policy: Users can read their own profile
-create policy "Users can view own profile"
+-- Create helper function to check if user is admin/owner (prevents recursion)
+create or replace function is_admin_or_owner()
+returns boolean as $$
+begin
+  return (
+    select role in ('Owner', 'Admin')
+    from profiles
+    where id = auth.uid()
+    limit 1
+  );
+end;
+$$ language plpgsql security definer stable;
+
+-- Policy: Users can view their own profile OR admins/owners can view all
+create policy "Users can view profiles"
   on profiles for select
-  using (auth.uid() = id);
+  using (auth.uid() = id or is_admin_or_owner());
 
 -- Policy: Users can update their own profile
 create policy "Users can update own profile"
   on profiles for update
   using (auth.uid() = id);
 
--- Policy: Allow insert during signup (needed for trigger)
-create policy "Enable insert during signup"
+-- Policy: Allow insert during signup OR by admins/owners
+create policy "Enable insert for signup and admins"
   on profiles for insert
-  with check (true);
+  with check (auth.uid() = id or is_admin_or_owner());
 
--- Policy: Admins can view all profiles
-create policy "Admins can view all profiles"
-  on profiles for select
-  using (
-    exists (
-      select 1 from profiles
-      where id = auth.uid()
-      and role = 'Admin'
-    )
-  );
+-- Policy: Only owners and admins can delete profiles
+create policy "Owners and admins can delete profiles"
+  on profiles for delete
+  using (is_admin_or_owner());
