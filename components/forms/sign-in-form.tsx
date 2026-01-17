@@ -71,10 +71,10 @@ const SignInForm = () => {
           return;
         }
 
-        // Check if user is Admin
-        if (profile.role !== "Admin") {
+        // Check if user is Owner or Admin
+        if (!["Owner", "Admin"].includes(profile.role)) {
           await supabase.auth.signOut();
-          setError("Access denied. Admin login only.");
+          setError("Access denied. Owner/Admin login only.");
           return;
         }
 
