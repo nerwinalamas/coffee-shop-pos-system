@@ -5,6 +5,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Profiles } from "@/types/profiles.types";
 import UserForm, { UserFormValues, userSchema } from "../forms/user-form";
+import { updateUser } from "@/actions/user-actions";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   Dialog,
   DialogContent,
@@ -21,6 +23,8 @@ interface EditUserModalProps {
 }
 
 const EditUserModal = ({ open, onOpenChange, user }: EditUserModalProps) => {
+  const queryClient = useQueryClient();
+
   const form = useForm<UserFormValues>({
     resolver: zodResolver(userSchema),
     defaultValues: {
@@ -28,8 +32,6 @@ const EditUserModal = ({ open, onOpenChange, user }: EditUserModalProps) => {
       lastName: "",
       email: "",
       phone: "",
-      role: undefined,
-      status: undefined,
     },
   });
 
@@ -50,13 +52,21 @@ const EditUserModal = ({ open, onOpenChange, user }: EditUserModalProps) => {
   };
 
   const onSubmit = async (values: UserFormValues) => {
+    if (!user) return;
+
     try {
-      // TODO: Replace with your actual API call
-      console.log("Updating user:", values);
+      const result = await updateUser(user.id, {
+        firstName: values.firstName,
+        lastName: values.lastName,
+        phone: values.phone,
+        email: values.email,
+      });
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      if (result.error) {
+        throw new Error(result.error);
+      }
 
+      await queryClient.invalidateQueries({ queryKey: ["profiles"] });
       toast.success("User updated successfully");
       onOpenChange(false);
       form.reset();
