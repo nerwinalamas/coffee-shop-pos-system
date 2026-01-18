@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/select";
 
 export const changeRoleSchema = z.object({
-  role: z.enum(["Admin", "Manager", "Staff"], {
+  role: z.enum(["Owner", "Admin", "Manager", "Staff"], {
     message: "Role is required",
   }),
 });
@@ -64,6 +64,7 @@ const UserRoleForm = ({
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
+                  <SelectItem value="Owner">Owner</SelectItem>
                   <SelectItem value="Admin">Admin</SelectItem>
                   <SelectItem value="Manager">Manager</SelectItem>
                   <SelectItem value="Staff">Staff</SelectItem>
