@@ -20,17 +20,22 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export const userSchema = z.object({
+// Base schema with only required fields
+const baseSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
   email: z.string().email("Must be a valid email"),
   phone: z.string().min(1, "Phone is required"),
+});
+
+// Full schema with all fields optional
+export const userSchema = baseSchema.extend({
   password: z
     .string()
     .min(8, "Password must be at least 8 characters")
     .optional(),
   role: z
-    .enum(["Admin", "Manager", "Staff"], {
+    .enum(["Owner", "Admin", "Manager", "Staff"], {
       message: "Role is required",
     })
     .optional(),
@@ -134,7 +139,7 @@ const UserForm = ({
                 <Input
                   {...field}
                   disabled={isSubmitting}
-                  placeholder="+1 (555) 123-4567"
+                  placeholder="+63 912 345 6789"
                 />
               </FormControl>
               <FormMessage />
@@ -172,7 +177,7 @@ const UserForm = ({
                 <FormLabel>Role</FormLabel>
                 <Select
                   onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  value={field.value}
                   disabled={isSubmitting}
                 >
                   <FormControl>
@@ -201,7 +206,7 @@ const UserForm = ({
                 <FormLabel>Status</FormLabel>
                 <Select
                   onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  value={field.value}
                   disabled={isSubmitting}
                 >
                   <FormControl>
