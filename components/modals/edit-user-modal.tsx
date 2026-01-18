@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { User } from "@/types/user.types";
+import { Profiles } from "@/types/profiles.types";
 import UserForm, { UserFormValues, userSchema } from "../forms/user-form";
 import {
   Dialog,
@@ -17,7 +17,7 @@ import { toast } from "sonner";
 interface EditUserModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  user: User | null;
+  user: Profiles | null;
 }
 
 const EditUserModal = ({ open, onOpenChange, user }: EditUserModalProps) => {
@@ -36,8 +36,8 @@ const EditUserModal = ({ open, onOpenChange, user }: EditUserModalProps) => {
   useEffect(() => {
     if (user && open) {
       form.reset({
-        firstName: user.firstName,
-        lastName: user.lastName,
+        firstName: user.first_name,
+        lastName: user.last_name,
         email: user.email,
         phone: user.phone,
       });

@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { User } from "@/types/user.types";
+import { Profiles } from "@/types/profiles.types";
 import UserStatusForm, {
   UserStatusFormValues,
   userStatusSchema,
@@ -18,7 +18,7 @@ import {
 import { toast } from "sonner";
 
 interface UserStatusModalProps {
-  user: User | null;
+  user: Profiles | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
@@ -74,7 +74,7 @@ const UserStatusModal = ({
           <DialogDescription>
             Change the status for{" "}
             <strong>
-              {user?.firstName} {user?.lastName}
+              {user?.first_name} {user?.last_name}
             </strong>
             .
           </DialogDescription>

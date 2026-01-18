@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { User } from "@/types/user.types";
+import { Profiles } from "@/types/profiles.types";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,7 +17,7 @@ import { toast } from "sonner";
 interface DeleteUserModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  user: User | null;
+  user: Profiles | null;
 }
 
 const DeleteUserModal = ({
@@ -55,7 +55,7 @@ const DeleteUserModal = ({
           <AlertDialogDescription>
             Are you sure you want to delete{" "}
             <strong>
-              {user.firstName} {user.lastName}
+              {user.first_name} {user.last_name}
             </strong>
             ? This action cannot be undone and all user data will be permanently
             removed.

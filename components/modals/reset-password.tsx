@@ -2,7 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { User } from "@/types/user.types";
+import { Profiles } from "@/types/profiles.types";
 import ResetPasswordForm, {
   resetPasswordSchema,
   ResetPasswordValues,
@@ -19,7 +19,7 @@ import { toast } from "sonner";
 interface ResetPasswordModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  user: User | null;
+  user: Profiles | null;
 }
 
 const ResetPasswordModal = ({
@@ -67,7 +67,7 @@ const ResetPasswordModal = ({
           <DialogDescription>
             Reset the password for{" "}
             <strong>
-              {user.firstName} {user.lastName}
+              {user.first_name} {user.last_name}
             </strong>
             .
           </DialogDescription>

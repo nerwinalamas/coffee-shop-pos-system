@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { User } from "@/types/user.types";
+import { Profiles } from "@/types/profiles.types";
 import UserRoleForm, {
   ChangeRoleFormValues,
   changeRoleSchema,
@@ -20,7 +20,7 @@ import { toast } from "sonner";
 interface ChangeUserRoleModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  user: User | null;
+  user: Profiles | null;
 }
 
 const ChangeUserRoleModal = ({
@@ -75,7 +75,7 @@ const ChangeUserRoleModal = ({
           <DialogDescription>
             Change the role for{" "}
             <strong>
-              {user.firstName} {user.lastName}
+              {user.first_name} {user.last_name}
             </strong>
             . Current role: <strong>{user.role}</strong>
           </DialogDescription>
