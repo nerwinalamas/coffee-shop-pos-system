@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { deleteUser } from "@/actions/user-actions";
 import { Profiles } from "@/types/profiles.types";
 import {
   AlertDialog,
@@ -26,15 +28,21 @@ const DeleteUserModal = ({
   user,
 }: DeleteUserModalProps) => {
   const [isLoading, setIsLoading] = useState(false);
+  const queryClient = useQueryClient();
 
   const handleDelete = async () => {
+    if (!user) return;
+
     try {
       setIsLoading(true);
-      console.log("Deleting user:", user?.id);
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const result = await deleteUser(user.id);
 
+      if (result.error) {
+        throw new Error(result.error);
+      }
+
+      await queryClient.invalidateQueries({ queryKey: ["profiles"] });
       toast.success("User deleted successfully");
       onOpenChange(false);
     } catch (error) {
