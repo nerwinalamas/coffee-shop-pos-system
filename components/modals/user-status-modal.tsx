@@ -2,7 +2,9 @@
 
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useQueryClient } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { updateUserStatus } from "@/actions/user-actions";
 import { Profiles } from "@/types/profiles.types";
 import UserStatusForm, {
   UserStatusFormValues,
@@ -28,6 +30,8 @@ const UserStatusModal = ({
   open,
   onOpenChange,
 }: UserStatusModalProps) => {
+  const queryClient = useQueryClient();
+
   const form = useForm<UserStatusFormValues>({
     resolver: zodResolver(userStatusSchema),
     defaultValues: {
@@ -50,13 +54,18 @@ const UserStatusModal = ({
   };
 
   const onSubmit = async (values: UserStatusFormValues) => {
+    if (!user) return;
+
     try {
-      // TODO: Replace with your actual API call
-      console.log("Updating user status:", { userId: user?.id, ...values });
+      const result = await updateUserStatus(user.id, {
+        status: values.status,
+      });
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      if (result.error) {
+        throw new Error(result.error);
+      }
 
+      await queryClient.invalidateQueries({ queryKey: ["profiles"] });
       toast.success(`User status updated to ${values.status}`);
       onOpenChange(false);
       form.reset();
