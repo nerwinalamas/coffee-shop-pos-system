@@ -2,7 +2,9 @@
 
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useQueryClient } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { updateUserRole } from "@/actions/user-actions";
 import { Profiles } from "@/types/profiles.types";
 import UserRoleForm, {
   ChangeRoleFormValues,
@@ -28,6 +30,8 @@ const ChangeUserRoleModal = ({
   onOpenChange,
   user,
 }: ChangeUserRoleModalProps) => {
+  const queryClient = useQueryClient();
+
   const form = useForm<ChangeRoleFormValues>({
     resolver: zodResolver(changeRoleSchema),
     defaultValues: {
@@ -49,13 +53,18 @@ const ChangeUserRoleModal = ({
   };
 
   const onSubmit = async (values: ChangeRoleFormValues) => {
+    if (!user) return;
+
     try {
-      // TODO: Replace with your actual API call
-      console.log("Changing role for user:", user?.id, "to:", values.role);
+      const result = await updateUserRole(user.id, {
+        role: values.role,
+      });
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      if (result.error) {
+        throw new Error(result.error);
+      }
 
+      await queryClient.invalidateQueries({ queryKey: ["profiles"] });
       toast.success(`Role changed to ${values.role} successfully`);
       onOpenChange(false);
       form.reset();
