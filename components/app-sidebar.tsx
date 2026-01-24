@@ -6,7 +6,6 @@ import {
   User2,
   ChevronUp,
   Settings,
-  LogOut,
   CreditCard,
   Bell,
 } from "lucide-react";
@@ -31,6 +30,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import SignOutButton from "@/components/sign-out-button";
 
 const items = [
   {
@@ -140,10 +140,7 @@ export const AppSidebar = () => {
                   );
                 })}
                 <DropdownMenuSeparator />
-                <DropdownMenuItem variant="destructive">
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span>Sign out</span>
-                </DropdownMenuItem>
+                <SignOutButton />
               </DropdownMenuContent>
             </DropdownMenu>
           </SidebarMenuItem>
