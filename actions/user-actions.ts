@@ -84,7 +84,6 @@ export async function updateUser(
     firstName: string;
     lastName: string;
     phone: string;
-    email?: string;
   },
 ) {
   try {
@@ -110,8 +109,10 @@ export async function updateUser(
       return { error: "Forbidden: Admin access required" };
     }
 
-    // Update profile
-    const { error: updateError } = await supabase
+    // Use admin client to update profile (bypasses RLS)
+    const adminSupabase = createAdminClient();
+
+    const { error: updateError } = await adminSupabase
       .from("profiles")
       .update({
         first_name: formData.firstName,
@@ -124,13 +125,174 @@ export async function updateUser(
       return { error: updateError.message };
     }
 
-    // Revalidate the users page
     revalidatePath("/users");
 
     return { success: true };
   } catch (error) {
     console.error("Update user error:", error);
     return { error: "Failed to update user" };
+  }
+}
+
+export async function updateUserRole(
+  userId: string,
+  formData: {
+    role: "Owner" | "Admin" | "Manager" | "Staff";
+  },
+) {
+  try {
+    const supabase = await createClient();
+
+    const {
+      data: { user: currentUser },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !currentUser) {
+      return { error: "Unauthorized" };
+    }
+
+    // Check permissions - only Owner/Admin can change roles
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", currentUser.id)
+      .single();
+
+    if (!profile || !["Owner", "Admin"].includes(profile.role)) {
+      return { error: "Forbidden: Admin access required" };
+    }
+
+    // Prevent users from changing their own role
+    if (currentUser.id === userId) {
+      return { error: "You cannot change your own role" };
+    }
+
+    // Use admin client to update role (bypasses RLS)
+    const adminSupabase = createAdminClient();
+
+    const { error: updateError } = await adminSupabase
+      .from("profiles")
+      .update({
+        role: formData.role,
+      })
+      .eq("id", userId);
+
+    if (updateError) {
+      return { error: updateError.message };
+    }
+
+    revalidatePath("/users");
+
+    return { success: true };
+  } catch (error) {
+    console.error("Update user role error:", error);
+    return { error: "Failed to update user role" };
+  }
+}
+
+export async function updateUserStatus(
+  userId: string,
+  formData: {
+    status: "Active" | "Inactive";
+  },
+) {
+  try {
+    const supabase = await createClient();
+
+    const {
+      data: { user: currentUser },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !currentUser) {
+      return { error: "Unauthorized" };
+    }
+
+    // Check permissions
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", currentUser.id)
+      .single();
+
+    if (!profile || !["Owner", "Admin"].includes(profile.role)) {
+      return { error: "Forbidden: Admin access required" };
+    }
+
+    // Prevent users from deactivating themselves
+    if (currentUser.id === userId) {
+      return { error: "You cannot change your own status" };
+    }
+
+    // Use admin client
+    const adminSupabase = createAdminClient();
+
+    const { error: updateError } = await adminSupabase
+      .from("profiles")
+      .update({
+        status: formData.status,
+      })
+      .eq("id", userId);
+
+    if (updateError) {
+      return { error: updateError.message };
+    }
+
+    revalidatePath("/users");
+
+    return { success: true };
+  } catch (error) {
+    console.error("Update user status error:", error);
+    return { error: "Failed to update user status" };
+  }
+}
+
+export async function resetUserPassword(
+  userId: string,
+  formData: {
+    newPassword: string;
+  },
+) {
+  try {
+    const supabase = await createClient();
+
+    const {
+      data: { user: currentUser },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !currentUser) {
+      return { error: "Unauthorized" };
+    }
+
+    // Check permissions - only Owner/Admin can reset passwords
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", currentUser.id)
+      .single();
+
+    if (!profile || !["Owner", "Admin"].includes(profile.role)) {
+      return { error: "Forbidden: Admin access required" };
+    }
+
+    // Use admin client to update password
+    const adminSupabase = createAdminClient();
+
+    const { error: updateError } =
+      await adminSupabase.auth.admin.updateUserById(userId, {
+        password: formData.newPassword,
+      });
+
+    if (updateError) {
+      return { error: updateError.message };
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error("Reset password error:", error);
+    return { error: "Failed to reset password" };
   }
 }
 
@@ -155,6 +317,11 @@ export async function deleteUser(userId: string) {
 
     if (!profile || !["Owner", "Admin"].includes(profile.role)) {
       return { error: "Forbidden: Admin access required" };
+    }
+
+    // Prevent users from deleting themselves
+    if (currentUser.id === userId) {
+      return { error: "You cannot delete your own account" };
     }
 
     // Use admin client to delete user from auth
