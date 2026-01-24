@@ -1,7 +1,9 @@
 "use client";
 
 import { useForm } from "react-hook-form";
+import { useQueryClient } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { resetUserPassword } from "@/actions/user-actions";
 import { Profiles } from "@/types/profiles.types";
 import ResetPasswordForm, {
   resetPasswordSchema,
@@ -27,6 +29,8 @@ const ResetPasswordModal = ({
   onOpenChange,
   user,
 }: ResetPasswordModalProps) => {
+  const queryClient = useQueryClient();
+
   const form = useForm<ResetPasswordValues>({
     resolver: zodResolver(resetPasswordSchema),
     defaultValues: {
@@ -41,19 +45,28 @@ const ResetPasswordModal = ({
   };
 
   const onSubmit = async (values: ResetPasswordValues) => {
+    if (!user) return;
+
     try {
-      // TODO: Replace with your actual API call
-      console.log("Resetting password:", values);
+      const result = await resetUserPassword(user.id, {
+        newPassword: values.newPassword,
+      });
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      if (result.error) {
+        throw new Error(result.error);
+      }
 
+      await queryClient.invalidateQueries({ queryKey: ["profiles"] });
       toast.success("Password reset successfully");
       onOpenChange(false);
       form.reset();
     } catch (error) {
       console.error("Reset password error:", error);
-      toast.error("Failed to reset password. Please try again.");
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Failed to reset password. Please try again.",
+      );
     }
   };
 
