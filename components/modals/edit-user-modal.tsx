@@ -30,7 +30,6 @@ const EditUserModal = ({ open, onOpenChange, user }: EditUserModalProps) => {
     defaultValues: {
       firstName: "",
       lastName: "",
-      email: "",
       phone: "",
     },
   });
@@ -59,7 +58,6 @@ const EditUserModal = ({ open, onOpenChange, user }: EditUserModalProps) => {
         firstName: values.firstName,
         lastName: values.lastName,
         phone: values.phone,
-        email: values.email,
       });
 
       if (result.error) {
@@ -94,6 +92,7 @@ const EditUserModal = ({ open, onOpenChange, user }: EditUserModalProps) => {
           showRoleField={false}
           showStatusField={false}
           showPasswordField={false}
+          disableEmail={true}
         />
       </DialogContent>
     </Dialog>
