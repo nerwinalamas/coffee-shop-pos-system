@@ -8,7 +8,10 @@ export const useProfiles = () => {
   return useQuery<Profiles[]>({
     queryKey: ["profiles"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("profiles").select("*");
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .neq("role", "Owner");
       if (error) throw error;
       return data;
     },
