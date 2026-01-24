@@ -57,6 +57,7 @@ interface UserFormProps {
   showRoleField?: boolean;
   showStatusField?: boolean;
   showPasswordField?: boolean;
+  disableEmail?: boolean;
 }
 
 const UserForm = ({
@@ -68,6 +69,7 @@ const UserForm = ({
   showRoleField = true,
   showStatusField = true,
   showPasswordField = true,
+  disableEmail = false,
 }: UserFormProps) => {
   const isSubmitting = form.formState.isSubmitting;
 
@@ -120,7 +122,7 @@ const UserForm = ({
                 <Input
                   {...field}
                   type="email"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || disableEmail}
                   placeholder="email@example.com"
                 />
               </FormControl>
