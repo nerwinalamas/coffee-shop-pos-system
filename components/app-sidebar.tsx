@@ -1,14 +1,5 @@
 import Link from "next/link";
-import {
-  Home,
-  ShoppingBag,
-  Package,
-  User2,
-  ChevronUp,
-  Settings,
-  CreditCard,
-  Bell,
-} from "lucide-react";
+import { Home, ShoppingBag, Package, User2, ChevronUp } from "lucide-react";
 import SidebarLogo from "@/components/sidebar-logo";
 import {
   Sidebar,
@@ -25,12 +16,13 @@ import {
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import SignOutButton from "@/components/sign-out-button";
+import UserInfo from "@/components/user-info";
+import UserAvatar from "@/components/user-avatar";
+import AppSidebarMenuItems from "@/components/app-sidebar-menu-items";
 
 const items = [
   {
@@ -52,25 +44,6 @@ const items = [
     title: "Users",
     url: "/users",
     icon: User2,
-  },
-];
-
-const menuItems = [
-  {
-    icon: User2,
-    label: "Profile Settings",
-  },
-  {
-    icon: CreditCard,
-    label: "Billing",
-  },
-  {
-    icon: Bell,
-    label: "Notifications",
-  },
-  {
-    icon: Settings,
-    label: "Settings",
   },
 ];
 
@@ -111,34 +84,14 @@ export const AppSidebar = () => {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
-                  <div className="flex items-center gap-3">
-                    <Avatar className="h-8 w-8">
-                      <AvatarFallback className="bg-amber-100 text-amber-700 text-sm font-medium">
-                        AD
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex flex-col items-start">
-                      <span className="text-sm font-medium">Admin User</span>
-                    </div>
-                  </div>
+                  <UserAvatar />
                   <ChevronUp className="ml-auto h-4 w-4" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56" side="top" align="end">
-                <div className="px-2 py-1.5">
-                  <p className="text-sm font-medium">Admin User</p>
-                  <p className="text-xs text-gray-500">admin@coffeeshop.com</p>
-                </div>
+                <UserInfo />
                 <DropdownMenuSeparator />
-                {menuItems.map((item, index) => {
-                  const Icon = item.icon;
-                  return (
-                    <DropdownMenuItem key={index}>
-                      <Icon className="mr-2 h-4 w-4" />
-                      <span>{item.label}</span>
-                    </DropdownMenuItem>
-                  );
-                })}
+                <AppSidebarMenuItems />
                 <DropdownMenuSeparator />
                 <SignOutButton />
               </DropdownMenuContent>
