@@ -26,7 +26,7 @@ const PRODUCT_STATUS = ["In Stock", "Low Stock", "Out of Stock"];
 const USER_STATUS = ["Active", "Inactive"];
 
 interface DataTableFilterProps {
-  filterType?: "product" | "user";
+  filterType?: "product" | "inventory" | "user";
   onFilterChange?: (filters: {
     categories: string[];
     statuses: string[];
@@ -40,8 +40,8 @@ const DataTableFilter = ({
   const [categoryFilter, setCategoryFilter] = useState<string[]>([]);
   const [statusFilter, setStatusFilter] = useState<string[]>([]);
 
-  const showCategory = filterType === "product";
-  const showStatus = true;
+  const showCategory = filterType === "product" || filterType === "inventory";
+  const showStatus = filterType === "inventory" || filterType === "user";
   const STATUS_OPTIONS = filterType === "user" ? USER_STATUS : PRODUCT_STATUS;
 
   const handleCategoryChange = (category: string) => {
