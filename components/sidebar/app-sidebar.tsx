@@ -1,6 +1,10 @@
 import Link from "next/link";
 import { Home, ShoppingBag, Package, User2, ChevronUp } from "lucide-react";
-import SidebarLogo from "@/components/sidebar-logo";
+import SidebarLogo from "@/components/sidebar/sidebar-logo";
+import MenuItems from "@/components/sidebar/menu-items";
+import UserInfo from "@/components/sidebar/user-info";
+import UserAvatar from "@/components/sidebar/user-avatar";
+import SignOutButton from "@/components/sidebar/sign-out-button";
 import {
   Sidebar,
   SidebarContent,
@@ -19,10 +23,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import SignOutButton from "@/components/sign-out-button";
-import UserInfo from "@/components/user-info";
-import UserAvatar from "@/components/user-avatar";
-import AppSidebarMenuItems from "@/components/app-sidebar-menu-items";
 
 const items = [
   {
@@ -91,7 +91,7 @@ export const AppSidebar = () => {
               <DropdownMenuContent className="w-56" side="top" align="end">
                 <UserInfo />
                 <DropdownMenuSeparator />
-                <AppSidebarMenuItems />
+                <MenuItems />
                 <DropdownMenuSeparator />
                 <SignOutButton />
               </DropdownMenuContent>

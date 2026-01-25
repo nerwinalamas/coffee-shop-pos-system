@@ -1,5 +1,5 @@
-import AppLogo from "./app-logo";
-import AppName from "./app-name";
+import AppLogo from "@/components/app-logo";
+import AppName from "@/components/app-name";
 
 const SidebarLogo = () => {
   return (

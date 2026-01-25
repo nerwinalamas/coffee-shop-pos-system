@@ -20,7 +20,7 @@ const menuItems = [
   // },
 ];
 
-const AppSidebarMenuItems = () => {
+const MenuItems = () => {
   return (
     <div>
       {menuItems.map((item, index) => {
@@ -36,4 +36,4 @@ const AppSidebarMenuItems = () => {
   );
 };
 
-export default AppSidebarMenuItems;
+export default MenuItems;
