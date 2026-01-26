@@ -11,17 +11,19 @@ import DataTableFilter from "@/components/data-table-filter";
 import AddItemModal from "@/components/modals/add-item-modal";
 import RestockModal from "@/components/modals/restock-modal";
 import ViewItemDetailsModal from "@/components/modals/view-item-details-modal";
+import DeleteInventoryModal from "@/components/modals/delete-inventory-modal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Package, RotateCw, Plus } from "lucide-react";
+import { Package, RotateCw, Plus, Trash2 } from "lucide-react";
 import { useInventory } from "@/hooks/useInventory";
 
 const InventoryTable = () => {
   const [isAddItemModalOpen, setIsAddItemModalOpen] = useState(false);
   const [isRestockModalOpen, setIsRestockModalOpen] = useState(false);
   const [isViewDetailsModalOpen, setIsViewDetailsModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<InventoryWithProduct | null>(
-    null
+    null,
   );
 
   const { data: inventory, isLoading, error } = useInventory();
@@ -44,6 +46,11 @@ const InventoryTable = () => {
     setIsViewDetailsModalOpen(true);
   };
 
+  const handleDelete = (item: InventoryWithProduct) => {
+    setSelectedItem(item);
+    setIsDeleteModalOpen(true);
+  };
+
   const filteredData = useMemo(() => {
     if (!inventory) return [];
 
@@ -51,13 +58,13 @@ const InventoryTable = () => {
 
     if (filters.categories.length > 0) {
       filtered = filtered.filter((item) =>
-        filters.categories.includes(item.products?.category || "Unknown")
+        filters.categories.includes(item.products?.category || "Unknown"),
       );
     }
 
     if (filters.statuses.length > 0) {
       filtered = filtered.filter((item) =>
-        filters.statuses.includes(item.status)
+        filters.statuses.includes(item.status),
       );
     }
 
@@ -156,7 +163,7 @@ const InventoryTable = () => {
                   month: "short",
                   day: "numeric",
                   year: "numeric",
-                }
+                },
               )
             : "Never"}
         </div>
@@ -177,6 +184,12 @@ const InventoryTable = () => {
             label: "View Details",
             icon: Package,
             onClick: () => handleViewDetails(row.original),
+          },
+          {
+            label: "Delete",
+            icon: Trash2,
+            onClick: () => handleDelete(row.original),
+            variant: "destructive",
           },
         ];
 
@@ -222,6 +235,12 @@ const InventoryTable = () => {
       <ViewItemDetailsModal
         open={isViewDetailsModalOpen}
         onOpenChange={setIsViewDetailsModalOpen}
+        item={selectedItem}
+      />
+
+      <DeleteInventoryModal
+        open={isDeleteModalOpen}
+        onOpenChange={setIsDeleteModalOpen}
         item={selectedItem}
       />
     </>
