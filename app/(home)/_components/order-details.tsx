@@ -1,10 +1,10 @@
 "use client";
 
+import { useOrderStore } from "@/store/order";
 import Heading from "@/components/heading";
-import OrderItems from "@/components/order-items";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { useOrderStore } from "@/store/order";
+import OrderItems from "./order-items";
 
 const OrderDetails = () => {
   const { items, subtotal, tax, total, clearOrder } = useOrderStore();

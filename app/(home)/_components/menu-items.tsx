@@ -1,8 +1,8 @@
 "use client";
 
 import { InventoryWithProduct } from "@/types/inventory.types";
-import ProductCard from "./product-card";
 import { Button } from "@/components/ui/button";
+import ProductCard from "./product-card";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const PAGE_SIZE = 12;

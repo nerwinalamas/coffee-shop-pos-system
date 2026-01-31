@@ -3,9 +3,9 @@
 import { useState, useMemo } from "react";
 import { useInventory } from "@/hooks/useInventory";
 import { ProductCategory } from "@/types/product.types";
-import CategoryTabs from "@/components/category-tabs";
-import MenuItems from "@/components/menu-items";
 import SearchInput from "@/components/search-input";
+import CategoryTabs from "./category-tabs";
+import MenuItems from "./menu-items";
 
 const Menu = () => {
   const [selectedCategory, setSelectedCategory] = useState<
@@ -24,14 +24,14 @@ const Menu = () => {
     // Filter by category
     if (selectedCategory !== "All") {
       filtered = filtered.filter(
-        (item) => item.products?.category === selectedCategory
+        (item) => item.products?.category === selectedCategory,
       );
     }
 
     // Filter by search query
     if (searchQuery.trim()) {
       filtered = filtered.filter((item) =>
-        item.products?.name.toLowerCase().includes(searchQuery.toLowerCase())
+        item.products?.name.toLowerCase().includes(searchQuery.toLowerCase()),
       );
     }
 

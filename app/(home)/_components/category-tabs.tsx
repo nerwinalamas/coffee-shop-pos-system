@@ -24,7 +24,7 @@ const CategoryTabs = ({
             "px-4 py-2 rounded-full text-sm font-medium transition-colors",
             selectedCategory === category
               ? "bg-primary text-primary-foreground shadow-sm"
-              : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+              : "text-gray-600 hover:text-gray-900 hover:bg-gray-100",
           )}
         >
           {category}

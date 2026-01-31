@@ -1,5 +1,5 @@
-import Menu from "@/components/menu";
-import OrderDetails from "@/components/order-details";
+import Menu from "./_components/menu";
+import OrderDetails from "./_components/order-details";
 
 const Home = () => {
   return (
