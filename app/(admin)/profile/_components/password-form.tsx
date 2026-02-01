@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 const passwordSchema = z
   .object({
@@ -49,19 +50,12 @@ export function PasswordForm() {
         data.newPassword,
       );
 
-      // if (result.error) {
-      //   toast({
-      //     variant: "destructive",
-      //     title: "Error",
-      //     description: result.error,
-      //   });
-      // } else {
-      //   toast({
-      //     title: "Success",
-      //     description: "Password changed successfully",
-      //   });
-      //   form.reset();
-      // }
+      if (result.error) {
+        toast.error(result.error);
+      } else {
+        toast.success("Password changed successfully");
+        form.reset();
+      }
     });
   };
 
