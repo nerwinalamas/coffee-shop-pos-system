@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 const profileSchema = z.object({
   business_name: z
@@ -43,18 +44,11 @@ export function ProfileForm({ profile }: ProfileFormProps) {
     startTransition(async () => {
       const result = await updateProfile(data);
 
-      // if (result.error) {
-      //   toast({
-      //     variant: "destructive",
-      //     title: "Error",
-      //     description: result.error,
-      //   });
-      // } else {
-      //   toast({
-      //     title: "Success",
-      //     description: "Profile updated successfully",
-      //   });
-      // }
+      if (result.error) {
+        toast.error(result.error);
+      } else {
+        toast.success("Profile updated successfully");
+      }
     });
   };
 
@@ -126,7 +120,12 @@ export function ProfileForm({ profile }: ProfileFormProps) {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input type="email" placeholder="john@example.com" {...field} />
+                <Input
+                  type="email"
+                  placeholder="john@example.com"
+                  {...field}
+                  disabled
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
