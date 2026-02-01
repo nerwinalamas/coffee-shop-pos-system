@@ -1,6 +1,6 @@
 "use client";
 
-import { InventoryWithProduct } from "@/types/inventory.types";
+import { ProductWithInventory } from "@/types/product.types";
 import { Button } from "@/components/ui/button";
 import ProductCard from "./product-card";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -8,7 +8,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 const PAGE_SIZE = 12;
 
 interface MenuItemsProps {
-  data: InventoryWithProduct[] | undefined;
+  data: ProductWithInventory[] | undefined;
   currentPage: number;
   setCurrentPage: (page: number) => void;
 }
@@ -36,22 +36,32 @@ const MenuItems = ({ data, currentPage, setCurrentPage }: MenuItemsProps) => {
     setCurrentPage(Math.min(totalPages - 1, currentPage + 1));
   };
 
-  if (!data || data.length === 0) {
-    return (
-      <div className="text-gray-500 text-center text-sm py-8">
-        <p>No products found.</p>
-      </div>
-    );
-  }
-
   return (
     <div>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pb-4">
-        {currentData
-          .filter((p) => p.products !== null)
-          .map((p) => (
-            <ProductCard key={p.id} product={p.products!} />
-          ))}
+        {currentData.map((product) => {
+          let isOutOfStock = true;
+
+          if (product.inventory) {
+            if (Array.isArray(product.inventory)) {
+              // Empty array or first item has 0 quantity
+              isOutOfStock =
+                product.inventory.length === 0 ||
+                product.inventory[0]?.quantity === 0;
+            } else {
+              // Single object
+              isOutOfStock = product.inventory.quantity === 0;
+            }
+          }
+
+          return (
+            <ProductCard
+              key={product.id}
+              product={product}
+              isOutOfStock={isOutOfStock}
+            />
+          );
+        })}
       </div>
 
       {totalPages > 1 && (

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { useInventory } from "@/hooks/useInventory";
+import { useProductsWithInventory } from "@/hooks/useProductsWithInventory";
 import { ProductCategory } from "@/types/product.types";
 import SearchInput from "@/components/search-input";
 import CategoryTabs from "./category-tabs";
@@ -14,24 +14,24 @@ const Menu = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
 
-  const { data: inventory, isLoading, error } = useInventory();
+  const { data: products, isLoading, error } = useProductsWithInventory();
 
   const filteredProducts = useMemo(() => {
-    if (!inventory) return [];
+    if (!products) return [];
 
-    let filtered = inventory;
+    let filtered = products;
 
     // Filter by category
     if (selectedCategory !== "All") {
       filtered = filtered.filter(
-        (item) => item.products?.category === selectedCategory,
+        (product) => product.category === selectedCategory,
       );
     }
 
     // Filter by search query
     if (searchQuery.trim()) {
-      filtered = filtered.filter((item) =>
-        item.products?.name.toLowerCase().includes(searchQuery.toLowerCase()),
+      filtered = filtered.filter((product) =>
+        product.name.toLowerCase().includes(searchQuery.toLowerCase()),
       );
     }
 
@@ -39,7 +39,7 @@ const Menu = () => {
     setCurrentPage(0);
 
     return filtered;
-  }, [inventory, selectedCategory, searchQuery]);
+  }, [products, selectedCategory, searchQuery]);
 
   if (isLoading) {
     return (
