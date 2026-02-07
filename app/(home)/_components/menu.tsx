@@ -6,6 +6,7 @@ import { ProductCategory } from "@/types/product.types";
 import SearchInput from "@/components/search-input";
 import CategoryTabs from "./category-tabs";
 import MenuItems from "./menu-items";
+import AvailabilityFilter from "./availability-filter";
 
 const Menu = () => {
   const [selectedCategory, setSelectedCategory] = useState<
@@ -13,6 +14,9 @@ const Menu = () => {
   >("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
+  const [availabilityFilter, setAvailabilityFilter] = useState<
+    "All" | "Available" | "Out of Stock"
+  >("All");
 
   const { data: products, isLoading, error } = useProductsWithInventory();
 
@@ -35,11 +39,30 @@ const Menu = () => {
       );
     }
 
+    // Filter by availability
+    if (availabilityFilter !== "All") {
+      filtered = filtered.filter((product) => {
+        const inventory = Array.isArray(product.inventory)
+          ? product.inventory[0]
+          : product.inventory;
+
+        if (availabilityFilter === "Available") {
+          return (
+            inventory?.status === "In Stock" ||
+            inventory?.status === "Low Stock"
+          );
+        } else {
+          // Out of Stock
+          return inventory?.status === "Out of Stock" || !inventory;
+        }
+      });
+    }
+
     // Reset to first page when filters change
     setCurrentPage(0);
 
     return filtered;
-  }, [products, selectedCategory, searchQuery]);
+  }, [products, selectedCategory, searchQuery, availabilityFilter]);
 
   if (isLoading) {
     return (
@@ -66,10 +89,16 @@ const Menu = () => {
           selectedCategory={selectedCategory}
           setSelectedCategory={setSelectedCategory}
         />
-        <SearchInput
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-        />
+        <div className="flex items-center gap-4">
+          <SearchInput
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+          />
+          <AvailabilityFilter
+            availabilityFilter={availabilityFilter}
+            setAvailabilityFilter={setAvailabilityFilter}
+          />
+        </div>
       </div>
 
       <MenuItems
