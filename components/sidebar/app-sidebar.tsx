@@ -1,5 +1,12 @@
 import Link from "next/link";
-import { Home, ShoppingBag, Package, User2, ChevronUp } from "lucide-react";
+import {
+  Home,
+  ShoppingBag,
+  Package,
+  User2,
+  ChevronUp,
+  Receipt,
+} from "lucide-react";
 import SidebarLogo from "@/components/sidebar/sidebar-logo";
 import MenuItems from "@/components/sidebar/menu-items";
 import UserInfo from "@/components/sidebar/user-info";
@@ -39,6 +46,11 @@ const items = [
     title: "Inventory",
     url: "/inventory",
     icon: Package,
+  },
+  {
+    title: "Transaction History",
+    url: "/transactions",
+    icon: Receipt,
   },
   {
     title: "Users",
