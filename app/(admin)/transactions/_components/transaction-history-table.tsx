@@ -13,26 +13,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ArrowUpDown, MoreHorizontal } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
+import { useTransactions } from "@/hooks/useTransactions";
 
 const TransactionHistoryTable = () => {
-  const isLoading = false;
-  const error = null;
+  const { data: transactions = [], isLoading, error } = useTransactions();
 
   const columns: ColumnDef<Transactions>[] = [
     {
       accessorKey: "transaction_number",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Transaction #
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
-      },
+      header: "Transaction #",
       cell: ({ row }) => (
         <div className="font-medium">{row.getValue("transaction_number")}</div>
       ),
@@ -48,17 +38,7 @@ const TransactionHistoryTable = () => {
     },
     {
       accessorKey: "total_amount",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Total Amount
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
-      },
+      header: "Total Amount",
       cell: ({ row }) => {
         const amount = row.getValue("total_amount") as number;
         return <div className="font-medium">${amount.toFixed(2)}</div>;
@@ -94,17 +74,7 @@ const TransactionHistoryTable = () => {
     },
     {
       accessorKey: "created_at",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Date
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
-      },
+      header: "Date",
       cell: ({ row }) => {
         const dateString = row.getValue("created_at") as string;
         if (!dateString) return <div>-</div>;
@@ -166,7 +136,7 @@ const TransactionHistoryTable = () => {
   return (
     <DataTable
       columns={columns}
-      data={[]}
+      data={transactions}
       emptyMessage="No transactions found."
       searchPlaceholder="Search transactions..."
       isLoading={isLoading}
