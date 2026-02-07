@@ -147,16 +147,112 @@ export type Database = {
         }
         Relationships: []
       }
+      transaction_items: {
+        Row: {
+          created_at: string | null
+          id: string
+          product_id: string
+          product_name: string
+          product_price: number
+          quantity: number
+          subtotal: number
+          transaction_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          product_id: string
+          product_name: string
+          product_price: number
+          quantity: number
+          subtotal: number
+          transaction_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          product_id?: string
+          product_name?: string
+          product_price?: number
+          quantity?: number
+          subtotal?: number
+          transaction_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transaction_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transaction_items_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      transactions: {
+        Row: {
+          created_at: string | null
+          customer_name: string | null
+          id: string
+          payment_method: Database["public"]["Enums"]["payment_method"]
+          status: Database["public"]["Enums"]["transaction_status"]
+          subtotal: number
+          tax_amount: number
+          tax_rate: number
+          total_amount: number
+          transaction_number: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          customer_name?: string | null
+          id?: string
+          payment_method: Database["public"]["Enums"]["payment_method"]
+          status?: Database["public"]["Enums"]["transaction_status"]
+          subtotal: number
+          tax_amount: number
+          tax_rate?: number
+          total_amount: number
+          transaction_number: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          customer_name?: string | null
+          id?: string
+          payment_method?: Database["public"]["Enums"]["payment_method"]
+          status?: Database["public"]["Enums"]["transaction_status"]
+          subtotal?: number
+          tax_amount?: number
+          tax_rate?: number
+          total_amount?: number
+          transaction_number?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      generate_transaction_number: { Args: never; Returns: string }
       is_admin_or_owner: { Args: never; Returns: boolean }
     }
     Enums: {
       inventory_status: "In Stock" | "Low Stock" | "Out of Stock"
+      payment_method: "Cash" | "Credit Card" | "Debit Card" | "E-Wallet"
       product_category: "Coffee" | "Food" | "Dessert"
+      transaction_status: "Completed" | "Pending" | "Cancelled"
       user_role: "Owner" | "Admin" | "Manager" | "Staff"
       user_status: "Active" | "Inactive"
     }
@@ -290,7 +386,9 @@ export const Constants = {
   public: {
     Enums: {
       inventory_status: ["In Stock", "Low Stock", "Out of Stock"],
+      payment_method: ["Cash", "Credit Card", "Debit Card", "E-Wallet"],
       product_category: ["Coffee", "Food", "Dessert"],
+      transaction_status: ["Completed", "Pending", "Cancelled"],
       user_role: ["Owner", "Admin", "Manager", "Staff"],
       user_status: ["Active", "Inactive"],
     },
