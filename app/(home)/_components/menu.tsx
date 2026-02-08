@@ -58,6 +58,26 @@ const Menu = () => {
       });
     }
 
+    // Sort: Available items first, then out of stock
+    filtered = filtered.sort((a, b) => {
+      const inventoryA = Array.isArray(a.inventory)
+        ? a.inventory[0]
+        : a.inventory;
+      const inventoryB = Array.isArray(b.inventory)
+        ? b.inventory[0]
+        : b.inventory;
+
+      const isAvailableA =
+        inventoryA?.status === "In Stock" || inventoryA?.status === "Low Stock";
+      const isAvailableB =
+        inventoryB?.status === "In Stock" || inventoryB?.status === "Low Stock";
+
+      // Available items (true) come before unavailable (false)
+      if (isAvailableA && !isAvailableB) return -1;
+      if (!isAvailableA && isAvailableB) return 1;
+      return 0;
+    });
+
     // Reset to first page when filters change
     setCurrentPage(0);
 
