@@ -104,15 +104,15 @@ const PaymentForm = ({
 
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
-            <span>Subtotal:</span>
+            <span>Subtotal</span>
             <span>${subtotal.toFixed(2)}</span>
           </div>
           <div className="flex justify-between text-sm">
-            <span>Tax (12%):</span>
+            <span>Tax 12%</span>
             <span>${tax.toFixed(2)}</span>
           </div>
           <div className="flex justify-between font-semibold text-lg">
-            <span>Total:</span>
+            <span>Total</span>
             <span>${total.toFixed(2)}</span>
           </div>
         </div>
