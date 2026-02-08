@@ -1,25 +1,41 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { Transactions } from "@/types/transactions.types";
+import { useTransactions } from "@/hooks/useTransactions";
+import { TransactionWithItems } from "@/types/transactions.types";
+import ActionsDropdown, { ActionItem } from "@/components/actions-dropdown";
 import { DataTable } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { MoreHorizontal } from "lucide-react";
-import { useTransactions } from "@/hooks/useTransactions";
+import { Copy, Eye, Printer } from "lucide-react";
+import ViewTransactionDetailsModal from "@/components/modals/view-transaction-details-modal";
+import { useState } from "react";
 
 const TransactionHistoryTable = () => {
   const { data: transactions = [], isLoading, error } = useTransactions();
 
-  const columns: ColumnDef<Transactions>[] = [
+  const [
+    isViewTransactionDetailsModalOpen,
+    setIsViewTransactionDetailsModalOpen,
+  ] = useState(false);
+
+  const [selectedTransaction, setSelectedTransaction] =
+    useState<TransactionWithItems | null>(null);
+
+  const handleCopyTransactionId = (transaction: TransactionWithItems) => {
+    navigator.clipboard.writeText(transaction.transaction_number);
+  };
+
+  const handleViewTransactionDetails = (transaction: TransactionWithItems) => {
+    setSelectedTransaction(transaction);
+    setIsViewTransactionDetailsModalOpen(true);
+  };
+
+  const handlePrintReceipt = (transaction: TransactionWithItems) => {
+    // Add your print receipt logic here
+    console.log("Print receipt for:", transaction);
+  };
+
+  const columns: ColumnDef<TransactionWithItems>[] = [
     {
       accessorKey: "transaction_number",
       header: "Transaction #",
@@ -56,7 +72,7 @@ const TransactionHistoryTable = () => {
       accessorKey: "status",
       header: "Status",
       cell: ({ row }) => {
-        const status = row.getValue("status") as Transactions["status"];
+        const status = row.getValue("status") as TransactionWithItems["status"];
         return (
           <Badge
             variant={
@@ -95,55 +111,54 @@ const TransactionHistoryTable = () => {
     },
     {
       id: "actions",
+      header: "",
+      size: 60,
       cell: ({ row }) => {
         const transaction = row.original;
 
-        return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={() =>
-                  navigator.clipboard.writeText(transaction.transaction_number)
-                }
-              >
-                Copy transaction #
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>View details</DropdownMenuItem>
-              <DropdownMenuItem>Print receipt</DropdownMenuItem>
-              {transaction.status === "Pending" && (
-                <>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem className="text-red-600">
-                    Cancel transaction
-                  </DropdownMenuItem>
-                </>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        );
+        const actions: ActionItem[] = [
+          {
+            label: "Copy Transaction #",
+            icon: Copy,
+            onClick: () => handleCopyTransactionId(transaction),
+          },
+          {
+            label: "View Details",
+            icon: Eye,
+            onClick: () => handleViewTransactionDetails(transaction),
+          },
+          {
+            label: "Print Receipt",
+            icon: Printer,
+            onClick: () => handlePrintReceipt(transaction),
+          },
+        ];
+
+        return <ActionsDropdown actions={actions} />;
       },
+      enableSorting: false,
     },
   ];
 
   return (
-    <DataTable
-      columns={columns}
-      data={transactions}
-      emptyMessage="No transactions found."
-      searchPlaceholder="Search transactions..."
-      isLoading={isLoading}
-      loadingText="Loading transactions..."
-      error={error}
-      errorText="Error loading transactions"
-    />
+    <>
+      <DataTable
+        columns={columns}
+        data={transactions}
+        emptyMessage="No transactions found."
+        searchPlaceholder="Search transactions..."
+        isLoading={isLoading}
+        loadingText="Loading transactions..."
+        error={error}
+        errorText="Error loading transactions"
+      />
+
+      <ViewTransactionDetailsModal
+        open={isViewTransactionDetailsModalOpen}
+        onOpenChange={setIsViewTransactionDetailsModalOpen}
+        transaction={selectedTransaction}
+      />
+    </>
   );
 };
 
