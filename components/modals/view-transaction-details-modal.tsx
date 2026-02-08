@@ -150,7 +150,7 @@ const ViewTransactionDetailsModal = ({
               </div>
               <div className="flex justify-between text-base">
                 <span className="text-muted-foreground">
-                  Tax ({(transaction.tax_rate * 100).toFixed(2)}%)
+                  Tax {(transaction.tax_rate * 100)}%
                 </span>
                 <span className="font-medium">
                   ${transaction.tax_amount.toFixed(2)}
