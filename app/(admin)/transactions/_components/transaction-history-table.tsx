@@ -8,6 +8,7 @@ import { DataTable } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Copy, Eye, Printer } from "lucide-react";
 import ViewTransactionDetailsModal from "@/components/modals/view-transaction-details-modal";
+import PrintReceiptModal from "@/components/modals/print-receipt-modal";
 import { useState } from "react";
 
 const TransactionHistoryTable = () => {
@@ -17,6 +18,7 @@ const TransactionHistoryTable = () => {
     isViewTransactionDetailsModalOpen,
     setIsViewTransactionDetailsModalOpen,
   ] = useState(false);
+  const [isPrintReceiptModalOpen, setIsPrintReceiptModalOpen] = useState(false);
 
   const [selectedTransaction, setSelectedTransaction] =
     useState<TransactionWithItems | null>(null);
@@ -31,8 +33,8 @@ const TransactionHistoryTable = () => {
   };
 
   const handlePrintReceipt = (transaction: TransactionWithItems) => {
-    // Add your print receipt logic here
-    console.log("Print receipt for:", transaction);
+    setSelectedTransaction(transaction);
+    setIsPrintReceiptModalOpen(true);
   };
 
   const columns: ColumnDef<TransactionWithItems>[] = [
@@ -156,6 +158,12 @@ const TransactionHistoryTable = () => {
       <ViewTransactionDetailsModal
         open={isViewTransactionDetailsModalOpen}
         onOpenChange={setIsViewTransactionDetailsModalOpen}
+        transaction={selectedTransaction}
+      />
+
+      <PrintReceiptModal
+        open={isPrintReceiptModalOpen}
+        onOpenChange={setIsPrintReceiptModalOpen}
         transaction={selectedTransaction}
       />
     </>
