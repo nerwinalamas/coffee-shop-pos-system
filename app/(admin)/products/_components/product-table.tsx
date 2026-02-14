@@ -12,14 +12,16 @@ import EditProductModal from "@/components/modals/edit-product-modal";
 import DeleteProductModal from "@/components/modals/delete-product-modal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Edit2, Trash2, Plus } from "lucide-react";
+import { Edit2, Trash2, Plus, Eye } from "lucide-react";
 import DataTableFilter from "@/components/data-table-filter";
 import { useProducts } from "@/hooks/useProducts";
+import ViewProductDetailsModal from "@/components/modals/view-product-details-modal";
 
 const ProductTable = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Products | null>(null);
 
   const { data: products, isLoading, error } = useProducts();
@@ -40,6 +42,11 @@ const ProductTable = () => {
     setIsDeleteModalOpen(true);
   };
 
+  const handleView = (product: Products) => {
+    setSelectedProduct(product);
+    setIsViewModalOpen(true);
+  };
+
   const filteredData = useMemo(() => {
     if (!products) return [];
 
@@ -47,7 +54,7 @@ const ProductTable = () => {
 
     if (filters.categories.length > 0) {
       filtered = filtered.filter((item) =>
-        filters.categories.includes(item.category)
+        filters.categories.includes(item.category),
       );
     }
 
@@ -114,6 +121,11 @@ const ProductTable = () => {
       cell: ({ row }) => {
         const actions: ActionItem[] = [
           {
+            label: "View",
+            icon: Eye,
+            onClick: () => handleView(row.original),
+          },
+          {
             label: "Edit",
             icon: Edit2,
             onClick: () => handleEdit(row.original),
@@ -163,6 +175,11 @@ const ProductTable = () => {
       <DeleteProductModal
         open={isDeleteModalOpen}
         onOpenChange={setIsDeleteModalOpen}
+        product={selectedProduct}
+      />
+      <ViewProductDetailsModal
+        open={isViewModalOpen}
+        onOpenChange={setIsViewModalOpen}
         product={selectedProduct}
       />
     </>
