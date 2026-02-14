@@ -141,9 +141,16 @@ const ProductForm = ({
                   step="0.01"
                   disabled={isSubmitting}
                   placeholder="0.00"
-                  onChange={(e) =>
-                    field.onChange(parseFloat(e.target.value) || 0)
-                  }
+                  onChange={(e) => {
+                    const rawValue = e.target.value;
+                    if (rawValue === "" || rawValue === "0") {
+                      field.onChange(0);
+                      return;
+                    }
+                    const cleaned = rawValue.replace(/^0+/, "");
+                    field.onChange(parseFloat(cleaned) || 0);
+                  }}
+                  value={field.value === 0 ? "" : field.value}
                 />
               </FormControl>
               <FormMessage />

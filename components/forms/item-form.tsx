@@ -76,12 +76,12 @@ const ItemForm = ({
                       disabled={isSubmitting || isLoading}
                       className={cn(
                         "w-full justify-between",
-                        !field.value && "text-muted-foreground"
+                        !field.value && "text-muted-foreground",
                       )}
                     >
                       {field.value
                         ? products?.find(
-                            (product) => product.id === field.value
+                            (product) => product.id === field.value,
                           )?.name
                         : "Select a product"}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -122,7 +122,7 @@ const ItemForm = ({
                                   "mr-2 h-4 w-4",
                                   field.value === product.id
                                     ? "opacity-100"
-                                    : "opacity-0"
+                                    : "opacity-0",
                                 )}
                               />
                               {product.name} - {product.category}
@@ -151,9 +151,16 @@ const ItemForm = ({
                     type="number"
                     disabled={isSubmitting}
                     placeholder="0"
-                    onChange={(e) =>
-                      field.onChange(parseInt(e.target.value) || 0)
-                    }
+                    onChange={(e) => {
+                      const rawValue = e.target.value;
+                      if (rawValue === "" || rawValue === "0") {
+                        field.onChange(0);
+                        return;
+                      }
+                      const cleaned = rawValue.replace(/^0+/, "");
+                      field.onChange(parseInt(cleaned) || 0);
+                    }}
+                    value={field.value === 0 ? "" : field.value}
                   />
                 </FormControl>
                 <FormMessage />
@@ -173,9 +180,16 @@ const ItemForm = ({
                     type="number"
                     disabled={isSubmitting}
                     placeholder="0"
-                    onChange={(e) =>
-                      field.onChange(parseInt(e.target.value) || 0)
-                    }
+                    onChange={(e) => {
+                      const rawValue = e.target.value;
+                      if (rawValue === "" || rawValue === "0") {
+                        field.onChange(0);
+                        return;
+                      }
+                      const cleaned = rawValue.replace(/^0+/, "");
+                      field.onChange(parseInt(cleaned) || 0);
+                    }}
+                    value={field.value === 0 ? "" : field.value}
                   />
                 </FormControl>
                 <FormMessage />

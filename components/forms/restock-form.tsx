@@ -67,9 +67,16 @@ const RestockForm = ({
                   type="number"
                   disabled={isSubmitting}
                   placeholder="Enter quantity to add"
-                  onChange={(e) =>
-                    field.onChange(parseInt(e.target.value) || 0)
-                  }
+                  onChange={(e) => {
+                    const rawValue = e.target.value;
+                    if (rawValue === "" || rawValue === "0") {
+                      field.onChange(0);
+                      return;
+                    }
+                    const cleaned = rawValue.replace(/^0+/, "");
+                    field.onChange(parseInt(cleaned) || 0);
+                  }}
+                  value={field.value === 0 ? "" : field.value}
                 />
               </FormControl>
               <FormMessage />
