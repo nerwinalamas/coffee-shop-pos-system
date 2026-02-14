@@ -10,6 +10,7 @@ import { Copy, Eye, Printer } from "lucide-react";
 import ViewTransactionDetailsModal from "@/components/modals/view-transaction-details-modal";
 import PrintReceiptModal from "@/components/modals/print-receipt-modal";
 import { useState } from "react";
+import { toast } from "sonner";
 
 const TransactionHistoryTable = () => {
   const { data: transactions = [], isLoading, error } = useTransactions();
@@ -25,6 +26,7 @@ const TransactionHistoryTable = () => {
 
   const handleCopyTransactionId = (transaction: TransactionWithItems) => {
     navigator.clipboard.writeText(transaction.transaction_number);
+    toast.success("Transaction ID copied to clipboard!");
   };
 
   const handleViewTransactionDetails = (transaction: TransactionWithItems) => {
