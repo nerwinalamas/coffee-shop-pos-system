@@ -14,6 +14,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { createClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const formSchema = z
   .object({
@@ -43,6 +45,7 @@ const formSchema = z
   });
 
 const SignUpForm = () => {
+  const router = useRouter();
   const supabase = createClient();
 
   const form = useForm({
@@ -78,6 +81,8 @@ const SignUpForm = () => {
 
       if (error) throw error;
 
+      toast.success("Account created successfully.");
+      router.push("/auth/sign-in");
       form.reset();
     } catch (error) {
       console.error("Error signing up:", error);
