@@ -16,7 +16,7 @@ const Menu = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [availabilityFilter, setAvailabilityFilter] = useState<
     "All" | "Available" | "Out of Stock"
-  >("All");
+  >("Available");
 
   const { data: products, isLoading, error } = useProductsWithInventory();
 
