@@ -9,7 +9,11 @@ import { Badge } from "@/components/ui/badge";
 import { Copy, Eye, Printer } from "lucide-react";
 import ViewTransactionDetailsModal from "@/components/modals/view-transaction-details-modal";
 import PrintReceiptModal from "@/components/modals/print-receipt-modal";
-import { useState } from "react";
+import DateRangeFilter, {
+  DateRangeValue,
+  getPresetDateRange,
+} from "@/components/date-range-filter";
+import { useState, useMemo } from "react";
 import { toast } from "sonner";
 
 const TransactionHistoryTable = () => {
@@ -23,6 +27,18 @@ const TransactionHistoryTable = () => {
 
   const [selectedTransaction, setSelectedTransaction] =
     useState<TransactionWithItems | null>(null);
+
+  const [dateRange, setDateRange] = useState<DateRangeValue>(
+    getPresetDateRange("this_month"),
+  );
+
+  const filteredData = useMemo(() => {
+    return transactions.filter((t) => {
+      if (!t.created_at) return false;
+      const d = new Date(t.created_at);
+      return d >= dateRange.from && d <= dateRange.to;
+    });
+  }, [transactions, dateRange]);
 
   const handleCopyTransactionId = (transaction: TransactionWithItems) => {
     navigator.clipboard.writeText(transaction.transaction_number);
@@ -67,10 +83,7 @@ const TransactionHistoryTable = () => {
     {
       accessorKey: "payment_method",
       header: "Payment Method",
-      cell: ({ row }) => {
-        const method = row.getValue("payment_method") as string;
-        return <div>{method}</div>;
-      },
+      cell: ({ row }) => <div>{row.getValue("payment_method")}</div>,
     },
     {
       accessorKey: "status",
@@ -148,7 +161,8 @@ const TransactionHistoryTable = () => {
     <>
       <DataTable
         columns={columns}
-        data={transactions}
+        data={filteredData}
+        filterComponent={<DateRangeFilter onChange={setDateRange} />}
         emptyMessage="No transactions found."
         searchPlaceholder="Search transactions..."
         isLoading={isLoading}
