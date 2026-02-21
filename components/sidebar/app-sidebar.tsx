@@ -6,6 +6,7 @@ import {
   User2,
   ChevronUp,
   Receipt,
+  BarChart2,
 } from "lucide-react";
 import SidebarLogo from "@/components/sidebar/sidebar-logo";
 import MenuItems from "@/components/sidebar/menu-items";
@@ -51,6 +52,11 @@ const items = [
     title: "Transaction History",
     url: "/transactions",
     icon: Receipt,
+  },
+  {
+    title: "Sales Reports",
+    url: "/sales",
+    icon: BarChart2,
   },
   {
     title: "Users",
