@@ -1,5 +1,7 @@
+import SalesReportTable from "./_components/sales-report-table";
+
 const SalesPage = () => {
-  return <div>Sales Page</div>;
+  return <SalesReportTable />;
 };
 
 export default SalesPage;
