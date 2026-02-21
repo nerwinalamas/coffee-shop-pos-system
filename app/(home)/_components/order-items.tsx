@@ -1,3 +1,5 @@
+"use client";
+
 import ReusableImage from "@/components/reusable-image";
 import { Button } from "@/components/ui/button";
 import { Minus, Plus } from "lucide-react";
@@ -9,6 +11,7 @@ interface OrderItemsProps {
   name: string;
   price: number;
   quantity: number;
+  maxQuantity: number;
 }
 
 const OrderItems = ({
@@ -17,6 +20,7 @@ const OrderItems = ({
   name,
   price,
   quantity,
+  maxQuantity,
 }: OrderItemsProps) => {
   const { updateQuantity, removeItem } = useOrderStore();
 
@@ -59,7 +63,12 @@ const OrderItems = ({
         <span className="font-semibold min-w-[20px] text-center">
           {quantity}
         </span>
-        <Button size="icon" className="rounded-full" onClick={handleIncrement}>
+        <Button
+          size="icon"
+          className="rounded-full"
+          onClick={handleIncrement}
+          disabled={quantity >= maxQuantity}
+        >
           <Plus className="w-4 h-4" />
         </Button>
       </div>

@@ -14,9 +14,15 @@ interface ProductCardProps {
 const ProductCard = ({ product, isOutOfStock }: ProductCardProps) => {
   const addItem = useOrderStore((state) => state.addItem);
 
+  const inventory = Array.isArray(product.inventory)
+    ? product.inventory[0]
+    : product.inventory;
+
+  const availableQty = inventory?.quantity ?? 0;
+
   const handleAddToOrder = () => {
     if (isOutOfStock) return;
-    addItem(product);
+    addItem(product, availableQty);
   };
 
   return (
@@ -46,6 +52,9 @@ const ProductCard = ({ product, isOutOfStock }: ProductCardProps) => {
         <Button size="sm" onClick={handleAddToOrder} disabled={isOutOfStock}>
           Add
         </Button>
+      </div>
+      <div className="text-xs text-gray-400">
+        {isOutOfStock ? "Out of stock" : `${availableQty} available`}
       </div>
     </div>
   );

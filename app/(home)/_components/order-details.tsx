@@ -28,6 +28,7 @@ const OrderDetails = () => {
                 name={item.name}
                 price={item.price}
                 quantity={item.quantity}
+                maxQuantity={item.maxQuantity}
               />
             ))
           ) : (
