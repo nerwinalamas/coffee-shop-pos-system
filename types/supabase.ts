@@ -39,6 +39,7 @@ export type Database = {
           created_at: string | null
           id: string
           last_restocked: string | null
+          owner_id: string
           product_id: string
           quantity: number
           reorder_level: number
@@ -50,6 +51,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           last_restocked?: string | null
+          owner_id: string
           product_id: string
           quantity?: number
           reorder_level?: number
@@ -61,6 +63,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           last_restocked?: string | null
+          owner_id?: string
           product_id?: string
           quantity?: number
           reorder_level?: number
@@ -85,6 +88,7 @@ export type Database = {
           id: string
           image: string | null
           name: string
+          owner_id: string
           price: number
           updated_at: string | null
         }
@@ -94,6 +98,7 @@ export type Database = {
           id?: string
           image?: string | null
           name: string
+          owner_id: string
           price: number
           updated_at?: string | null
         }
@@ -103,6 +108,7 @@ export type Database = {
           id?: string
           image?: string | null
           name?: string
+          owner_id?: string
           price?: number
           updated_at?: string | null
         }
@@ -200,6 +206,7 @@ export type Database = {
           created_at: string | null
           customer_name: string | null
           id: string
+          owner_id: string
           payment_method: Database["public"]["Enums"]["payment_method"]
           status: Database["public"]["Enums"]["transaction_status"]
           subtotal: number
@@ -214,6 +221,7 @@ export type Database = {
           created_at?: string | null
           customer_name?: string | null
           id?: string
+          owner_id: string
           payment_method: Database["public"]["Enums"]["payment_method"]
           status?: Database["public"]["Enums"]["transaction_status"]
           subtotal: number
@@ -228,6 +236,7 @@ export type Database = {
           created_at?: string | null
           customer_name?: string | null
           id?: string
+          owner_id?: string
           payment_method?: Database["public"]["Enums"]["payment_method"]
           status?: Database["public"]["Enums"]["transaction_status"]
           subtotal?: number
