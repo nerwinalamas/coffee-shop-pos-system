@@ -1,11 +1,12 @@
--- Create enum for inventory status
+-- ENUM
 create type inventory_status as enum ('In Stock', 'Low Stock', 'Out of Stock');
 
--- Create inventory table
+-- TABLE
 create table if not exists inventory (
   id uuid primary key default gen_random_uuid(),
+  owner_id uuid not null references auth.users(id) on delete cascade,
   product_id uuid not null references products(id) on delete cascade,
-  sku text unique not null,
+  sku text not null,
   quantity integer not null default 0 check (quantity >= 0),
   reorder_level integer not null default 10 check (reorder_level >= 0),
   status inventory_status not null default 'In Stock',
@@ -14,12 +15,13 @@ create table if not exists inventory (
   updated_at timestamptz default now()
 );
 
--- Create unique index on product_id (one inventory record per product)
-create unique index if not exists inventory_product_id_idx on inventory(product_id);
-
--- Create index on status for filtering
+-- INDEXES
+create unique index if not exists inventory_owner_sku_idx on inventory(owner_id, sku);
+create unique index if not exists inventory_owner_product_idx on inventory(owner_id, product_id);
+create index if not exists inventory_owner_id_idx on inventory(owner_id);
 create index if not exists inventory_status_idx on inventory(status);
 
+-- FUNCTIONS & TRIGGERS
 -- Create trigger to automatically update updated_at
 create trigger update_inventory_updated_at
   before update on inventory
@@ -47,27 +49,25 @@ create trigger update_inventory_status_trigger
   for each row
   execute function update_inventory_status();
 
--- Enable Row Level Security
+-- RLS
 alter table inventory enable row level security;
 
--- Create policies (development - adjust for production)
-create policy "Anyone can view inventory"
+create policy "Users can view their own inventory"
   on inventory for select
-  to authenticated, anon
-  using (true);
+  to authenticated
+  using (owner_id = auth.uid());
 
-create policy "Anyone can insert inventory"
+create policy "Users can insert their own inventory"
   on inventory for insert
-  to authenticated, anon
-  with check (true);
+  to authenticated
+  with check (owner_id = auth.uid());
 
-create policy "Anyone can update inventory"
+create policy "Users can update their own inventory"
   on inventory for update
-  to authenticated, anon
-  using (true);
+  to authenticated
+  using (owner_id = auth.uid());
 
-create policy "Anyone can delete inventory"
+create policy "Users can delete their own inventory"
   on inventory for delete
-  to authenticated, anon
-  using (true);
-  
+  to authenticated
+  using (owner_id = auth.uid());

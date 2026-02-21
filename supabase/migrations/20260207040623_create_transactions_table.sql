@@ -1,10 +1,11 @@
--- Create enum types for transactions
+-- ENUMS
 create type payment_method as enum ('Cash', 'Credit Card', 'Debit Card', 'E-Wallet');
 create type transaction_status as enum ('Completed', 'Pending', 'Cancelled');
 
--- Create transactions table
+-- TABLE
 create table if not exists transactions (
   id uuid primary key default gen_random_uuid(),
+  owner_id uuid not null references auth.users(id) on delete cascade,
   transaction_number text unique not null,
   customer_name text,
   subtotal numeric(10, 2) not null check (subtotal >= 0),
@@ -18,13 +19,15 @@ create table if not exists transactions (
   updated_at timestamptz default now()
 );
 
--- Create indexes for better performance
+-- INDEXES
+create index if not exists transactions_owner_id_idx on transactions(owner_id);
 create index if not exists transactions_transaction_number_idx on transactions(transaction_number);
 create index if not exists transactions_status_idx on transactions(status);
 create index if not exists transactions_payment_method_idx on transactions(payment_method);
 create index if not exists transactions_user_id_idx on transactions(user_id);
 create index if not exists transactions_created_at_idx on transactions(created_at desc);
 
+-- FUNCTIONS & TRIGGERS
 -- Create trigger to automatically update updated_at
 create trigger update_transactions_updated_at
   before update on transactions
@@ -86,21 +89,20 @@ create trigger calculate_transaction_totals_trigger
   for each row
   execute function calculate_transaction_totals();
 
--- Enable Row Level Security
+-- RLS
 alter table transactions enable row level security;
 
--- Policies for transactions
 create policy "Users can view their own transactions"
   on transactions for select
-  using (auth.uid() = user_id or is_admin_or_owner());
+  using (owner_id = auth.uid() or is_admin_or_owner());
 
 create policy "Users can create transactions"
   on transactions for insert
-  with check (auth.uid() = user_id or is_admin_or_owner());
+  with check (owner_id = auth.uid() or is_admin_or_owner());
 
 create policy "Users can update their own transactions"
   on transactions for update
-  using (auth.uid() = user_id or is_admin_or_owner());
+  using (owner_id = auth.uid() or is_admin_or_owner());
 
 create policy "Admins can delete transactions"
   on transactions for delete

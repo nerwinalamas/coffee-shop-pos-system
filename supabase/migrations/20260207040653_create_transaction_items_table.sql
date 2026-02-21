@@ -1,4 +1,4 @@
--- Create transaction_items table
+-- TABLE
 -- This table stores individual items/products for each transaction
 create table if not exists transaction_items (
   id uuid primary key default gen_random_uuid(),
@@ -11,21 +11,20 @@ create table if not exists transaction_items (
   created_at timestamptz default now()
 );
 
--- Create indexes for better performance
+-- INDEXES
 create index if not exists transaction_items_transaction_id_idx on transaction_items(transaction_id);
 create index if not exists transaction_items_product_id_idx on transaction_items(product_id);
 
--- Enable Row Level Security
+-- RLS
 alter table transaction_items enable row level security;
 
--- Policies for transaction_items
 create policy "Users can view transaction items"
   on transaction_items for select
   using (
     exists (
       select 1 from transactions
       where transactions.id = transaction_items.transaction_id
-      and (transactions.user_id = auth.uid() or is_admin_or_owner())
+      and (transactions.owner_id = auth.uid() or is_admin_or_owner())
     )
   );
 
@@ -35,7 +34,7 @@ create policy "Users can insert transaction items"
     exists (
       select 1 from transactions
       where transactions.id = transaction_items.transaction_id
-      and (transactions.user_id = auth.uid() or is_admin_or_owner())
+      and (transactions.owner_id = auth.uid() or is_admin_or_owner())
     )
   );
 
@@ -45,7 +44,7 @@ create policy "Users can update transaction items"
     exists (
       select 1 from transactions
       where transactions.id = transaction_items.transaction_id
-      and (transactions.user_id = auth.uid() or is_admin_or_owner())
+      and (transactions.owner_id = auth.uid() or is_admin_or_owner())
     )
   );
 

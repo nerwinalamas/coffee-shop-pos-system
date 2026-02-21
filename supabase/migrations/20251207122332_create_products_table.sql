@@ -1,9 +1,10 @@
--- Create enum type for product category
+-- ENUM
 create type product_category as enum ('Coffee', 'Food', 'Dessert');
 
--- Create products table
+-- TABLE
 create table if not exists products (
   id uuid primary key default gen_random_uuid(),
+  owner_id uuid not null references auth.users(id) on delete cascade,
   name text not null,
   price numeric(10, 2) not null check (price >= 0),
   image text,
@@ -12,51 +13,36 @@ create table if not exists products (
   updated_at timestamptz default now()
 );
 
--- Create index on category for filtering
+-- INDEXES
+create index if not exists products_owner_id_idx on products(owner_id);
 create index if not exists products_category_idx on products(category);
-
--- Create index on name for searching
 create index if not exists products_name_idx on products(name);
 
--- Create function to update updated_at timestamp (if not already created)
-create or replace function update_updated_at_column()
-returns trigger as $$
-begin
-  new.updated_at = now();
-  return new;
-end;
-$$ language plpgsql;
-
--- Create trigger to automatically update updated_at
+-- TRIGGERS
 create trigger update_products_updated_at
   before update on products
   for each row
   execute function update_updated_at_column();
 
--- Enable Row Level Security (RLS)
+-- RLS
 alter table products enable row level security;
 
--- Create policies
--- Allow everyone to view products
-create policy "Anyone can view products"
+create policy "Users can view their own products"
   on products for select
-  to authenticated, anon
-  using (true);
+  to authenticated
+  using (owner_id = auth.uid());
 
--- Allow anyone to insert products (for development - change later!)
-create policy "Anyone can insert products"
+create policy "Users can insert their own products"
   on products for insert
-  to authenticated, anon
-  with check (true);
+  to authenticated
+  with check (owner_id = auth.uid());
 
--- Allow anyone to update products (for development - change later!)
-create policy "Anyone can update products"
+create policy "Users can update their own products"
   on products for update
-  to authenticated, anon
-  using (true);
+  to authenticated
+  using (owner_id = auth.uid());
 
--- Allow anyone to delete products (for development - change later!)
-create policy "Anyone can delete products"
+create policy "Users can delete their own products"
   on products for delete
-  to authenticated, anon
-  using (true);
+  to authenticated
+  using (owner_id = auth.uid());
