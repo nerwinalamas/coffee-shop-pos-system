@@ -19,9 +19,6 @@ import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 const profileSchema = z.object({
-  business_name: z
-    .string()
-    .min(2, "Business name must be at least 2 characters"),
   first_name: z.string().min(2, "First name must be at least 2 characters"),
   last_name: z.string().min(2, "Last name must be at least 2 characters"),
   phone: z.string().min(10, "Phone number must be at least 10 characters"),
@@ -55,20 +52,6 @@ export function ProfileForm({ profile }: ProfileFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <FormField
-          control={form.control}
-          name="business_name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Business Name</FormLabel>
-              <FormControl>
-                <Input placeholder="Your Business" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             control={form.control}

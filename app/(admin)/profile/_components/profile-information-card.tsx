@@ -12,13 +12,7 @@ import { Profiles } from "@/types/profiles.types";
 interface ProfileInformationCardProps {
   profile: Pick<
     Profiles,
-    | "business_name"
-    | "first_name"
-    | "last_name"
-    | "phone"
-    | "email"
-    | "status"
-    | "role"
+    "first_name" | "last_name" | "phone" | "email" | "status" | "role"
   >;
 }
 
@@ -29,9 +23,7 @@ const ProfileInformationCard = ({ profile }: ProfileInformationCardProps) => {
         <div className="flex items-center justify-between">
           <div>
             <CardTitle>Personal Information</CardTitle>
-            <CardDescription>
-              Update your profile details and business information
-            </CardDescription>
+            <CardDescription>Update your profile details</CardDescription>
           </div>
           <div className="flex gap-2">
             <Badge

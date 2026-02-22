@@ -1,15 +1,13 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { Profiles } from "@/types/profiles.types";
 import { revalidatePath } from "next/cache";
 
-export type ProfileFormData = {
-  business_name: string;
-  first_name: string;
-  last_name: string;
-  phone: string;
-  email: string;
-};
+export type ProfileFormData = Pick<
+  Profiles,
+  "first_name" | "last_name" | "phone" | "email"
+>;
 
 export async function updateProfile(data: ProfileFormData) {
   try {
@@ -29,7 +27,6 @@ export async function updateProfile(data: ProfileFormData) {
     const { error: updateError } = await supabase
       .from("profiles")
       .update({
-        business_name: data.business_name,
         first_name: data.first_name,
         last_name: data.last_name,
         phone: data.phone,
