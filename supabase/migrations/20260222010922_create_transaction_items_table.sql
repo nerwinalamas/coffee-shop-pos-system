@@ -1,5 +1,4 @@
 -- TABLE
--- This table stores individual items/products for each transaction
 create table if not exists transaction_items (
   id uuid primary key default gen_random_uuid(),
   transaction_id uuid not null references transactions(id) on delete cascade,
@@ -24,7 +23,7 @@ create policy "Users can view transaction items"
     exists (
       select 1 from transactions
       where transactions.id = transaction_items.transaction_id
-      and (transactions.owner_id = auth.uid() or is_admin_or_owner())
+      and transactions.business_id = get_my_business_id()
     )
   );
 
@@ -34,7 +33,7 @@ create policy "Users can insert transaction items"
     exists (
       select 1 from transactions
       where transactions.id = transaction_items.transaction_id
-      and (transactions.owner_id = auth.uid() or is_admin_or_owner())
+      and transactions.business_id = get_my_business_id()
     )
   );
 
@@ -44,10 +43,10 @@ create policy "Users can update transaction items"
     exists (
       select 1 from transactions
       where transactions.id = transaction_items.transaction_id
-      and (transactions.owner_id = auth.uid() or is_admin_or_owner())
+      and transactions.business_id = get_my_business_id()
     )
   );
 
-create policy "Admins can delete transaction items"
+create policy "Owners and admins can delete transaction items"
   on transaction_items for delete
   using (is_admin_or_owner());

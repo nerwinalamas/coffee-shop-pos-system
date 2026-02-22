@@ -5,8 +5,8 @@ create type user_status as enum ('Active', 'Inactive');
 -- TABLE
 create table if not exists profiles (
   id uuid primary key references auth.users(id) on delete cascade,
+  business_id uuid references businesses(id) on delete set null,
   email text not null,
-  business_name text not null,
   first_name text not null,
   last_name text not null,
   phone text not null,
@@ -17,29 +17,16 @@ create table if not exists profiles (
 );
 
 -- INDEXES
+create index if not exists profiles_business_id_idx on profiles(business_id);
 create index if not exists profiles_status_idx on profiles(status);
 create index if not exists profiles_role_idx on profiles(role);
 create index if not exists profiles_email_idx on profiles(email);
 
-
 -- FUNCTIONS & TRIGGERS
-
--- Create function to update updated_at timestamp
-create or replace function update_updated_at_column()
-returns trigger
-language plpgsql
-as $$
-begin
-  new.updated_at = now();
-  return new;
-end;
-$$;
-
--- Create trigger to automatically update updated_at
 create trigger update_profiles_updated_at
   before update on profiles
   for each row
-  execute function update_updated_at_column();
+  execute function update_updated_at_column(); -- defined in businesses migration
 
 -- Helper: check if current user is Owner or Admin (used in RLS, avoids recursion)
 create or replace function is_admin_or_owner()
@@ -54,34 +41,50 @@ begin
 end;
 $$ language plpgsql security definer stable;
 
--- Function to auto-create profile when user signs up
+-- Helper: get current user's business_id
+create or replace function get_my_business_id()
+returns uuid as $$
+begin
+  return (
+    select business_id
+    from profiles
+    where id = auth.uid()
+    limit 1
+  );
+end;
+$$ language plpgsql security definer stable;
+
+-- Auto-create profile + business on signup
 create or replace function public.handle_new_user()
 returns trigger
 language plpgsql
 security definer
 set search_path = public
 as $$
+declare
+  v_business_id uuid;
 begin
-  insert into public.profiles (
-    id,
-    email,
-    business_name,
-    first_name,
-    last_name,
-    phone,
-    role,
-    status
+  -- Create business first
+  insert into public.businesses (name, owner_id)
+  values (
+    coalesce(new.raw_user_meta_data->>'business_name', 'My Business'),
+    new.id
   )
+  returning id into v_business_id;
+
+  -- Create profile linked to business
+  insert into public.profiles (id, business_id, email, first_name, last_name, phone, role, status)
   values (
     new.id,
+    v_business_id,
     new.email,
-    coalesce(new.raw_user_meta_data->>'business_name', ''),
     coalesce(new.raw_user_meta_data->>'first_name', ''),
     coalesce(new.raw_user_meta_data->>'last_name', ''),
     coalesce(new.raw_user_meta_data->>'phone', ''),
     'Owner'::user_role,
     'Active'::user_status
   );
+
   return new;
 exception
   when others then
@@ -90,7 +93,6 @@ exception
 end;
 $$;
 
--- Trigger that fires after user is created in auth.users
 create trigger on_auth_user_created
   after insert on auth.users
   for each row
@@ -99,9 +101,9 @@ create trigger on_auth_user_created
 -- RLS
 alter table profiles enable row level security;
 
-create policy "Users can view profiles"
+create policy "Users can view profiles in their business"
   on profiles for select
-  using (auth.uid() = id or is_admin_or_owner());
+  using (business_id = get_my_business_id());
 
 create policy "Users can update own profile"
   on profiles for update

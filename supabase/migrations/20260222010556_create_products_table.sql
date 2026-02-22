@@ -4,7 +4,7 @@ create type product_category as enum ('Coffee', 'Food', 'Dessert');
 -- TABLE
 create table if not exists products (
   id uuid primary key default gen_random_uuid(),
-  owner_id uuid not null references auth.users(id) on delete cascade,
+  business_id uuid not null references businesses(id) on delete cascade,
   name text not null,
   price numeric(10, 2) not null check (price >= 0),
   image text,
@@ -14,7 +14,7 @@ create table if not exists products (
 );
 
 -- INDEXES
-create index if not exists products_owner_id_idx on products(owner_id);
+create index if not exists products_business_id_idx on products(business_id);
 create index if not exists products_category_idx on products(category);
 create index if not exists products_name_idx on products(name);
 
@@ -22,27 +22,27 @@ create index if not exists products_name_idx on products(name);
 create trigger update_products_updated_at
   before update on products
   for each row
-  execute function update_updated_at_column();
+  execute function update_updated_at_column(); -- defined in businesses migration
 
 -- RLS
 alter table products enable row level security;
 
-create policy "Users can view their own products"
+create policy "Users can view products in their business"
   on products for select
   to authenticated
-  using (owner_id = auth.uid());
+  using (business_id = get_my_business_id());
 
-create policy "Users can insert their own products"
+create policy "Users can insert products in their business"
   on products for insert
   to authenticated
-  with check (owner_id = auth.uid());
+  with check (business_id = get_my_business_id());
 
-create policy "Users can update their own products"
+create policy "Owners and admins can update products"
   on products for update
   to authenticated
-  using (owner_id = auth.uid());
+  using (business_id = get_my_business_id() and is_admin_or_owner());
 
-create policy "Users can delete their own products"
+create policy "Owners and admins can delete products"
   on products for delete
   to authenticated
-  using (owner_id = auth.uid());
+  using (business_id = get_my_business_id() and is_admin_or_owner());
