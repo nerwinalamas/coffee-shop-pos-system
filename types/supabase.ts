@@ -34,12 +34,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      businesses: {
+        Row: {
+          address: string | null
+          created_at: string | null
+          id: string
+          name: string
+          owner_id: string
+          phone: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string | null
+          id?: string
+          name: string
+          owner_id: string
+          phone?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          address?: string | null
+          created_at?: string | null
+          id?: string
+          name?: string
+          owner_id?: string
+          phone?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       inventory: {
         Row: {
+          business_id: string
           created_at: string | null
           id: string
           last_restocked: string | null
-          owner_id: string
           product_id: string
           quantity: number
           reorder_level: number
@@ -48,10 +78,10 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          business_id: string
           created_at?: string | null
           id?: string
           last_restocked?: string | null
-          owner_id: string
           product_id: string
           quantity?: number
           reorder_level?: number
@@ -60,10 +90,10 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          business_id?: string
           created_at?: string | null
           id?: string
           last_restocked?: string | null
-          owner_id?: string
           product_id?: string
           quantity?: number
           reorder_level?: number
@@ -72,6 +102,13 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "inventory_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "inventory_product_id_fkey"
             columns: ["product_id"]
@@ -83,40 +120,48 @@ export type Database = {
       }
       products: {
         Row: {
+          business_id: string
           category: Database["public"]["Enums"]["product_category"]
           created_at: string | null
           id: string
           image: string | null
           name: string
-          owner_id: string
           price: number
           updated_at: string | null
         }
         Insert: {
+          business_id: string
           category: Database["public"]["Enums"]["product_category"]
           created_at?: string | null
           id?: string
           image?: string | null
           name: string
-          owner_id: string
           price: number
           updated_at?: string | null
         }
         Update: {
+          business_id?: string
           category?: Database["public"]["Enums"]["product_category"]
           created_at?: string | null
           id?: string
           image?: string | null
           name?: string
-          owner_id?: string
           price?: number
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "products_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
-          business_name: string
+          business_id: string | null
           created_at: string | null
           email: string
           first_name: string
@@ -128,7 +173,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
-          business_name: string
+          business_id?: string | null
           created_at?: string | null
           email: string
           first_name: string
@@ -140,7 +185,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
-          business_name?: string
+          business_id?: string | null
           created_at?: string | null
           email?: string
           first_name?: string
@@ -151,7 +196,15 @@ export type Database = {
           status?: Database["public"]["Enums"]["user_status"]
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       transaction_items: {
         Row: {
@@ -203,10 +256,10 @@ export type Database = {
       }
       transactions: {
         Row: {
+          business_id: string
           created_at: string | null
           customer_name: string | null
           id: string
-          owner_id: string
           payment_method: Database["public"]["Enums"]["payment_method"]
           status: Database["public"]["Enums"]["transaction_status"]
           subtotal: number
@@ -218,10 +271,10 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          business_id: string
           created_at?: string | null
           customer_name?: string | null
           id?: string
-          owner_id: string
           payment_method: Database["public"]["Enums"]["payment_method"]
           status?: Database["public"]["Enums"]["transaction_status"]
           subtotal: number
@@ -233,10 +286,10 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          business_id?: string
           created_at?: string | null
           customer_name?: string | null
           id?: string
-          owner_id?: string
           payment_method?: Database["public"]["Enums"]["payment_method"]
           status?: Database["public"]["Enums"]["transaction_status"]
           subtotal?: number
@@ -247,7 +300,15 @@ export type Database = {
           updated_at?: string | null
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "transactions_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
@@ -255,6 +316,7 @@ export type Database = {
     }
     Functions: {
       generate_transaction_number: { Args: never; Returns: string }
+      get_my_business_id: { Args: never; Returns: string }
       is_admin_or_owner: { Args: never; Returns: boolean }
     }
     Enums: {
