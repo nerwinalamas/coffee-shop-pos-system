@@ -54,7 +54,7 @@ const SalesTrendChart = ({ data, isLoading }: SalesTrendChartProps) => {
   const maxSales = Math.max(...data.map((d) => d.sales), 1);
 
   return (
-    <Card className="col-span-2">
+    <Card className="xl:col-span-2">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <CardTitle className="text-sm font-medium">
           Sales Trend — Last 7 Days
