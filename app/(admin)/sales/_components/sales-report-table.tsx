@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
@@ -21,6 +21,7 @@ import DateRangeFilter, {
   getPresetDateRange,
 } from "@/components/date-range-filter";
 import { format } from "date-fns";
+import DataTableFilter from "@/components/data-table-filter";
 
 const statusVariant = (status: string) => {
   if (status === "Completed") return "default";
@@ -33,11 +34,33 @@ const SalesReportTable = () => {
     getPresetDateRange("this_month"),
   );
 
+  const [filters, setFilters] = useState<{
+    statuses: string[];
+    paymentMethods: string[];
+  }>({
+    statuses: [],
+    paymentMethods: [],
+  });
+
   const { data: report, isLoading, error } = useSalesReport(dateRange);
 
   const handleDateRangeChange = (range: DateRangeValue) => {
     setDateRange(range);
   };
+
+  const filteredRows = useMemo(() => {
+    if (!report?.rows) return [];
+
+    return report.rows.filter((row) => {
+      const inStatus =
+        filters.statuses.length === 0 || filters.statuses.includes(row.status);
+      const inPayment =
+        filters.paymentMethods.length === 0 ||
+        filters.paymentMethods.includes(row.payment_method);
+
+      return inStatus && inPayment;
+    });
+  }, [report?.rows, filters]);
 
   const periodLabel = `${format(dateRange.from, "MMM d, yyyy")} – ${format(dateRange.to, "MMM d, yyyy")}`;
 
@@ -54,8 +77,18 @@ const SalesReportTable = () => {
     {
       accessorKey: "created_at",
       header: "Date",
+      accessorFn: (row) => {
+        if (!row.created_at) return "-";
+        return new Date(row.created_at).toLocaleString("en-PH", {
+          month: "short",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+        });
+      },
       cell: ({ row }) => {
-        const d = new Date(row.getValue("created_at") as string);
+        const d = new Date(row.original.created_at as string);
         return (
           <span className="text-sm text-gray-600">
             {d.toLocaleString("en-PH", {
@@ -271,7 +304,18 @@ const SalesReportTable = () => {
       {/* Table */}
       <DataTable
         columns={columns}
-        data={report?.rows ?? []}
+        data={filteredRows}
+        filterComponent={
+          <DataTableFilter
+            filterType="transaction"
+            onFilterChange={(f) =>
+              setFilters({
+                statuses: f.statuses,
+                paymentMethods: f.paymentMethods ?? [],
+              })
+            }
+          />
+        }
         emptyMessage="No transactions for this period."
         searchPlaceholder="Search transactions..."
         isLoading={isLoading}

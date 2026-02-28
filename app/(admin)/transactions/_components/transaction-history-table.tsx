@@ -15,6 +15,7 @@ import DateRangeFilter, {
 } from "@/components/date-range-filter";
 import { useState, useMemo } from "react";
 import { toast } from "sonner";
+import DataTableFilter from "@/components/data-table-filter";
 
 const TransactionHistoryTable = () => {
   const { data: transactions = [], isLoading, error } = useTransactions();
@@ -32,13 +33,30 @@ const TransactionHistoryTable = () => {
     getPresetDateRange("this_month"),
   );
 
+  const [filters, setFilters] = useState<{
+    statuses: string[];
+    paymentMethods: string[];
+  }>({
+    statuses: [],
+    paymentMethods: [],
+  });
+
   const filteredData = useMemo(() => {
     return transactions.filter((t) => {
       if (!t.created_at) return false;
       const d = new Date(t.created_at);
-      return d >= dateRange.from && d <= dateRange.to;
+      const inDateRange = d >= dateRange.from && d <= dateRange.to;
+
+      const inStatus =
+        filters.statuses.length === 0 || filters.statuses.includes(t.status);
+
+      const inPayment =
+        filters.paymentMethods.length === 0 ||
+        filters.paymentMethods.includes(t.payment_method);
+
+      return inDateRange && inStatus && inPayment;
     });
-  }, [transactions, dateRange]);
+  }, [transactions, dateRange, filters]);
 
   const handleCopyTransactionId = (transaction: TransactionWithItems) => {
     navigator.clipboard.writeText(transaction.transaction_number);
@@ -108,8 +126,18 @@ const TransactionHistoryTable = () => {
     {
       accessorKey: "created_at",
       header: "Date",
+      accessorFn: (row) => {
+        if (!row.created_at) return "-";
+        return new Date(row.created_at).toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      },
       cell: ({ row }) => {
-        const dateString = row.getValue("created_at") as string;
+        const dateString = row.original.created_at;
         if (!dateString) return <div>-</div>;
 
         const date = new Date(dateString);
@@ -162,7 +190,20 @@ const TransactionHistoryTable = () => {
       <DataTable
         columns={columns}
         data={filteredData}
-        filterComponent={<DateRangeFilter onChange={setDateRange} />}
+        filterComponent={
+          <div className="flex items-center gap-2">
+            <DateRangeFilter onChange={setDateRange} />
+            <DataTableFilter
+              filterType="transaction"
+              onFilterChange={(f) =>
+                setFilters({
+                  statuses: f.statuses,
+                  paymentMethods: f.paymentMethods ?? [],
+                })
+              }
+            />
+          </div>
+        }
         emptyMessage="No transactions found."
         searchPlaceholder="Search transactions..."
         isLoading={isLoading}

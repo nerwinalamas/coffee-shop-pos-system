@@ -89,7 +89,7 @@ const InventoryTable = () => {
       enableSorting: false,
     },
     {
-      accessorKey: "productName",
+      accessorKey: "products.name",
       header: "Product Name",
       size: 200,
       cell: ({ row }) => (
@@ -107,7 +107,7 @@ const InventoryTable = () => {
       ),
     },
     {
-      accessorKey: "category",
+      accessorKey: "products.category",
       header: "Category",
       size: 120,
       cell: ({ row }) => {
@@ -128,7 +128,7 @@ const InventoryTable = () => {
       ),
     },
     {
-      accessorKey: "reorderLevel",
+      accessorKey: "reorder_level",
       header: "Reorder Level",
       size: 120,
       cell: ({ row }) => (
@@ -154,6 +154,14 @@ const InventoryTable = () => {
       accessorKey: "last_restocked",
       header: "Last Restocked",
       size: 140,
+      accessorFn: (row) => {
+        if (!row.last_restocked) return "Never";
+        return new Date(row.last_restocked).toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        });
+      },
       cell: ({ row }) => (
         <div className="text-sm text-muted-foreground">
           {row.original.last_restocked
