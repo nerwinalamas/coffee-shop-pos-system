@@ -7,8 +7,15 @@ import SearchInput from "@/components/search-input";
 import CategoryTabs from "./category-tabs";
 import MenuItems from "./menu-items";
 import AvailabilityFilter from "./availability-filter";
+import { Button } from "@/components/ui/button";
+import { LogOut } from "lucide-react";
 
-const Menu = () => {
+interface MenuProps {
+  posUser: { name: string; role: string };
+  onSignOut: () => void;
+}
+
+const Menu = ({ posUser, onSignOut }: MenuProps) => {
   const [selectedCategory, setSelectedCategory] = useState<
     ProductCategory | "All"
   >("All");
@@ -104,6 +111,22 @@ const Menu = () => {
 
   return (
     <div className="col-span-12 md:col-span-8 xl:col-span-9 bg-white rounded-lg shadow-sm h-full p-4 space-y-4">
+      <div className="flex items-center justify-between border-b pb-3">
+        <div>
+          <p className="text-sm font-medium text-gray-900">{posUser.name}</p>
+          <p className="text-xs text-muted-foreground">{posUser.role}</p>
+        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="gap-2 text-gray-500 hover:text-red-600"
+          onClick={onSignOut}
+        >
+          <LogOut className="w-4 h-4" />
+          Sign Out
+        </Button>
+      </div>
+
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <CategoryTabs
           selectedCategory={selectedCategory}
