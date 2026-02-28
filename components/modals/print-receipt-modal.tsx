@@ -13,6 +13,7 @@ import Receipt from "@/components/receipt";
 import { useRef } from "react";
 import { useReactToPrint } from "react-to-print";
 import { Printer } from "lucide-react";
+import { useBusinessById } from "@/hooks/useBusinessById";
 
 interface PrintReceiptModalProps {
   open: boolean;
@@ -26,6 +27,8 @@ const PrintReceiptModal = ({
   transaction,
 }: PrintReceiptModalProps) => {
   const receiptRef = useRef<HTMLDivElement>(null);
+
+  const { data: business } = useBusinessById(transaction?.business_id);
 
   const handlePrint = useReactToPrint({
     contentRef: receiptRef,
@@ -45,7 +48,11 @@ const PrintReceiptModal = ({
         </DialogHeader>
 
         <div className="max-h-[60vh] overflow-y-auto border rounded-lg">
-          <Receipt transaction={transaction} receiptRef={receiptRef} />
+          <Receipt
+            transaction={transaction}
+            receiptRef={receiptRef}
+            business={business ?? null}
+          />
         </div>
 
         <div className="flex justify-end gap-2">
