@@ -10,6 +10,8 @@ import LowStockAlerts from "./_components/low-stock-alerts";
 import TopProducts from "./_components/top-products";
 import PageTransition from "@/components/page-transition";
 import { Variants } from "framer-motion";
+import PaymentMethodChart from "./_components/payment-method-chart";
+import TransactionStatusChart from "./_components/transaction-status-chart";
 
 const container: Variants = {
   hidden: {},
@@ -63,6 +65,20 @@ const DashboardPage = () => {
         <motion.div variants={item}>
           <RecentTransactions
             data={data?.recentTransactions ?? []}
+            isLoading={isLoading}
+          />
+        </motion.div>
+
+        <motion.div
+          variants={item}
+          className="grid grid-cols-1 xl:grid-cols-2 gap-4"
+        >
+          <PaymentMethodChart
+            data={data?.paymentMethodBreakdown ?? []}
+            isLoading={isLoading}
+          />
+          <TransactionStatusChart
+            data={data?.statusBreakdown ?? []}
             isLoading={isLoading}
           />
         </motion.div>
