@@ -24,12 +24,15 @@ import { Badge } from "@/components/ui/badge";
 const CATEGORIES = ["Coffee", "Food", "Dessert"];
 const PRODUCT_STATUS = ["In Stock", "Low Stock", "Out of Stock"];
 const USER_STATUS = ["Active", "Inactive"];
+const PAYMENT_METHODS = ["Cash", "Credit Card", "Debit Card", "E-Wallet"];
+const TRANSACTION_STATUS = ["Completed", "Pending", "Cancelled"];
 
 interface DataTableFilterProps {
-  filterType?: "product" | "inventory" | "user";
+  filterType?: "product" | "inventory" | "user" | "transaction";
   onFilterChange?: (filters: {
     categories: string[];
     statuses: string[];
+    paymentMethods?: string[];
   }) => void;
 }
 
@@ -39,10 +42,21 @@ const DataTableFilter = ({
 }: DataTableFilterProps) => {
   const [categoryFilter, setCategoryFilter] = useState<string[]>([]);
   const [statusFilter, setStatusFilter] = useState<string[]>([]);
+  const [paymentMethodFilter, setPaymentMethodFilter] = useState<string[]>([]);
 
   const showCategory = filterType === "product" || filterType === "inventory";
-  const showStatus = filterType === "inventory" || filterType === "user";
-  const STATUS_OPTIONS = filterType === "user" ? USER_STATUS : PRODUCT_STATUS;
+  const showStatus =
+    filterType === "inventory" ||
+    filterType === "user" ||
+    filterType === "transaction";
+  const showPaymentMethod = filterType === "transaction";
+
+  const STATUS_OPTIONS =
+    filterType === "user"
+      ? USER_STATUS
+      : filterType === "transaction"
+        ? TRANSACTION_STATUS
+        : PRODUCT_STATUS;
 
   const handleCategoryChange = (category: string) => {
     const newCategories = categoryFilter.includes(category)
@@ -62,14 +76,29 @@ const DataTableFilter = ({
     onFilterChange?.({ categories: categoryFilter, statuses: newStatuses });
   };
 
+  const handlePaymentMethodChange = (method: string) => {
+    const newMethods = paymentMethodFilter.includes(method)
+      ? paymentMethodFilter.filter((m) => m !== method)
+      : [...paymentMethodFilter, method];
+
+    setPaymentMethodFilter(newMethods);
+    onFilterChange?.({
+      categories: categoryFilter,
+      statuses: statusFilter,
+      paymentMethods: newMethods,
+    });
+  };
+
   const handleClearAll = () => {
     setCategoryFilter([]);
     setStatusFilter([]);
-    onFilterChange?.({ categories: [], statuses: [] });
+    setPaymentMethodFilter([]);
+    onFilterChange?.({ categories: [], statuses: [], paymentMethods: [] });
   };
 
   const hasActiveFilters = categoryFilter.length > 0 || statusFilter.length > 0;
-  const activeFilterCount = categoryFilter.length + statusFilter.length;
+  const activeFilterCount =
+    categoryFilter.length + statusFilter.length + paymentMethodFilter.length;
 
   return (
     <Popover>
@@ -123,6 +152,27 @@ const DataTableFilter = ({
                         onCheckedChange={() => handleStatusChange(status)}
                       />
                       <span>{status}</span>
+                    </div>
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            )}
+            {showPaymentMethod && showStatus && <CommandSeparator />}
+            {showPaymentMethod && (
+              <CommandGroup heading="Payment Method">
+                {PAYMENT_METHODS.map((method) => (
+                  <CommandItem
+                    key={method}
+                    onSelect={() => handlePaymentMethodChange(method)}
+                  >
+                    <div className="flex items-center gap-2">
+                      <Checkbox
+                        checked={paymentMethodFilter.includes(method)}
+                        onCheckedChange={() =>
+                          handlePaymentMethodChange(method)
+                        }
+                      />
+                      <span>{method}</span>
                     </div>
                   </CommandItem>
                 ))}
