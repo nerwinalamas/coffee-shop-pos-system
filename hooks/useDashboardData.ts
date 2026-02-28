@@ -62,6 +62,17 @@ export interface DashboardStats {
   pendingTransactions: number;
 }
 
+export interface PaymentMethodBreakdown {
+  method: string;
+  amount: number;
+  count: number;
+}
+
+export interface StatusBreakdown {
+  status: string;
+  count: number;
+}
+
 export interface DashboardData {
   stats: DashboardStats;
   salesTrend: SalesTrendPoint[];
@@ -69,6 +80,8 @@ export interface DashboardData {
   recentTransactions: RecentTransaction[];
   lowStockItems: LowStockItem[];
   topProducts: TopProduct[];
+  paymentMethodBreakdown: PaymentMethodBreakdown[];
+  statusBreakdown: StatusBreakdown[];
 }
 
 // Local types matching what Supabase returns for joined queries
@@ -142,6 +155,7 @@ export const useDashboardData = () => {
         pendingTx,
         last7DaysTx,
         txItems,
+        thisMonthDetailTx,
       ] = await Promise.all([
         // Today's sales
         supabase
@@ -236,6 +250,11 @@ export const useDashboardData = () => {
           )
           .gte("created_at", thisMonthStart.toISOString())
           .returns<TxItemRow[]>(),
+
+        supabase
+          .from("transactions")
+          .select("payment_method, status, total_amount")
+          .gte("created_at", thisMonthStart.toISOString()),
       ]);
 
       // ---- STATS ----
@@ -370,6 +389,30 @@ export const useDashboardData = () => {
           product: item.products!,
         }));
 
+      // ---- PAYMENT METHOD BREAKDOWN ----
+      const paymentMap: Record<string, { amount: number; count: number }> = {};
+      thisMonthDetailTx.data?.forEach((t) => {
+        const method = t.payment_method ?? "Unknown";
+        if (!paymentMap[method]) paymentMap[method] = { amount: 0, count: 0 };
+        paymentMap[method].amount += t.total_amount || 0;
+        paymentMap[method].count += 1;
+      });
+      const paymentMethodBreakdown: PaymentMethodBreakdown[] = Object.entries(
+        paymentMap,
+      )
+        .map(([method, val]) => ({ method, ...val }))
+        .sort((a, b) => b.amount - a.amount);
+
+      // ---- STATUS BREAKDOWN ----
+      const statusMap: Record<string, number> = {};
+      thisMonthDetailTx.data?.forEach((t) => {
+        const s = t.status ?? "Unknown";
+        statusMap[s] = (statusMap[s] ?? 0) + 1;
+      });
+      const statusBreakdown: StatusBreakdown[] = Object.entries(statusMap).map(
+        ([status, count]) => ({ status, count }),
+      );
+
       return {
         stats,
         salesTrend,
@@ -377,6 +420,8 @@ export const useDashboardData = () => {
         recentTransactions: (recentTx.data ?? []) as RecentTransaction[],
         lowStockItems,
         topProducts,
+        paymentMethodBreakdown,
+        statusBreakdown,
       };
     },
     refetchInterval: 60_000,
