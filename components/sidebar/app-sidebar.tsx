@@ -1,14 +1,6 @@
-import Link from "next/link";
-import {
-  Home,
-  ShoppingBag,
-  Package,
-  User2,
-  ChevronUp,
-  Receipt,
-  BarChart2,
-} from "lucide-react";
+import { ChevronUp } from "lucide-react";
 import SidebarLogo from "@/components/sidebar/sidebar-logo";
+import SidebarNavItems from "@/components/sidebar/sidebar-nav-items";
 import MenuItems from "@/components/sidebar/menu-items";
 import UserInfo from "@/components/sidebar/user-info";
 import UserAvatar from "@/components/sidebar/user-avatar";
@@ -32,39 +24,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-const items = [
-  {
-    title: "Dashboard",
-    url: "/dashboard",
-    icon: Home,
-  },
-  {
-    title: "Products",
-    url: "/products",
-    icon: ShoppingBag,
-  },
-  {
-    title: "Inventory",
-    url: "/inventory",
-    icon: Package,
-  },
-  {
-    title: "Transaction History",
-    url: "/transactions",
-    icon: Receipt,
-  },
-  {
-    title: "Sales Reports",
-    url: "/sales",
-    icon: BarChart2,
-  },
-  {
-    title: "Users",
-    url: "/users",
-    icon: User2,
-  },
-];
-
 export const AppSidebar = () => {
   return (
     <Sidebar>
@@ -81,16 +40,7 @@ export const AppSidebar = () => {
           <SidebarGroupLabel>Management</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <Link href={item.url} className="flex items-center gap-3">
-                      <item.icon className="h-5 w-5" />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              <SidebarNavItems />
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
