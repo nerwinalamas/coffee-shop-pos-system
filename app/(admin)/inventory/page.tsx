@@ -1,7 +1,12 @@
+import PageTransition from "@/components/page-transition";
 import InventoryTable from "./_components/inventory-table";
 
 const InventoryPage = () => {
-  return <InventoryTable />;
+  return (
+    <PageTransition>
+      <InventoryTable />
+    </PageTransition>
+  );
 };
 
 export default InventoryPage;

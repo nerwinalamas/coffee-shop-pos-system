@@ -7,6 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import OrderItems from "./order-items";
 import PaymentModal from "@/components/modals/payment-modal";
 import { useState } from "react";
+import { AnimatePresence } from "framer-motion";
 
 const OrderDetails = () => {
   const { items, subtotal, tax, total, clearOrder } = useOrderStore();
@@ -18,19 +19,21 @@ const OrderDetails = () => {
         <Heading title="Order Details" />
 
         {/* Order items */}
-        <div className="flex-1 space-y-2 overflow-y-auto pr-2">
+        <div className="flex-1 space-y-2 overflow-y-auto overflow-x-hidden pr-2">
           {items.length > 0 ? (
-            items.map((item) => (
-              <OrderItems
-                key={item.id}
-                id={item.id}
-                imageUrl={item.image || ""}
-                name={item.name}
-                price={item.price}
-                quantity={item.quantity}
-                maxQuantity={item.maxQuantity}
-              />
-            ))
+            <AnimatePresence mode="popLayout">
+              {items.map((item) => (
+                <OrderItems
+                  key={item.id}
+                  id={item.id}
+                  imageUrl={item.image || ""}
+                  name={item.name}
+                  price={item.price}
+                  quantity={item.quantity}
+                  maxQuantity={item.maxQuantity}
+                />
+              ))}
+            </AnimatePresence>
           ) : (
             <div className="text-gray-500 text-center text-sm py-8">
               No items in order

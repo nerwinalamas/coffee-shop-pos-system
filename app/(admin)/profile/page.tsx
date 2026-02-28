@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import PageTransition from "@/components/page-transition";
 import PageHeader from "./_components/page-header";
 import ProfileInformationCard from "./_components/profile-information-card";
 import PasswordChangeCard from "./_components/password-change-card";
@@ -19,15 +20,17 @@ const ProfilePage = async () => {
     .single();
 
   return (
-    <div className="space-y-6">
-      <PageHeader />
-      <ProfileInformationCard profile={profile} />
-      {profile?.businesses && (
-        <BusinessDetailsCard business={profile.businesses} />
-      )}
-      <PasswordChangeCard />
-      <AccountInformationCard profile={profile} />
-    </div>
+    <PageTransition>
+      <div className="space-y-6">
+        <PageHeader />
+        <ProfileInformationCard profile={profile} />
+        {profile?.businesses && (
+          <BusinessDetailsCard business={profile.businesses} />
+        )}
+        <PasswordChangeCard />
+        <AccountInformationCard profile={profile} />
+      </div>
+    </PageTransition>
   );
 };
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "framer-motion";
 import { ProductWithInventory } from "@/types/product.types";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -26,7 +27,12 @@ const ProductCard = ({ product, isOutOfStock }: ProductCardProps) => {
   };
 
   return (
-    <div
+    <motion.div
+      layout
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      transition={{ duration: 0.2, ease: "easeOut" as const }}
       className={`p-2 flex flex-col gap-1.5 bg-white border rounded-lg ${
         isOutOfStock ? "opacity-60" : ""
       }`}
@@ -56,7 +62,7 @@ const ProductCard = ({ product, isOutOfStock }: ProductCardProps) => {
       <div className="text-xs text-gray-400">
         {isOutOfStock ? "Out of stock" : `${availableQty} available`}
       </div>
-    </div>
+    </motion.div>
   );
 };
 

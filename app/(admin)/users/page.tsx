@@ -1,7 +1,12 @@
+import PageTransition from "@/components/page-transition";
 import UserTable from "./_components/user-table";
 
 const UsersPage = () => {
-  return <UserTable />;
+  return (
+    <PageTransition>
+      <UserTable />;
+    </PageTransition>
+  );
 };
 
 export default UsersPage;

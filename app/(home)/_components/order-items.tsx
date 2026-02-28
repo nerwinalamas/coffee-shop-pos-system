@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "framer-motion";
 import ReusableImage from "@/components/reusable-image";
 import { Button } from "@/components/ui/button";
 import { Minus, Plus } from "lucide-react";
@@ -24,10 +25,7 @@ const OrderItems = ({
 }: OrderItemsProps) => {
   const { updateQuantity, removeItem } = useOrderStore();
 
-  const handleIncrement = () => {
-    updateQuantity(id, quantity + 1);
-  };
-
+  const handleIncrement = () => updateQuantity(id, quantity + 1);
   const handleDecrement = () => {
     if (quantity === 1) {
       removeItem(id);
@@ -37,7 +35,14 @@ const OrderItems = ({
   };
 
   return (
-    <div className="flex justify-between items-center text-sm">
+    <motion.div
+      layout
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 20 }}
+      transition={{ duration: 0.2, ease: "easeOut" as const }}
+      className="flex justify-between items-center text-sm"
+    >
       <div className="flex items-center gap-2">
         <ReusableImage
           src={imageUrl}
@@ -72,7 +77,7 @@ const OrderItems = ({
           <Plus className="w-4 h-4" />
         </Button>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
