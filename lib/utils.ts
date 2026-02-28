@@ -40,6 +40,7 @@ export const getPageName = (pathname: string) => {
     products: "Products",
     sales: "Sales",
     inventory: "Inventory",
+    transactions: "Transactions",
     users: "Users",
   };
 
