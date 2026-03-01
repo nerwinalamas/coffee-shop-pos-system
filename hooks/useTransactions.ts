@@ -12,9 +12,14 @@ export const useTransactions = () => {
         .from("transactions")
         .select(
           `
-          *,
-          transaction_items (*)
-        `,
+            *,
+            transaction_items (*),
+            cashier:profiles!transactions_user_id_fkey (
+              first_name,
+              last_name,
+              role
+            )
+          `,
         )
         .order("created_at", { ascending: false });
 
