@@ -100,6 +100,31 @@ const ViewTransactionDetailsModal = ({
 
           <Separator />
 
+          {/* Cashier Information */}
+          <div className="space-y-4">
+            <h4 className="text-sm font-semibold text-muted-foreground uppercase">
+              Cashier
+            </h4>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <p className="text-sm text-muted-foreground">Name</p>
+                <p className="text-base font-medium">
+                  {transaction.cashier
+                    ? `${transaction.cashier.first_name} ${transaction.cashier.last_name}`
+                    : "Unknown"}
+                </p>
+              </div>
+              <div className="space-y-1">
+                <p className="text-sm text-muted-foreground">Role</p>
+                <p className="text-base font-medium">
+                  {transaction.cashier?.role ?? "—"}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <Separator />
+
           {/* Transaction Items */}
           <div className="space-y-4">
             <h4 className="text-sm font-semibold text-muted-foreground uppercase">
@@ -120,7 +145,7 @@ const ViewTransactionDetailsModal = ({
                     <div className="flex-1">
                       <p className="font-medium">{item.product_name}</p>
                       <p className="text-sm text-muted-foreground">
-                        ${item.product_price.toFixed(2)} × {item.quantity}
+                        ${item.product_price.toFixed(2)} x {item.quantity}
                       </p>
                     </div>
                     <div className="text-right">
@@ -150,7 +175,7 @@ const ViewTransactionDetailsModal = ({
               </div>
               <div className="flex justify-between text-base">
                 <span className="text-muted-foreground">
-                  Tax {(transaction.tax_rate * 100)}%
+                  Tax {transaction.tax_rate * 100}%
                 </span>
                 <span className="font-medium">
                   ${transaction.tax_amount.toFixed(2)}

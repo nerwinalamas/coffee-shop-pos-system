@@ -11,6 +11,10 @@ const ReceiptTransactionInfo = ({
     ? new Date(transaction.created_at)
     : null;
 
+  const cashierName = transaction.cashier
+    ? `${transaction.cashier.first_name} ${transaction.cashier.last_name}`
+    : "Unknown";
+
   return (
     <div className="mb-4 text-sm">
       <div className="flex justify-between">
@@ -34,6 +38,10 @@ const ReceiptTransactionInfo = ({
       <div className="flex justify-between">
         <span>Customer:</span>
         <span>{transaction.customer_name || "Walk-in Customer"}</span>
+      </div>
+      <div className="flex justify-between">
+        <span>Cashier:</span>
+        <span>{cashierName}</span>
       </div>
       <div className="flex justify-between">
         <span>Payment:</span>
