@@ -14,7 +14,7 @@ create table if not exists transactions (
   total_amount numeric(10, 2) not null check (total_amount >= 0),
   payment_method payment_method not null,
   status transaction_status not null default 'Pending',
-  user_id uuid references auth.users(id) on delete set null,
+  user_id uuid references public.profiles(id) on delete set null,
   created_at timestamptz default now(),
   updated_at timestamptz default now()
 );
