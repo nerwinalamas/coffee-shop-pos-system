@@ -5,6 +5,8 @@ import ReusableImage from "@/components/reusable-image";
 import { Button } from "@/components/ui/button";
 import { Minus, Plus } from "lucide-react";
 import { useOrderStore } from "@/store/order";
+import { useState } from "react";
+import QuantityModal from "@/components/modals/quantity-modal";
 
 interface OrderItemsProps {
   id: string;
@@ -24,6 +26,7 @@ const OrderItems = ({
   maxQuantity,
 }: OrderItemsProps) => {
   const { updateQuantity, removeItem } = useOrderStore();
+  const [isQtyModalOpen, setIsQtyModalOpen] = useState(false);
 
   const handleIncrement = () => updateQuantity(id, quantity + 1);
   const handleDecrement = () => {
@@ -35,49 +38,66 @@ const OrderItems = ({
   };
 
   return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: 20 }}
-      transition={{ duration: 0.2, ease: "easeOut" as const }}
-      className="flex justify-between items-center text-sm"
-    >
-      <div className="flex items-center gap-2">
-        <ReusableImage
-          src={imageUrl}
-          alt={name}
-          className="w-14 h-14"
-          fallbackText={name}
-          priority
-        />
-        <div className="flex flex-col gap-2">
-          <span className="text-sm">{name}</span>
-          <span className="font-semibold text-base">${price.toFixed(2)}</span>
+    <>
+      <motion.div
+        layout
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: 20 }}
+        transition={{ duration: 0.2, ease: "easeOut" as const }}
+        className="flex justify-between items-center text-sm"
+      >
+        <div className="flex items-center gap-2">
+          <ReusableImage
+            src={imageUrl}
+            alt={name}
+            className="w-14 h-14"
+            fallbackText={name}
+            priority
+          />
+          <div className="flex flex-col gap-2">
+            <span className="text-sm">{name}</span>
+            <span className="font-semibold text-base">${price.toFixed(2)}</span>
+          </div>
         </div>
-      </div>
-      <div className="flex items-center gap-3">
-        <Button
-          size="icon"
-          className="rounded-full"
-          variant="outline"
-          onClick={handleDecrement}
-        >
-          <Minus className="w-4 h-4" />
-        </Button>
-        <span className="font-semibold min-w-[20px] text-center">
-          {quantity}
-        </span>
-        <Button
-          size="icon"
-          className="rounded-full"
-          onClick={handleIncrement}
-          disabled={quantity >= maxQuantity}
-        >
-          <Plus className="w-4 h-4" />
-        </Button>
-      </div>
-    </motion.div>
+        <div className="flex items-center gap-3">
+          <Button
+            size="icon"
+            className="rounded-full"
+            variant="outline"
+            onClick={handleDecrement}
+          >
+            <Minus className="w-4 h-4" />
+          </Button>
+
+          <span
+            className="font-semibold min-w-[20px] text-center cursor-pointer hover:bg-gray-100 rounded px-1 py-0.5 transition-colors"
+            onClick={() => setIsQtyModalOpen(true)}
+            title="Click to edit quantity"
+          >
+            {quantity}
+          </span>
+
+          <Button
+            size="icon"
+            className="rounded-full"
+            onClick={handleIncrement}
+            disabled={quantity >= maxQuantity}
+          >
+            <Plus className="w-4 h-4" />
+          </Button>
+        </div>
+      </motion.div>
+
+      <QuantityModal
+        open={isQtyModalOpen}
+        onOpenChange={setIsQtyModalOpen}
+        id={id}
+        name={name}
+        quantity={quantity}
+        maxQuantity={maxQuantity}
+      />
+    </>
   );
 };
 
