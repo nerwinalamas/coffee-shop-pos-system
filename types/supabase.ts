@@ -118,6 +118,57 @@ export type Database = {
           },
         ]
       }
+      notifications: {
+        Row: {
+          business_id: string
+          created_at: string | null
+          entity_id: string | null
+          id: string
+          is_read: boolean | null
+          message: string
+          title: string
+          type: Database["public"]["Enums"]["notification_type"]
+          user_id: string | null
+        }
+        Insert: {
+          business_id: string
+          created_at?: string | null
+          entity_id?: string | null
+          id?: string
+          is_read?: boolean | null
+          message: string
+          title: string
+          type: Database["public"]["Enums"]["notification_type"]
+          user_id?: string | null
+        }
+        Update: {
+          business_id?: string
+          created_at?: string | null
+          entity_id?: string | null
+          id?: string
+          is_read?: boolean | null
+          message?: string
+          title?: string
+          type?: Database["public"]["Enums"]["notification_type"]
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       products: {
         Row: {
           business_id: string
@@ -328,6 +379,7 @@ export type Database = {
     }
     Enums: {
       inventory_status: "In Stock" | "Low Stock" | "Out of Stock"
+      notification_type: "low_stock" | "out_of_stock" | "pending_order"
       payment_method: "Cash" | "Credit Card" | "Debit Card" | "E-Wallet"
       product_category: "Coffee" | "Food" | "Dessert"
       transaction_status: "Completed" | "Pending" | "Cancelled"
@@ -464,6 +516,7 @@ export const Constants = {
   public: {
     Enums: {
       inventory_status: ["In Stock", "Low Stock", "Out of Stock"],
+      notification_type: ["low_stock", "out_of_stock", "pending_order"],
       payment_method: ["Cash", "Credit Card", "Debit Card", "E-Wallet"],
       product_category: ["Coffee", "Food", "Dessert"],
       transaction_status: ["Completed", "Pending", "Cancelled"],
