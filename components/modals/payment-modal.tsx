@@ -55,10 +55,24 @@ const PaymentModal = ({ open, onOpenChange }: PaymentModalProps) => {
         throw new Error("User not authenticated");
       }
 
+      // Get business_id from profile
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("business_id")
+        .eq("id", user.id)
+        .single();
+
+      if (profileError || !profile?.business_id) {
+        throw new Error("Could not retrieve business information");
+      }
+
+      const business_id = profile.business_id;
+
       // 1. Insert transaction
       const { data: transaction, error: transactionError } = await supabase
         .from("transactions")
         .insert({
+          business_id,
           customer_name: values.customer_name || null,
           subtotal: subtotal,
           payment_method: values.payment_method,
