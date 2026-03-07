@@ -23,7 +23,11 @@ const notificationIcon = (type: Notification["type"]) => {
   }
 };
 
-const NotificationBell = ({ businessId }: { businessId: string }) => {
+const NotificationBell = ({
+  businessId,
+}: {
+  businessId: string | undefined;
+}) => {
   const {
     data: notifications = [],
     unreadCount,
