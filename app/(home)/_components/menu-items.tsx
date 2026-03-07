@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import ProductCard from "./product-card";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-const PAGE_SIZE = 12;
+const PAGE_SIZE = 15;
 
 interface MenuItemsProps {
   data: ProductWithInventory[] | undefined;
@@ -34,7 +34,7 @@ const MenuItems = ({ data, currentPage, setCurrentPage }: MenuItemsProps) => {
 
   return (
     <div>
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pb-4">
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 pb-4">
         <AnimatePresence mode="popLayout">
           {currentData.map((product) => {
             let isOutOfStock = true;
