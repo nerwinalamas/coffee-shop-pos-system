@@ -1,12 +1,17 @@
 import Link from "next/link";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { User2 } from "lucide-react";
+import { ShoppingCart, User2 } from "lucide-react";
 
 const menuItems = [
   {
     icon: User2,
     label: "Profile Settings",
     href: "/profile",
+  },
+  {
+    icon: ShoppingCart,
+    label: "Home",
+    href: "/",
   },
   // {
   //   icon: CreditCard,

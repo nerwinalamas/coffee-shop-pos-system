@@ -8,12 +8,15 @@ import CategoryTabs from "./category-tabs";
 import MenuItems from "./menu-items";
 import AvailabilityFilter from "./availability-filter";
 import { Button } from "@/components/ui/button";
-import { LogOut } from "lucide-react";
+import { LogOut, LayoutDashboard } from "lucide-react";
+import Link from "next/link";
 
 interface MenuProps {
   posUser: { name: string; role: string };
   onSignOut: () => void;
 }
+
+const DASHBOARD_ROLES = ["Admin", "Owner"];
 
 const Menu = ({ posUser, onSignOut }: MenuProps) => {
   const [selectedCategory, setSelectedCategory] = useState<
@@ -26,6 +29,8 @@ const Menu = ({ posUser, onSignOut }: MenuProps) => {
   >("Available");
 
   const { data: products, isLoading, error } = useProductsWithInventory();
+
+  const canAccessDashboard = DASHBOARD_ROLES.includes(posUser.role);
 
   const filteredProducts = useMemo(() => {
     if (!products) return [];
@@ -116,15 +121,30 @@ const Menu = ({ posUser, onSignOut }: MenuProps) => {
           <p className="text-sm font-medium text-gray-900">{posUser.name}</p>
           <p className="text-xs text-muted-foreground">{posUser.role}</p>
         </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="gap-2 text-gray-500 hover:text-red-600"
-          onClick={onSignOut}
-        >
-          <LogOut className="w-4 h-4" />
-          Sign Out
-        </Button>
+        <div className="flex items-center gap-1">
+          {canAccessDashboard && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="gap-2 text-gray-500 hover:text-blue-600"
+              asChild
+            >
+              <Link href="/dashboard">
+                <LayoutDashboard className="w-4 h-4" />
+                Dashboard
+              </Link>
+            </Button>
+          )}
+          <Button
+            variant="ghost"
+            size="sm"
+            className="gap-2 text-gray-500 hover:text-red-600"
+            onClick={onSignOut}
+          >
+            <LogOut className="w-4 h-4" />
+            Sign Out
+          </Button>
+        </div>
       </div>
 
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
