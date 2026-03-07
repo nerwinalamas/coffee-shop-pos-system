@@ -34,10 +34,10 @@ create policy "System can insert notifications"
   on notifications for insert
   with check (business_id = get_my_business_id());
 
-create policy "Users can update their own notifications"
+create policy "Users can update notifications in their business"
   on notifications for update
-  using (user_id = auth.uid())
-  with check (user_id = auth.uid());
+  using (business_id = get_my_business_id())
+  with check (business_id = get_my_business_id());
 
 create policy "Owners and admins can delete notifications"
   on notifications for delete
