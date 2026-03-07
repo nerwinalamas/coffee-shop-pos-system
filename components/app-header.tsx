@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { getPageName } from "@/lib/utils";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
+import NotificationBell from "./notification-bell";
 
 const AppHeader = () => {
   const pathname = usePathname();
@@ -16,8 +17,9 @@ const AppHeader = () => {
         orientation="vertical"
         className="mr-2 data-[orientation=vertical]:h-4"
       />
-      <div className="flex items-center gap-2">
+      <div className="flex flex-1 items-center justify-between gap-2">
         <h1 className="text-sm font-semibold">{pageName}</h1>
+        <NotificationBell businessId="f1b2c3d4-e5f6-7890-abcd-ef1234567890" />
       </div>
     </header>
   );
