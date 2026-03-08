@@ -23,6 +23,9 @@ create index if not exists notifications_created_at_idx on notifications(created
 create index if not exists notifications_business_unread_idx on notifications(business_id, is_read)
   where is_read = false;
 
+-- REALTIME
+alter publication supabase_realtime add table notifications;
+
 -- RLS
 alter table notifications enable row level security;
 
