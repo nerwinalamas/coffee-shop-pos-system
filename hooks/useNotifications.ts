@@ -32,7 +32,7 @@ export const useNotifications = (businessId: string | undefined) => {
     if (!businessId) return;
 
     const channel = supabase
-      .channel("notifications-realtime")
+      .channel(`notifications-realtime-${businessId}`)
       .on(
         "postgres_changes",
         {
