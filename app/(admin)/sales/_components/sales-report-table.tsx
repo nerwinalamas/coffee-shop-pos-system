@@ -215,7 +215,7 @@ const SalesReportTable = () => {
           <Button
             variant="outline"
             size="sm"
-            className="gap-2 text-sm"
+            className="gap-2 text-sm cursor-pointer"
             disabled={!report || isLoading}
             onClick={() => report && exportToCSV(report)}
           >
@@ -224,7 +224,7 @@ const SalesReportTable = () => {
           </Button>
           <Button
             size="sm"
-            className="gap-2 text-sm"
+            className="gap-2 text-sm cursor-pointer"
             disabled={!report || isLoading}
             onClick={() => report && exportToPDF(report)}
           >

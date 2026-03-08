@@ -59,15 +59,23 @@ const UserRoleForm = ({
                 disabled={isSubmitting}
               >
                 <FormControl>
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger className="w-full cursor-pointer">
                     <SelectValue placeholder="Select Role" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="Owner">Owner</SelectItem>
-                  <SelectItem value="Admin">Admin</SelectItem>
-                  <SelectItem value="Manager">Manager</SelectItem>
-                  <SelectItem value="Staff">Staff</SelectItem>
+                  <SelectItem value="Owner" className="cursor-pointer">
+                    Owner
+                  </SelectItem>
+                  <SelectItem value="Admin" className="cursor-pointer">
+                    Admin
+                  </SelectItem>
+                  <SelectItem value="Manager" className="cursor-pointer">
+                    Manager
+                  </SelectItem>
+                  <SelectItem value="Staff" className="cursor-pointer">
+                    Staff
+                  </SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -81,10 +89,15 @@ const UserRoleForm = ({
             variant="outline"
             disabled={isSubmitting}
             onClick={handleCancel}
+            className="cursor-pointer"
           >
             Cancel
           </Button>
-          <Button type="submit" disabled={isSubmitting}>
+          <Button
+            type="submit"
+            disabled={isSubmitting}
+            className="cursor-pointer"
+          >
             {isSubmitting ? submitLoadingLabel : submitLabel}
           </Button>
         </div>

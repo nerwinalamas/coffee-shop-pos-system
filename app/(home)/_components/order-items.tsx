@@ -63,7 +63,7 @@ const OrderItems = ({
         <div className="flex items-center gap-3">
           <Button
             size="icon"
-            className="rounded-full"
+            className="rounded-full cursor-pointer"
             variant="outline"
             onClick={handleDecrement}
           >
@@ -80,7 +80,7 @@ const OrderItems = ({
 
           <Button
             size="icon"
-            className="rounded-full"
+            className="rounded-full cursor-pointer"
             onClick={handleIncrement}
             disabled={quantity >= maxQuantity}
           >

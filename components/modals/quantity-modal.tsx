@@ -79,12 +79,12 @@ const QuantityModal = ({
         <div className="flex gap-2">
           <Button
             variant="outline"
-            className="flex-1"
+            className="flex-1 cursor-pointer"
             onClick={() => onOpenChange(false)}
           >
             Cancel
           </Button>
-          <Button className="flex-1" onClick={handleConfirm}>
+          <Button className="flex-1 cursor-pointer" onClick={handleConfirm}>
             Confirm
           </Button>
         </div>

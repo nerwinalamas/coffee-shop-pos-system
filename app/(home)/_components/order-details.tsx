@@ -65,7 +65,7 @@ const OrderDetails = () => {
         {/* Action buttons */}
         <div className="mt-4 space-y-4">
           <Button
-            className="w-full"
+            className="w-full cursor-pointer"
             disabled={items.length === 0}
             onClick={() => setIsPaymentAddModalOpen(true)}
           >
@@ -73,7 +73,7 @@ const OrderDetails = () => {
           </Button>
           <Button
             variant="secondary"
-            className="w-full"
+            className="w-full cursor-pointer"
             onClick={clearOrder}
             disabled={items.length === 0}
           >

@@ -67,7 +67,7 @@ const MenuItems = ({ data, currentPage, setCurrentPage }: MenuItemsProps) => {
             size="sm"
             onClick={goToPreviousPage}
             disabled={currentPage === 0}
-            className="flex items-center gap-1"
+            className="flex items-center gap-1 cursor-pointer"
           >
             <ChevronLeft className="h-4 w-4" />
             Previous
@@ -77,7 +77,7 @@ const MenuItems = ({ data, currentPage, setCurrentPage }: MenuItemsProps) => {
             size="sm"
             onClick={goToNextPage}
             disabled={currentPage === totalPages - 1}
-            className="flex items-center gap-1"
+            className="flex items-center gap-1 cursor-pointer"
           >
             Next
             <ChevronRight className="h-4 w-4" />

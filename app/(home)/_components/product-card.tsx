@@ -55,7 +55,12 @@ const ProductCard = ({ product, isOutOfStock }: ProductCardProps) => {
         <div className="text-lg font-semibold text-gray-900">
           ${product.price.toFixed(2)}
         </div>
-        <Button size="sm" onClick={handleAddToOrder} disabled={isOutOfStock}>
+        <Button
+          size="sm"
+          onClick={handleAddToOrder}
+          disabled={isOutOfStock}
+          className="cursor-pointer"
+        >
           Add
         </Button>
       </div>

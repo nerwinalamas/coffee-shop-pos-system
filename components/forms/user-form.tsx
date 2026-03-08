@@ -183,14 +183,20 @@ const UserForm = ({
                   disabled={isSubmitting}
                 >
                   <FormControl>
-                    <SelectTrigger className="w-full">
+                    <SelectTrigger className="w-full cursor-pointer">
                       <SelectValue placeholder="Select Role" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="Admin">Admin</SelectItem>
-                    <SelectItem value="Manager">Manager</SelectItem>
-                    <SelectItem value="Staff">Staff</SelectItem>
+                    <SelectItem value="Admin" className="cursor-pointer">
+                      Admin
+                    </SelectItem>
+                    <SelectItem value="Manager" className="cursor-pointer">
+                      Manager
+                    </SelectItem>
+                    <SelectItem value="Staff" className="cursor-pointer">
+                      Staff
+                    </SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -212,13 +218,17 @@ const UserForm = ({
                   disabled={isSubmitting}
                 >
                   <FormControl>
-                    <SelectTrigger className="w-full">
+                    <SelectTrigger className="w-full cursor-pointer">
                       <SelectValue placeholder="Select Status" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="Active">Active</SelectItem>
-                    <SelectItem value="Inactive">Inactive</SelectItem>
+                    <SelectItem value="Active" className="cursor-pointer">
+                      Active
+                    </SelectItem>
+                    <SelectItem value="Inactive" className="cursor-pointer">
+                      Inactive
+                    </SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -233,10 +243,15 @@ const UserForm = ({
             variant="outline"
             disabled={isSubmitting}
             onClick={handleCancel}
+            className="cursor-pointer"
           >
             Cancel
           </Button>
-          <Button type="submit" disabled={isSubmitting}>
+          <Button
+            type="submit"
+            disabled={isSubmitting}
+            className="cursor-pointer"
+          >
             {isSubmitting ? submitLoadingLabel : submitLabel}
           </Button>
         </div>

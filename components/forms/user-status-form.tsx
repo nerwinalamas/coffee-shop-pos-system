@@ -59,13 +59,17 @@ const UserStatusForm = ({
                 disabled={isSubmitting}
               >
                 <FormControl>
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger className="w-full cursor-pointer">
                     <SelectValue placeholder="Select Status" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="Active">Active</SelectItem>
-                  <SelectItem value="Inactive">Inactive</SelectItem>
+                  <SelectItem value="Active" className="cursor-pointer">
+                    Active
+                  </SelectItem>
+                  <SelectItem value="Inactive" className="cursor-pointer">
+                    Inactive
+                  </SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -79,10 +83,15 @@ const UserStatusForm = ({
             variant="outline"
             disabled={isSubmitting}
             onClick={handleCancel}
+            className="cursor-pointer"
           >
             Cancel
           </Button>
-          <Button type="submit" disabled={isSubmitting}>
+          <Button
+            type="submit"
+            disabled={isSubmitting}
+            className="cursor-pointer"
+          >
             {isSubmitting ? submitLoadingLabel : submitLabel}
           </Button>
         </div>

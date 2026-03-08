@@ -72,11 +72,13 @@ const DeleteInventoryModal = ({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={isDeleting} className="cursor-pointer">
+            Cancel
+          </AlertDialogCancel>
           <AlertDialogAction
             onClick={handleDelete}
             disabled={isDeleting}
-            className="bg-destructive text-white hover:bg-destructive/90"
+            className="bg-destructive text-white hover:bg-destructive/90 cursor-pointer"
           >
             {isDeleting ? "Deleting..." : "Delete"}
           </AlertDialogAction>

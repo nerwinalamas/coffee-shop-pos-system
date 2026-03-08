@@ -208,7 +208,7 @@ const SignUpForm = () => {
           type="button"
           onClick={form.handleSubmit(onSubmit)}
           disabled={isSubmitting}
-          className="w-full bg-amber-600 hover:bg-amber-700 mt-6"
+          className="w-full bg-amber-600 hover:bg-amber-700 mt-6 cursor-pointer"
         >
           {isSubmitting ? "Creating Account..." : "Create Account"}
         </Button>

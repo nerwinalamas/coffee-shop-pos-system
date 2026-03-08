@@ -84,15 +84,23 @@ const PaymentForm = ({
                 disabled={isSubmitting}
               >
                 <FormControl>
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger className="w-full cursor-pointer">
                     <SelectValue placeholder="Select payment method" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="Cash">Cash</SelectItem>
-                  <SelectItem value="Credit Card">Credit Card</SelectItem>
-                  <SelectItem value="Debit Card">Debit Card</SelectItem>
-                  <SelectItem value="E-Wallet">E-Wallet</SelectItem>
+                  <SelectItem value="Cash" className="cursor-pointer">
+                    Cash
+                  </SelectItem>
+                  <SelectItem value="Credit Card" className="cursor-pointer">
+                    Credit Card
+                  </SelectItem>
+                  <SelectItem value="Debit Card" className="cursor-pointer">
+                    Debit Card
+                  </SelectItem>
+                  <SelectItem value="E-Wallet" className="cursor-pointer">
+                    E-Wallet
+                  </SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -123,10 +131,15 @@ const PaymentForm = ({
             variant="outline"
             disabled={isSubmitting}
             onClick={handleCancel}
+            className="cursor-pointer"
           >
             Cancel
           </Button>
-          <Button type="submit" disabled={isSubmitting}>
+          <Button
+            type="submit"
+            disabled={isSubmitting}
+            className="cursor-pointer"
+          >
             {isSubmitting ? submitLoadingLabel : submitLabel}
           </Button>
         </div>

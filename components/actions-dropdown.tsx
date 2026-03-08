@@ -24,7 +24,7 @@ const ActionsDropdown = ({ actions }: ActionsDropdownProps) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon">
+        <Button variant="ghost" size="icon" className="cursor-pointer">
           <MoreHorizontal className="w-4 h-4" />
         </Button>
       </DropdownMenuTrigger>
@@ -36,6 +36,7 @@ const ActionsDropdown = ({ actions }: ActionsDropdownProps) => {
               key={index}
               onClick={action.onClick}
               variant={action.variant}
+              className="cursor-pointer"
             >
               <Icon className="w-4 h-4 mr-2" />
               {action.label}

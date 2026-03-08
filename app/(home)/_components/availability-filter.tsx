@@ -29,12 +29,12 @@ const AvailabilityFilter = ({
         setAvailabilityFilter(value as "All" | "Available" | "Out of Stock")
       }
     >
-      <SelectTrigger className="w-[180px]">
+      <SelectTrigger className="w-[180px] cursor-pointer">
         <SelectValue placeholder="Filter by availability" />
       </SelectTrigger>
       <SelectContent>
         {options.map((option) => (
-          <SelectItem key={option.value} value={option.value}>
+          <SelectItem key={option.value} value={option.value} className="cursor-pointer">
             {option.label}
           </SelectItem>
         ))}

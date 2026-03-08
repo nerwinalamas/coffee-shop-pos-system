@@ -138,7 +138,7 @@ const Menu = ({ posUser, onSignOut }: MenuProps) => {
           <Button
             variant="ghost"
             size="sm"
-            className="gap-2 text-gray-500 hover:text-red-600"
+            className="gap-2 text-gray-500 hover:text-red-600 cursor-pointer"
             onClick={onSignOut}
           >
             <LogOut className="w-4 h-4" />

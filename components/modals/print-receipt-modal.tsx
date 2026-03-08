@@ -56,10 +56,14 @@ const PrintReceiptModal = ({
         </div>
 
         <div className="flex justify-end gap-2">
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+          <Button
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+            className="cursor-pointer"
+          >
             Cancel
           </Button>
-          <Button onClick={() => handlePrint()}>
+          <Button onClick={() => handlePrint()} className="cursor-pointer">
             <Printer className="mr-2 h-4 w-4" />
             Print Receipt
           </Button>

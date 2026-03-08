@@ -97,10 +97,15 @@ const RestockForm = ({
             variant="outline"
             disabled={isSubmitting}
             onClick={handleCancel}
+            className="cursor-pointer"
           >
             Cancel
           </Button>
-          <Button type="submit" disabled={isSubmitting}>
+          <Button
+            type="submit"
+            disabled={isSubmitting}
+            className="cursor-pointer"
+          >
             {isSubmitting ? submitLoadingLabel : submitLabel}
           </Button>
         </div>

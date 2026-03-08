@@ -33,7 +33,7 @@ const SignOutButton = () => {
     <DropdownMenuItem
       onClick={handleSignOut}
       disabled={isLoading}
-      className="text-red-600 focus:text-red-600 focus:bg-red-50"
+      className="text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer"
     >
       <LogOut className="mr-2 h-4 w-4" />
       <span>{isLoading ? "Signing out..." : "Sign out"}</span>

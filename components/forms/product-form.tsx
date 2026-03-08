@@ -170,14 +170,20 @@ const ProductForm = ({
                 disabled={isSubmitting}
               >
                 <FormControl>
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger className="w-full cursor-pointer">
                     <SelectValue placeholder="Select Category" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="Coffee">Coffee</SelectItem>
-                  <SelectItem value="Food">Food</SelectItem>
-                  <SelectItem value="Dessert">Dessert</SelectItem>
+                  <SelectItem value="Coffee" className="cursor-pointer">
+                    Coffee
+                  </SelectItem>
+                  <SelectItem value="Food" className="cursor-pointer">
+                    Food
+                  </SelectItem>
+                  <SelectItem value="Dessert" className="cursor-pointer">
+                    Dessert
+                  </SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -239,10 +245,15 @@ const ProductForm = ({
             variant="outline"
             disabled={isSubmitting}
             onClick={handleCancel}
+            className="cursor-pointer"
           >
             Cancel
           </Button>
-          <Button type="submit" disabled={isSubmitting || isUploading}>
+          <Button
+            type="submit"
+            disabled={isSubmitting || isUploading}
+            className="cursor-pointer"
+          >
             {isSubmitting ? submitLoadingLabel : submitLabel}
           </Button>
         </div>

@@ -88,7 +88,9 @@ const UserTable = () => {
       header: "First Name",
       size: 140,
       cell: ({ row }) => (
-        <div className="font-normal text-sm capitalize">{row.original.first_name}</div>
+        <div className="font-normal text-sm capitalize">
+          {row.original.first_name}
+        </div>
       ),
     },
     {
@@ -96,7 +98,9 @@ const UserTable = () => {
       header: "Last Name",
       size: 140,
       cell: ({ row }) => (
-        <div className="font-normal text-sm capitalize">{row.original.last_name}</div>
+        <div className="font-normal text-sm capitalize">
+          {row.original.last_name}
+        </div>
       ),
     },
     {
@@ -197,7 +201,10 @@ const UserTable = () => {
           <DataTableFilter filterType="user" onFilterChange={setFilters} />
         }
         headerActions={
-          <Button className="gap-2" onClick={() => setIsAddModalOpen(true)}>
+          <Button
+            className="gap-2 cursor-pointer"
+            onClick={() => setIsAddModalOpen(true)}
+          >
             <Plus className="w-4 h-4" />
             Add User
           </Button>

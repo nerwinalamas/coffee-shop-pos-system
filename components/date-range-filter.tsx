@@ -106,22 +106,36 @@ const DateRangeFilter = ({
         value={preset}
         onValueChange={(v) => handlePresetChange(v as DatePreset)}
       >
-        <SelectTrigger className="w-[150px] text-sm">
+        <SelectTrigger className="w-[150px] text-sm cursor-pointer">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="today">Today</SelectItem>
-          <SelectItem value="this_week">Last 7 Days</SelectItem>
-          <SelectItem value="this_month">This Month</SelectItem>
-          <SelectItem value="last_month">Last Month</SelectItem>
-          <SelectItem value="custom">Custom Range</SelectItem>
+          <SelectItem value="today" className="cursor-pointer">
+            Today
+          </SelectItem>
+          <SelectItem value="this_week" className="cursor-pointer">
+            Last 7 Days
+          </SelectItem>
+          <SelectItem value="this_month" className="cursor-pointer">
+            This Month
+          </SelectItem>
+          <SelectItem value="last_month" className="cursor-pointer">
+            Last Month
+          </SelectItem>
+          <SelectItem value="custom" className="cursor-pointer">
+            Custom Range
+          </SelectItem>
         </SelectContent>
       </Select>
 
       {preset === "custom" && (
         <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
           <PopoverTrigger asChild>
-            <Button variant="outline" size="sm" className="gap-2 text-sm">
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-2 text-sm cursor-pointer"
+            >
               <CalendarIcon className="h-3.5 w-3.5" />
               {customRange?.from && customRange?.to
                 ? `${format(customRange.from, "MMM d")} – ${format(customRange.to, "MMM d")}`

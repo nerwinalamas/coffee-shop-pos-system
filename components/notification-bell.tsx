@@ -38,7 +38,7 @@ const NotificationBell = ({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative h-8 w-8">
+        <Button variant="ghost" size="icon" className="relative h-8 w-8 cursor-pointer">
           <Bell className="h-4 w-4" />
 
           {/* Dot indicator */}
@@ -70,7 +70,7 @@ const NotificationBell = ({
             <Button
               variant="ghost"
               size="sm"
-              className="h-7 gap-1 text-xs text-muted-foreground hover:text-foreground"
+              className="h-7 gap-1 text-xs text-muted-foreground hover:text-foreground cursor-pointer"
               onClick={markAllAsRead}
             >
               <CheckCheck className="h-3 w-3" />

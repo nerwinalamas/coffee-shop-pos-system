@@ -103,7 +103,7 @@ const DataTableFilter = ({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" className="gap-2">
+        <Button variant="outline" className="gap-2 cursor-pointer">
           <Filter className="h-4 w-4" />
           Filter
           {activeFilterCount > 0 && (
@@ -124,7 +124,7 @@ const DataTableFilter = ({
                   <CommandItem
                     key={category}
                     onSelect={() => handleCategoryChange(category)}
-                    className="capitalize"
+                    className="capitalize cursor-pointer"
                   >
                     <div className="flex items-center gap-2">
                       <Checkbox
@@ -144,7 +144,7 @@ const DataTableFilter = ({
                   <CommandItem
                     key={status}
                     onSelect={() => handleStatusChange(status)}
-                    className="capitalize"
+                    className="capitalize cursor-pointer"
                   >
                     <div className="flex items-center gap-2">
                       <Checkbox
@@ -164,6 +164,7 @@ const DataTableFilter = ({
                   <CommandItem
                     key={method}
                     onSelect={() => handlePaymentMethodChange(method)}
+                    className="cursor-pointer"  
                   >
                     <div className="flex items-center gap-2">
                       <Checkbox
@@ -184,7 +185,7 @@ const DataTableFilter = ({
           <Button
             variant="ghost"
             size="sm"
-            className="w-full justify-center text-muted-foreground hover:text-foreground"
+            className="w-full justify-center text-muted-foreground hover:text-foreground cursor-pointer"
             onClick={handleClearAll}
             disabled={!hasActiveFilters}
           >

@@ -216,7 +216,10 @@ const InventoryTable = () => {
           <DataTableFilter filterType="inventory" onFilterChange={setFilters} />
         }
         headerActions={
-          <Button className="gap-2" onClick={() => setIsAddItemModalOpen(true)}>
+          <Button
+            className="gap-2 cursor-pointer"
+            onClick={() => setIsAddItemModalOpen(true)}
+          >
             <Plus className="w-4 h-4" />
             Add Item
           </Button>

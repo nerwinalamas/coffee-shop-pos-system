@@ -141,7 +141,7 @@ export function DataTable<TData, TValue>({
                       ? null
                       : flexRender(
                           header.column.columnDef.header,
-                          header.getContext()
+                          header.getContext(),
                         )}
                   </TableHead>
                 ))}
@@ -180,7 +180,7 @@ export function DataTable<TData, TValue>({
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}
@@ -220,14 +220,22 @@ export function DataTable<TData, TValue>({
                     table.setPageSize(Number(value));
                   }}
                 >
-                  <SelectTrigger size="sm" className="w-20" id="rows-per-page">
+                  <SelectTrigger
+                    size="sm"
+                    className="w-20 cursor-pointer"
+                    id="rows-per-page"
+                  >
                     <SelectValue
                       placeholder={table.getState().pagination.pageSize}
                     />
                   </SelectTrigger>
                   <SelectContent side="top">
                     {pageSizeOptions.map((pageSize) => (
-                      <SelectItem key={pageSize} value={`${pageSize}`}>
+                      <SelectItem
+                        key={pageSize}
+                        value={`${pageSize}`}
+                        className="cursor-pointer"
+                      >
                         {pageSize}
                       </SelectItem>
                     ))}
@@ -242,7 +250,7 @@ export function DataTable<TData, TValue>({
             <div className="ml-auto flex items-center gap-2 lg:ml-0">
               <Button
                 variant="outline"
-                className="hidden h-8 w-8 p-0 lg:flex"
+                className="hidden h-8 w-8 p-0 lg:flex cursor-pointer"
                 onClick={() => table.setPageIndex(0)}
                 disabled={!table.getCanPreviousPage()}
               >
@@ -251,7 +259,7 @@ export function DataTable<TData, TValue>({
               </Button>
               <Button
                 variant="outline"
-                className="size-8"
+                className="size-8 cursor-pointer"
                 size="icon"
                 onClick={() => table.previousPage()}
                 disabled={!table.getCanPreviousPage()}
@@ -261,7 +269,7 @@ export function DataTable<TData, TValue>({
               </Button>
               <Button
                 variant="outline"
-                className="size-8"
+                className="size-8 cursor-pointer"
                 size="icon"
                 onClick={() => table.nextPage()}
                 disabled={!table.getCanNextPage()}
@@ -271,7 +279,7 @@ export function DataTable<TData, TValue>({
               </Button>
               <Button
                 variant="outline"
-                className="hidden size-8 lg:flex"
+                className="hidden size-8 lg:flex cursor-pointer"
                 size="icon"
                 onClick={() => table.setPageIndex(table.getPageCount() - 1)}
                 disabled={!table.getCanNextPage()}

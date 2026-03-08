@@ -75,7 +75,7 @@ const ItemForm = ({
                       aria-expanded={open}
                       disabled={isSubmitting || isLoading}
                       className={cn(
-                        "w-full justify-between",
+                        "w-full justify-between cursor-pointer",
                         !field.value && "text-muted-foreground",
                       )}
                     >
@@ -116,6 +116,7 @@ const ItemForm = ({
                                 field.onChange(product.id);
                                 setOpen(false);
                               }}
+                              className="cursor-pointer"
                             >
                               <Check
                                 className={cn(
@@ -204,10 +205,15 @@ const ItemForm = ({
             variant="outline"
             disabled={isSubmitting}
             onClick={handleCancel}
+            className="cursor-pointer"
           >
             Cancel
           </Button>
-          <Button type="submit" disabled={isSubmitting}>
+          <Button
+            type="submit"
+            disabled={isSubmitting}
+            className="cursor-pointer"
+          >
             {isSubmitting ? submitLoadingLabel : submitLabel}
           </Button>
         </div>
