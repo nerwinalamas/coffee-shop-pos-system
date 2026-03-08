@@ -120,7 +120,12 @@ const PaymentModal = ({ open, onOpenChange }: PaymentModalProps) => {
       }
 
       await queryClient.invalidateQueries({ queryKey: ["transactions"] });
-      await queryClient.invalidateQueries({ queryKey: ["products-with-inventory"] });
+      await queryClient.invalidateQueries({
+        queryKey: ["products-with-inventory"],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ["notifications", profile?.business_id],
+      });
       toast.success(
         `Transaction ${transaction.transaction_number} completed successfully!`,
       );
