@@ -96,7 +96,7 @@ const DataTableFilter = ({
     onFilterChange?.({ categories: [], statuses: [], paymentMethods: [] });
   };
 
-  const hasActiveFilters = categoryFilter.length > 0 || statusFilter.length > 0;
+  const hasActiveFilters = categoryFilter.length > 0 || statusFilter.length > 0 || paymentMethodFilter.length > 0;
   const activeFilterCount =
     categoryFilter.length + statusFilter.length + paymentMethodFilter.length;
 
