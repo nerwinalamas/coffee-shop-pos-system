@@ -44,7 +44,7 @@ const DeleteProductModal = ({
 
       if (error) throw error;
 
-      queryClient.invalidateQueries({ queryKey: ["products"] });
+      await queryClient.invalidateQueries({ queryKey: ["products"] });
       toast.success("Product deleted successfully");
       onOpenChange(false);
     } catch (error) {

@@ -17,6 +17,7 @@ import { useOrderStore } from "@/store/order";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
+import { useProfile } from "@/hooks/useProfile";
 
 interface PaymentModalProps {
   open: boolean;
@@ -26,6 +27,7 @@ interface PaymentModalProps {
 const PaymentModal = ({ open, onOpenChange }: PaymentModalProps) => {
   const supabase = createClient();
   const queryClient = useQueryClient();
+  const { data: profile } = useProfile();
 
   const { items, subtotal, tax, total, clearOrder } = useOrderStore();
 
@@ -46,25 +48,13 @@ const PaymentModal = ({ open, onOpenChange }: PaymentModalProps) => {
     if (items.length === 0) return;
 
     try {
-      // Get current user
       const {
         data: { user },
       } = await supabase.auth.getUser();
 
-      if (!user) {
-        throw new Error("User not authenticated");
-      }
-
-      // Get business_id from profile
-      const { data: profile, error: profileError } = await supabase
-        .from("profiles")
-        .select("business_id")
-        .eq("id", user.id)
-        .single();
-
-      if (profileError || !profile?.business_id) {
+      if (!user) throw new Error("User not authenticated");
+      if (!profile?.business_id)
         throw new Error("Could not retrieve business information");
-      }
 
       const business_id = profile.business_id;
 
@@ -129,8 +119,8 @@ const PaymentModal = ({ open, onOpenChange }: PaymentModalProps) => {
         }
       }
 
-      queryClient.invalidateQueries({ queryKey: ["transactions"] });
-      queryClient.invalidateQueries({ queryKey: ["inventory"] });
+      await queryClient.invalidateQueries({ queryKey: ["transactions"] });
+      await queryClient.invalidateQueries({ queryKey: ["products-with-inventory"] });
       toast.success(
         `Transaction ${transaction.transaction_number} completed successfully!`,
       );

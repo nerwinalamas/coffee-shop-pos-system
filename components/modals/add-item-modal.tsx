@@ -67,6 +67,9 @@ const AddItemModal = ({ open, onOpenChange }: AddItemModalProps) => {
 
       toast.success("Inventory item added successfully");
       await queryClient.invalidateQueries({ queryKey: ["inventory"] });
+      await queryClient.invalidateQueries({
+        queryKey: ["products-with-inventory"],
+      });
       onOpenChange(false);
       form.reset();
     } catch (error) {

@@ -82,7 +82,7 @@ const AddProductModal = ({ open, onOpenChange }: AddProductModalProps) => {
 
       if (error) throw error;
 
-      queryClient.invalidateQueries({ queryKey: ["products"] });
+      await queryClient.invalidateQueries({ queryKey: ["products"] });
       toast.success("Product added successfully");
       onOpenChange(false);
       form.reset();

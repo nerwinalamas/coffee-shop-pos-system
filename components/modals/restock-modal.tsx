@@ -68,6 +68,9 @@ const RestockModal = ({ open, onOpenChange, item }: RestockModalProps) => {
 
       toast.success(`Successfully restocked ${item.products?.name}`);
       await queryClient.invalidateQueries({ queryKey: ["inventory"] });
+      await queryClient.invalidateQueries({
+        queryKey: ["products-with-inventory"],
+      });
       onOpenChange(false);
       form.reset();
     } catch (error) {

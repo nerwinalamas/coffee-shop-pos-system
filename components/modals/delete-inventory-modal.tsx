@@ -44,7 +44,10 @@ const DeleteInventoryModal = ({
 
       if (error) throw error;
 
-      queryClient.invalidateQueries({ queryKey: ["inventory"] });
+      await queryClient.invalidateQueries({ queryKey: ["inventory"] });
+      await queryClient.invalidateQueries({
+        queryKey: ["products-with-inventory"],
+      });
       toast.success("Inventory item deleted successfully");
       onOpenChange(false);
     } catch (error) {

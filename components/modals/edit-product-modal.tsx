@@ -111,7 +111,7 @@ const EditProductModal = ({
 
       if (error) throw error;
 
-      queryClient.invalidateQueries({ queryKey: ["products"] });
+      await queryClient.invalidateQueries({ queryKey: ["products"] });
       toast.success("Product updated successfully");
       onOpenChange(false);
       form.reset();
