@@ -22,4 +22,5 @@ export const navItems: NavItem[] = [
   { title: "Transaction History", url: "/transactions", icon: Receipt },
   { title: "Sales Reports", url: "/sales", icon: BarChart2 },
   { title: "Users", url: "/users", icon: User2 },
+  { title: "Activity Logs", url: "/activity-logs", icon: BarChart2 },
 ];
