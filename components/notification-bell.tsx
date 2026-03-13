@@ -80,7 +80,7 @@ const NotificationBell = ({
         </div>
 
         {/* List */}
-        <div className="h-[320px]">
+        <div className="h-[320px] overflow-y-auto">
           {notifications.length === 0 ? (
             <div className="flex flex-col items-center justify-center gap-2 py-12 text-center">
               <Bell className="h-8 w-8 text-muted-foreground/40" />
@@ -97,7 +97,7 @@ const NotificationBell = ({
                     !notification.is_read && markAsRead(notification.id)
                   }
                   className={cn(
-                    "flex w-full items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-muted/50",
+                    "flex w-full items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-muted/50 cursor-pointer",
                     !notification.is_read && "bg-muted/30",
                   )}
                 >
