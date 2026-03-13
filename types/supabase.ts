@@ -34,6 +34,57 @@ export type Database = {
   }
   public: {
     Tables: {
+      activity_logs: {
+        Row: {
+          action: Database["public"]["Enums"]["activity_action"]
+          business_id: string
+          changes: Json | null
+          created_at: string | null
+          entity_id: string | null
+          entity_name: string | null
+          id: string
+          subject: Database["public"]["Enums"]["activity_subject"]
+          user_id: string
+        }
+        Insert: {
+          action: Database["public"]["Enums"]["activity_action"]
+          business_id: string
+          changes?: Json | null
+          created_at?: string | null
+          entity_id?: string | null
+          entity_name?: string | null
+          id?: string
+          subject: Database["public"]["Enums"]["activity_subject"]
+          user_id: string
+        }
+        Update: {
+          action?: Database["public"]["Enums"]["activity_action"]
+          business_id?: string
+          changes?: Json | null
+          created_at?: string | null
+          entity_id?: string | null
+          entity_name?: string | null
+          id?: string
+          subject?: Database["public"]["Enums"]["activity_subject"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activity_logs_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activity_logs_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       businesses: {
         Row: {
           address: string | null
@@ -378,6 +429,15 @@ export type Database = {
       is_admin_or_owner: { Args: never; Returns: boolean }
     }
     Enums: {
+      activity_action: "create" | "update" | "delete" | "view"
+      activity_subject:
+        | "product"
+        | "transaction"
+        | "inventory"
+        | "user"
+        | "business"
+        | "profile"
+        | "other"
       inventory_status: "In Stock" | "Low Stock" | "Out of Stock"
       notification_type: "low_stock" | "out_of_stock" | "pending_order"
       payment_method: "Cash" | "Credit Card" | "Debit Card" | "E-Wallet"
@@ -515,6 +575,16 @@ export const Constants = {
   },
   public: {
     Enums: {
+      activity_action: ["create", "update", "delete", "view"],
+      activity_subject: [
+        "product",
+        "transaction",
+        "inventory",
+        "user",
+        "business",
+        "profile",
+        "other",
+      ],
       inventory_status: ["In Stock", "Low Stock", "Out of Stock"],
       notification_type: ["low_stock", "out_of_stock", "pending_order"],
       payment_method: ["Cash", "Credit Card", "Debit Card", "E-Wallet"],
