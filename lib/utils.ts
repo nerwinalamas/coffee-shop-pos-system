@@ -1,3 +1,4 @@
+import { ActivityAction } from "@/types/activity-logs.types";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -28,6 +29,21 @@ export const getStatusVariant = (status: string) => {
       return "bg-red-100 text-red-700 hover:bg-red-100";
     default:
       return "";
+  }
+};
+
+export const getActionColor = (action: ActivityAction) => {
+  switch (action) {
+    case "create":
+      return "bg-green-100 text-green-800";
+    case "update":
+      return "bg-blue-100 text-blue-800";
+    case "delete":
+      return "bg-red-100 text-red-800";
+    case "view":
+      return "bg-gray-100 text-gray-800";
+    default:
+      return "bg-gray-100 text-gray-800";
   }
 };
 
