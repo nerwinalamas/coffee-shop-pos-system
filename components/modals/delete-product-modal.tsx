@@ -15,6 +15,7 @@ import {
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
+import { useActivityLogger } from "@/hooks/useActivityLogger";
 
 interface DeleteProductModalProps {
   open: boolean;
@@ -29,6 +30,7 @@ const DeleteProductModal = ({
 }: DeleteProductModalProps) => {
   const supabase = createClient();
   const queryClient = useQueryClient();
+  const { log } = useActivityLogger();
 
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -43,6 +45,13 @@ const DeleteProductModal = ({
         .eq("id", product.id);
 
       if (error) throw error;
+
+      await log({
+        action: "delete",
+        subject: "product",
+        entityId: product.id,
+        entityName: product.name,
+      });
 
       await queryClient.invalidateQueries({ queryKey: ["products"] });
       toast.success("Product deleted successfully");

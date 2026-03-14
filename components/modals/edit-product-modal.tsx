@@ -18,6 +18,7 @@ import {
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
+import { useActivityLogger } from "@/hooks/useActivityLogger";
 
 interface EditProductModalProps {
   open: boolean;
@@ -32,6 +33,7 @@ const EditProductModal = ({
 }: EditProductModalProps) => {
   const supabase = createClient();
   const queryClient = useQueryClient();
+  const { log } = useActivityLogger();
 
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(productSchema),
@@ -102,7 +104,7 @@ const EditProductModal = ({
     if (!product) return;
 
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from("products")
         .update(values)
         .eq("id", product.id)
@@ -110,6 +112,27 @@ const EditProductModal = ({
         .single();
 
       if (error) throw error;
+
+      await log({
+        action: "update",
+        subject: "product",
+        entityId: product.id,
+        entityName: data.name,
+        changes: {
+          old: {
+            name: product.name,
+            price: product.price,
+            category: product.category,
+            image: product.image,
+          },
+          new: {
+            name: data.name,
+            price: data.price,
+            category: data.category,
+            image: data.image,
+          },
+        },
+      });
 
       await queryClient.invalidateQueries({ queryKey: ["products"] });
       toast.success("Product updated successfully");

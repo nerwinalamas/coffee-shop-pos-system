@@ -16,6 +16,8 @@ import {
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
+import { useProfile } from "@/hooks/useProfile";
+import { useActivityLogger } from "@/hooks/useActivityLogger";
 
 interface AddProductModalProps {
   open: boolean;
@@ -25,6 +27,8 @@ interface AddProductModalProps {
 const AddProductModal = ({ open, onOpenChange }: AddProductModalProps) => {
   const supabase = createClient();
   const queryClient = useQueryClient();
+  const { data: profile } = useProfile();
+  const { log } = useActivityLogger();
 
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(productSchema),
@@ -74,13 +78,20 @@ const AddProductModal = ({ open, onOpenChange }: AddProductModalProps) => {
 
   const onSubmit = async (values: ProductFormValues) => {
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from("products")
-        .insert([values])
+        .insert([{ ...values, business_id: profile?.business_id }])
         .select()
         .single();
 
       if (error) throw error;
+
+      await log({
+        action: "create",
+        subject: "product",
+        entityId: data.id,
+        entityName: data.name,
+      });
 
       await queryClient.invalidateQueries({ queryKey: ["products"] });
       toast.success("Product added successfully");

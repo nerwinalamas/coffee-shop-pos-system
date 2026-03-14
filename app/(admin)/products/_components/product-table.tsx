@@ -16,6 +16,7 @@ import { Edit2, Trash2, Plus, Eye } from "lucide-react";
 import DataTableFilter from "@/components/data-table-filter";
 import { useProducts } from "@/hooks/useProducts";
 import ViewProductDetailsModal from "@/components/modals/view-product-details-modal";
+import { useActivityLogger } from "@/hooks/useActivityLogger";
 
 const ProductTable = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -25,6 +26,7 @@ const ProductTable = () => {
   const [selectedProduct, setSelectedProduct] = useState<Products | null>(null);
 
   const { data: products, isLoading, error } = useProducts();
+  const { log } = useActivityLogger();
 
   const [filters, setFilters] = useState<{
     categories: string[];
@@ -42,9 +44,16 @@ const ProductTable = () => {
     setIsDeleteModalOpen(true);
   };
 
-  const handleView = (product: Products) => {
+  const handleView = async (product: Products) => {
     setSelectedProduct(product);
     setIsViewModalOpen(true);
+
+    await log({
+      action: "view",
+      subject: "product",
+      entityId: product.id,
+      entityName: product.name,
+    });
   };
 
   const filteredData = useMemo(() => {
