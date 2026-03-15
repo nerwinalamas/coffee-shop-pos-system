@@ -31,13 +31,14 @@ const PaymentModal = ({ open, onOpenChange }: PaymentModalProps) => {
   const { data: profile } = useProfile();
   const { log } = useActivityLogger();
 
-  const { items, subtotal, tax, total, clearOrder } = useOrderStore();
+  const { items, subtotal, tax, total, promo, clearOrder } = useOrderStore();
 
   const form = useForm<PaymentFormValues>({
     resolver: zodResolver(paymentSchema),
     defaultValues: {
       customer_name: "",
       payment_method: "Cash",
+      promo_code: undefined,
     },
   });
 
@@ -66,7 +67,9 @@ const PaymentModal = ({ open, onOpenChange }: PaymentModalProps) => {
         .insert({
           business_id,
           customer_name: values.customer_name || null,
-          subtotal: subtotal,
+          subtotal,
+          discount_amount: promo.discountAmount,
+          promo_code: promo.promoCode ?? null,
           payment_method: values.payment_method,
           status: "Completed",
           user_id: user.id,
