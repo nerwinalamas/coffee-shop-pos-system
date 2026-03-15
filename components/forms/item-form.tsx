@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { z } from "zod";
 import { UseFormReturn } from "react-hook-form";
-import { useProducts } from "@/hooks/useProducts";
+import { useProductsWithoutInventory } from "@/hooks/useProductsWithoutInventory";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -55,7 +55,7 @@ const ItemForm = ({
 }: ItemFormProps) => {
   const isSubmitting = form.formState.isSubmitting;
   const [open, setOpen] = useState(false);
-  const { data: products, isLoading, error } = useProducts();
+  const { data: products, isLoading, error } = useProductsWithoutInventory();
 
   return (
     <Form {...form}>
