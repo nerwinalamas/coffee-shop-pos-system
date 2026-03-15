@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { Filter } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -21,84 +20,107 @@ import {
 } from "@/components/ui/popover";
 import { Badge } from "@/components/ui/badge";
 
-const CATEGORIES = ["Coffee", "Food", "Dessert"];
-const PRODUCT_STATUS = ["In Stock", "Low Stock", "Out of Stock"];
-const USER_STATUS = ["Active", "Inactive"];
-const PAYMENT_METHODS = ["Cash", "Credit Card", "Debit Card", "E-Wallet"];
-const TRANSACTION_STATUS = ["Completed", "Pending", "Cancelled"];
+const FILTER_CONFIGS = {
+  product: [
+    {
+      key: "categories",
+      label: "Category",
+      options: ["Coffee", "Food", "Dessert"],
+    },
+  ],
+  inventory: [
+    {
+      key: "categories",
+      label: "Category",
+      options: ["Coffee", "Food", "Dessert"],
+    },
+    {
+      key: "statuses",
+      label: "Status",
+      options: ["In Stock", "Low Stock", "Out of Stock"],
+    },
+  ],
+  user: [{ key: "statuses", label: "Status", options: ["Active", "Inactive"] }],
+  transaction: [
+    {
+      key: "statuses",
+      label: "Status",
+      options: ["Completed", "Pending", "Cancelled"],
+    },
+    {
+      key: "paymentMethods",
+      label: "Payment Method",
+      options: ["Cash", "Credit Card", "Debit Card", "E-Wallet"],
+    },
+  ],
+  activity: [
+    {
+      key: "actions",
+      label: "Action",
+      options: ["create", "update", "delete", "view"],
+    },
+    {
+      key: "subjects",
+      label: "Subject",
+      options: [
+        "product",
+        "transaction",
+        "inventory",
+        "user",
+        "profile",
+        "business",
+      ],
+    },
+  ],
+} as const;
+
+type FilterType = keyof typeof FILTER_CONFIGS;
+type FilterKey =
+  | "categories"
+  | "statuses"
+  | "paymentMethods"
+  | "actions"
+  | "subjects";
+type FilterState = Partial<Record<FilterKey, string[]>>;
 
 interface DataTableFilterProps {
-  filterType?: "product" | "inventory" | "user" | "transaction";
-  onFilterChange?: (filters: {
-    categories: string[];
-    statuses: string[];
-    paymentMethods?: string[];
-  }) => void;
+  filterType?: FilterType;
+  onFilterChange?: (filters: FilterState) => void;
 }
 
 const DataTableFilter = ({
   filterType = "product",
   onFilterChange,
 }: DataTableFilterProps) => {
-  const [categoryFilter, setCategoryFilter] = useState<string[]>([]);
-  const [statusFilter, setStatusFilter] = useState<string[]>([]);
-  const [paymentMethodFilter, setPaymentMethodFilter] = useState<string[]>([]);
+  const config = FILTER_CONFIGS[filterType];
 
-  const showCategory = filterType === "product" || filterType === "inventory";
-  const showStatus =
-    filterType === "inventory" ||
-    filterType === "user" ||
-    filterType === "transaction";
-  const showPaymentMethod = filterType === "transaction";
+  // Single state object para sa lahat ng filters
+  const [filters, setFilters] = useState<FilterState>(() =>
+    Object.fromEntries(config.map((group) => [group.key, []])),
+  );
 
-  const STATUS_OPTIONS =
-    filterType === "user"
-      ? USER_STATUS
-      : filterType === "transaction"
-        ? TRANSACTION_STATUS
-        : PRODUCT_STATUS;
+  const handleChange = (key: FilterKey, value: string) => {
+    const current = filters[key] ?? [];
+    const updated = current.includes(value)
+      ? current.filter((v) => v !== value)
+      : [...current, value];
 
-  const handleCategoryChange = (category: string) => {
-    const newCategories = categoryFilter.includes(category)
-      ? categoryFilter.filter((c) => c !== category)
-      : [...categoryFilter, category];
-
-    setCategoryFilter(newCategories);
-    onFilterChange?.({ categories: newCategories, statuses: statusFilter });
-  };
-
-  const handleStatusChange = (status: string) => {
-    const newStatuses = statusFilter.includes(status)
-      ? statusFilter.filter((s) => s !== status)
-      : [...statusFilter, status];
-
-    setStatusFilter(newStatuses);
-    onFilterChange?.({ categories: categoryFilter, statuses: newStatuses });
-  };
-
-  const handlePaymentMethodChange = (method: string) => {
-    const newMethods = paymentMethodFilter.includes(method)
-      ? paymentMethodFilter.filter((m) => m !== method)
-      : [...paymentMethodFilter, method];
-
-    setPaymentMethodFilter(newMethods);
-    onFilterChange?.({
-      categories: categoryFilter,
-      statuses: statusFilter,
-      paymentMethods: newMethods,
-    });
+    const newFilters = { ...filters, [key]: updated };
+    setFilters(newFilters);
+    onFilterChange?.(newFilters);
   };
 
   const handleClearAll = () => {
-    setCategoryFilter([]);
-    setStatusFilter([]);
-    setPaymentMethodFilter([]);
-    onFilterChange?.({ categories: [], statuses: [], paymentMethods: [] });
+    const cleared = Object.fromEntries(config.map((group) => [group.key, []]));
+    setFilters(cleared);
+    onFilterChange?.(cleared);
   };
 
-  const hasActiveFilters = categoryFilter.length > 0 || statusFilter.length > 0 || paymentMethodFilter.length > 0;
-  const activeFilterCount =
-    categoryFilter.length + statusFilter.length + paymentMethodFilter.length;
+  const activeFilterCount = Object.values(filters).reduce(
+    (sum, arr) => sum + (arr?.length ?? 0),
+    0,
+  );
+  const hasActiveFilters = activeFilterCount > 0;
 
   return (
     <Popover>
@@ -118,67 +140,36 @@ const DataTableFilter = ({
           <CommandInput placeholder="Filter..." />
           <CommandList>
             <CommandEmpty>No results found.</CommandEmpty>
-            {showCategory && (
-              <CommandGroup heading="Category">
-                {CATEGORIES.map((category) => (
-                  <CommandItem
-                    key={category}
-                    onSelect={() => handleCategoryChange(category)}
-                    className="capitalize cursor-pointer"
-                  >
-                    <div className="flex items-center gap-2">
-                      <Checkbox
-                        checked={categoryFilter.includes(category)}
-                        onCheckedChange={() => handleCategoryChange(category)}
-                      />
-                      <span>{category}</span>
-                    </div>
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            )}
-            {showCategory && showStatus && <CommandSeparator />}
-            {showStatus && (
-              <CommandGroup heading="Status">
-                {STATUS_OPTIONS.map((status) => (
-                  <CommandItem
-                    key={status}
-                    onSelect={() => handleStatusChange(status)}
-                    className="capitalize cursor-pointer"
-                  >
-                    <div className="flex items-center gap-2">
-                      <Checkbox
-                        checked={statusFilter.includes(status)}
-                        onCheckedChange={() => handleStatusChange(status)}
-                      />
-                      <span>{status}</span>
-                    </div>
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            )}
-            {showPaymentMethod && showStatus && <CommandSeparator />}
-            {showPaymentMethod && (
-              <CommandGroup heading="Payment Method">
-                {PAYMENT_METHODS.map((method) => (
-                  <CommandItem
-                    key={method}
-                    onSelect={() => handlePaymentMethodChange(method)}
-                    className="cursor-pointer"  
-                  >
-                    <div className="flex items-center gap-2">
-                      <Checkbox
-                        checked={paymentMethodFilter.includes(method)}
-                        onCheckedChange={() =>
-                          handlePaymentMethodChange(method)
-                        }
-                      />
-                      <span>{method}</span>
-                    </div>
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            )}
+
+            {config.map((group, index) => (
+              <Fragment key={group.key}>
+                {index > 0 && <CommandSeparator key={`sep-${group.key}`} />}
+                <CommandGroup key={group.key} heading={group.label}>
+                  {group.options.map((option) => (
+                    <CommandItem
+                      key={option}
+                      onSelect={() =>
+                        handleChange(group.key as FilterKey, option)
+                      }
+                      className="capitalize cursor-pointer"
+                    >
+                      <div className="flex items-center gap-2">
+                        <Checkbox
+                          checked={
+                            filters[group.key as FilterKey]?.includes(option) ??
+                            false
+                          }
+                          onCheckedChange={() =>
+                            handleChange(group.key as FilterKey, option)
+                          }
+                        />
+                        <span>{option}</span>
+                      </div>
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              </Fragment>
+            ))}
           </CommandList>
         </Command>
         <div className="p-2 border-t border-border">
