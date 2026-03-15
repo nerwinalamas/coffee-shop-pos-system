@@ -139,6 +139,7 @@ const PaymentModal = ({ open, onOpenChange }: PaymentModalProps) => {
         queryKey: ["notifications", profile?.business_id],
       });
       await queryClient.invalidateQueries({ queryKey: ["inventory"] });
+      await queryClient.invalidateQueries({ queryKey: ["dashboard-data"] });
       toast.success(
         `Transaction ${transaction.transaction_number} completed successfully!`,
       );
