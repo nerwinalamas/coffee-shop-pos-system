@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import PageHeader from "@/components/page-header";
-import ActivityLogsTable from "@/components/activity-logs-table";
 import PageTransition from "@/components/page-transition";
+import ActivityLogsTable from "./_components/activity-logs-table";
 
 export const metadata: Metadata = {
   title: "Activity Logs - Coffee Shop POS",

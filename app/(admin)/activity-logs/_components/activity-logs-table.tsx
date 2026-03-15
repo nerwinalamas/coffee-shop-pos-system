@@ -8,7 +8,7 @@ import { DataTable } from "@/components/data-table";
 import { useActivityLogs } from "@/hooks/useActivityLogs";
 import { getActionColor } from "@/lib/utils";
 import { useMemo, useState } from "react";
-import DataTableFilter from "./data-table-filter";
+import DataTableFilter from "../../../../components/data-table-filter";
 
 const ActivityLogsTable = () => {
   const { data, isLoading, error } = useActivityLogs();
