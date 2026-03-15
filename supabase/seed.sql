@@ -308,6 +308,35 @@ on conflict (business_id, code) do update set
 
 
 -- ============================================================
+-- SALES TARGETS
+-- 2025 full year + 2026 up to current month
+-- Mix of achieved and not achieved
+-- ============================================================
+
+insert into public.sales_targets (business_id, month, target_amount, created_by) values
+  -- 2025
+  ('f1b2c3d4-e5f6-7890-abcd-ef1234567890', '2025-01-01', 3200.00, 'a1b2c3d4-e5f6-7890-abcd-ef1234567890'),
+  ('f1b2c3d4-e5f6-7890-abcd-ef1234567890', '2025-02-01', 3200.00, 'a1b2c3d4-e5f6-7890-abcd-ef1234567890'),
+  ('f1b2c3d4-e5f6-7890-abcd-ef1234567890', '2025-03-01', 3500.00, 'a1b2c3d4-e5f6-7890-abcd-ef1234567890'),
+  ('f1b2c3d4-e5f6-7890-abcd-ef1234567890', '2025-04-01', 3500.00, 'a1b2c3d4-e5f6-7890-abcd-ef1234567890'),
+  ('f1b2c3d4-e5f6-7890-abcd-ef1234567890', '2025-05-01', 3800.00, 'a1b2c3d4-e5f6-7890-abcd-ef1234567890'),
+  ('f1b2c3d4-e5f6-7890-abcd-ef1234567890', '2025-06-01', 3800.00, 'a1b2c3d4-e5f6-7890-abcd-ef1234567890'),
+  ('f1b2c3d4-e5f6-7890-abcd-ef1234567890', '2025-07-01', 4000.00, 'a1b2c3d4-e5f6-7890-abcd-ef1234567890'),
+  ('f1b2c3d4-e5f6-7890-abcd-ef1234567890', '2025-08-01', 4000.00, 'a1b2c3d4-e5f6-7890-abcd-ef1234567890'),
+  ('f1b2c3d4-e5f6-7890-abcd-ef1234567890', '2025-09-01', 4200.00, 'b1b2c3d4-e5f6-7890-abcd-ef1234567890'),
+  ('f1b2c3d4-e5f6-7890-abcd-ef1234567890', '2025-10-01', 4200.00, 'b1b2c3d4-e5f6-7890-abcd-ef1234567890'),
+  ('f1b2c3d4-e5f6-7890-abcd-ef1234567890', '2025-11-01', 4500.00, 'b1b2c3d4-e5f6-7890-abcd-ef1234567890'),
+  ('f1b2c3d4-e5f6-7890-abcd-ef1234567890', '2025-12-01', 5000.00, 'a1b2c3d4-e5f6-7890-abcd-ef1234567890'),
+  -- 2026
+  ('f1b2c3d4-e5f6-7890-abcd-ef1234567890', '2026-01-01', 4800.00, 'a1b2c3d4-e5f6-7890-abcd-ef1234567890'),
+  ('f1b2c3d4-e5f6-7890-abcd-ef1234567890', '2026-02-01', 4800.00, 'a1b2c3d4-e5f6-7890-abcd-ef1234567890'),
+  ('f1b2c3d4-e5f6-7890-abcd-ef1234567890', '2026-03-01', 5000.00, 'a1b2c3d4-e5f6-7890-abcd-ef1234567890')
+on conflict (business_id, month) do update set
+  target_amount = excluded.target_amount,
+  created_by    = excluded.created_by;
+
+
+-- ============================================================
 -- TRANSACTIONS + TRANSACTION ITEMS
 -- 30 transactions over the last 30 days
 -- ============================================================
