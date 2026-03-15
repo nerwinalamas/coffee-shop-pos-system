@@ -12,6 +12,7 @@ import PageTransition from "@/components/page-transition";
 import { Variants } from "framer-motion";
 import PaymentMethodChart from "./_components/payment-method-chart";
 import TransactionStatusChart from "./_components/transaction-status-chart";
+import SalesTarget from "./_components/sales-target";
 
 const container: Variants = {
   hidden: {},
@@ -60,6 +61,10 @@ const DashboardPage = () => {
             data={data?.categoryRevenue ?? []}
             isLoading={isLoading}
           />
+        </motion.div>
+
+        <motion.div variants={item}>
+          <SalesTarget data={data?.salesTarget ?? null} isLoading={isLoading} />
         </motion.div>
 
         <motion.div variants={item}>
