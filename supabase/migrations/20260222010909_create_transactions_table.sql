@@ -9,6 +9,8 @@ create table if not exists transactions (
   transaction_number text unique not null,
   customer_name text,
   subtotal numeric(10, 2) not null check (subtotal >= 0),
+  discount_amount numeric(10, 2) not null default 0 check (discount_amount >= 0),
+  promo_code text default null,
   tax_rate numeric(5, 4) not null default 0.12,
   tax_amount numeric(10, 2) not null check (tax_amount >= 0),
   total_amount numeric(10, 2) not null check (total_amount >= 0),
@@ -26,6 +28,7 @@ create index if not exists transactions_status_idx on transactions(status);
 create index if not exists transactions_payment_method_idx on transactions(payment_method);
 create index if not exists transactions_user_id_idx on transactions(user_id);
 create index if not exists transactions_created_at_idx on transactions(created_at desc);
+create index if not exists transactions_promo_code_idx on transactions(promo_code);
 
 -- FUNCTIONS & TRIGGERS
 create trigger update_transactions_updated_at
@@ -64,18 +67,18 @@ create trigger set_transaction_number_trigger
   for each row
   execute function set_transaction_number();
 
--- Auto-calculate tax and total
+-- Auto-calculate tax and total (now accounts for discount)
 create or replace function calculate_transaction_totals()
 returns trigger as $$
 begin
-  new.tax_amount := new.subtotal * new.tax_rate;
-  new.total_amount := new.subtotal + new.tax_amount;
+  new.tax_amount := (new.subtotal - new.discount_amount) * new.tax_rate;
+  new.total_amount := (new.subtotal - new.discount_amount) + new.tax_amount;
   return new;
 end;
 $$ language plpgsql;
 
 create trigger calculate_transaction_totals_trigger
-  before insert or update of subtotal, tax_rate on transactions
+  before insert or update of subtotal, tax_rate, discount_amount on transactions
   for each row
   execute function calculate_transaction_totals();
 
