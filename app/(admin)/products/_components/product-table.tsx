@@ -159,7 +159,14 @@ const ProductTable = () => {
         columns={columns}
         data={filteredData}
         filterComponent={
-          <DataTableFilter filterType="product" onFilterChange={setFilters} />
+          <DataTableFilter
+            filterType="product"
+            onFilterChange={(f) =>
+              setFilters({
+                categories: f.categories ?? [],
+              })
+            }
+          />
         }
         headerActions={
           <Button

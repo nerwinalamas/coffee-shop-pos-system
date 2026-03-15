@@ -198,7 +198,14 @@ const UserTable = () => {
         columns={columns}
         data={filteredData}
         filterComponent={
-          <DataTableFilter filterType="user" onFilterChange={setFilters} />
+          <DataTableFilter
+            filterType="user"
+            onFilterChange={(f) =>
+              setFilters({
+                statuses: f.statuses ?? [],
+              })
+            }
+          />
         }
         headerActions={
           <Button
