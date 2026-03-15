@@ -73,6 +73,16 @@ export interface StatusBreakdown {
   count: number;
 }
 
+export interface SalesTargetData {
+  id: string;
+  month: string;
+  targetAmount: number;
+  currentRevenue: number;
+  progressPercent: number;
+  remaining: number;
+  isAchieved: boolean;
+}
+
 export interface DashboardData {
   stats: DashboardStats;
   salesTrend: SalesTrendPoint[];
@@ -82,6 +92,7 @@ export interface DashboardData {
   topProducts: TopProduct[];
   paymentMethodBreakdown: PaymentMethodBreakdown[];
   statusBreakdown: StatusBreakdown[];
+  salesTarget: SalesTargetData | null;
 }
 
 // Local types matching what Supabase returns for joined queries
@@ -131,6 +142,7 @@ export const useDashboardData = () => {
       fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 14);
 
       const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+      const thisMonthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 1);
       const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
       const lastMonthEnd = new Date(
         now.getFullYear(),
@@ -140,6 +152,8 @@ export const useDashboardData = () => {
         59,
         59,
       );
+
+      const thisMonthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-01`;
 
       const [
         todayTx,
@@ -156,6 +170,8 @@ export const useDashboardData = () => {
         last7DaysTx,
         txItems,
         thisMonthDetailTx,
+        salesTargetRow,
+        thisMonthRevenueTx,
       ] = await Promise.all([
         // Today's sales
         supabase
@@ -251,10 +267,26 @@ export const useDashboardData = () => {
           .gte("created_at", thisMonthStart.toISOString())
           .returns<TxItemRow[]>(),
 
+        // This month transactions for payment + status breakdown
         supabase
           .from("transactions")
           .select("payment_method, status, total_amount")
           .gte("created_at", thisMonthStart.toISOString()),
+
+        // Current month sales target from DB
+        supabase
+          .from("sales_targets")
+          .select("id, month, target_amount")
+          .eq("month", thisMonthKey)
+          .maybeSingle(),
+
+        // Current month revenue for sales target
+        supabase
+          .from("transactions")
+          .select("total_amount")
+          .eq("status", "Completed")
+          .gte("created_at", thisMonthStart.toISOString())
+          .lt("created_at", thisMonthEnd.toISOString()),
       ]);
 
       // ---- STATS ----
@@ -413,6 +445,33 @@ export const useDashboardData = () => {
         ([status, count]) => ({ status, count }),
       );
 
+      // ---- SALES TARGET ----
+      let salesTarget: SalesTargetData | null = null;
+
+      if (salesTargetRow.data) {
+        const currentRevenue =
+          thisMonthRevenueTx.data?.reduce(
+            (sum, t) => sum + (t.total_amount ?? 0),
+            0,
+          ) ?? 0;
+
+        const targetAmount = salesTargetRow.data.target_amount;
+        const progressPercent =
+          targetAmount > 0
+            ? Math.min(100, Math.round((currentRevenue / targetAmount) * 100))
+            : 0;
+
+        salesTarget = {
+          id: salesTargetRow.data.id,
+          month: salesTargetRow.data.month,
+          targetAmount,
+          currentRevenue,
+          progressPercent,
+          remaining: Math.max(0, targetAmount - currentRevenue),
+          isAchieved: currentRevenue >= targetAmount,
+        };
+      }
+
       return {
         stats,
         salesTrend,
@@ -422,6 +481,7 @@ export const useDashboardData = () => {
         topProducts,
         paymentMethodBreakdown,
         statusBreakdown,
+        salesTarget,
       };
     },
     refetchInterval: 60_000,
