@@ -13,6 +13,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { useActivityLogger } from "@/hooks/useActivityLogger";
 
 interface AddUserModalProps {
   open: boolean;
@@ -21,6 +22,7 @@ interface AddUserModalProps {
 
 const AddUserModal = ({ open, onOpenChange }: AddUserModalProps) => {
   const queryClient = useQueryClient();
+  const { log } = useActivityLogger();
 
   const form = useForm<UserFormValues>({
     resolver: zodResolver(userSchema),
@@ -60,6 +62,13 @@ const AddUserModal = ({ open, onOpenChange }: AddUserModalProps) => {
       if (result.error) {
         throw new Error(result.error);
       }
+
+      await log({
+        action: "create",
+        subject: "user",
+        entityId: result.user?.id,
+        entityName: `${values.firstName} ${values.lastName}`,
+      });
 
       await queryClient.invalidateQueries({ queryKey: ["profiles"] });
       toast.success("User added successfully");

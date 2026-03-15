@@ -17,6 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { useActivityLogger } from "@/hooks/useActivityLogger";
 
 const passwordSchema = z
   .object({
@@ -33,6 +34,7 @@ type PasswordFormData = z.infer<typeof passwordSchema>;
 
 export function PasswordForm() {
   const [isPending, startTransition] = useTransition();
+  const { log } = useActivityLogger();
 
   const form = useForm<PasswordFormData>({
     resolver: zodResolver(passwordSchema),
@@ -53,6 +55,12 @@ export function PasswordForm() {
       if (result.error) {
         toast.error(result.error);
       } else {
+        await log({
+          action: "update",
+          subject: "profile",
+          entityName: "Password Changed",
+        });
+
         toast.success("Password changed successfully");
         form.reset();
       }

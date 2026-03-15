@@ -15,6 +15,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
+import { useActivityLogger } from "@/hooks/useActivityLogger";
 
 interface DeleteUserModalProps {
   open: boolean;
@@ -29,6 +30,7 @@ const DeleteUserModal = ({
 }: DeleteUserModalProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const queryClient = useQueryClient();
+  const { log } = useActivityLogger();
 
   const handleDelete = async () => {
     if (!user) return;
@@ -41,6 +43,13 @@ const DeleteUserModal = ({
       if (result.error) {
         throw new Error(result.error);
       }
+
+      await log({
+        action: "delete",
+        subject: "user",
+        entityId: user.id,
+        entityName: `${user.first_name} ${user.last_name}`,
+      });
 
       await queryClient.invalidateQueries({ queryKey: ["profiles"] });
       toast.success("User deleted successfully");

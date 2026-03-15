@@ -18,6 +18,7 @@ import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { useProfile } from "@/hooks/useProfile";
+import { useActivityLogger } from "@/hooks/useActivityLogger";
 
 interface PaymentModalProps {
   open: boolean;
@@ -28,6 +29,7 @@ const PaymentModal = ({ open, onOpenChange }: PaymentModalProps) => {
   const supabase = createClient();
   const queryClient = useQueryClient();
   const { data: profile } = useProfile();
+  const { log } = useActivityLogger();
 
   const { items, subtotal, tax, total, clearOrder } = useOrderStore();
 
@@ -89,7 +91,6 @@ const PaymentModal = ({ open, onOpenChange }: PaymentModalProps) => {
         .insert(itemsToInsert);
 
       if (itemsError) {
-        // Rollback transaction
         await supabase.from("transactions").delete().eq("id", transaction.id);
         throw itemsError;
       }
@@ -119,6 +120,14 @@ const PaymentModal = ({ open, onOpenChange }: PaymentModalProps) => {
         }
       }
 
+      // 4. Log after all steps are successful
+      await log({
+        action: "create",
+        subject: "transaction",
+        entityId: transaction.id,
+        entityName: transaction.transaction_number,
+      });
+
       await queryClient.invalidateQueries({ queryKey: ["transactions"] });
       await queryClient.invalidateQueries({
         queryKey: ["products-with-inventory"],
@@ -126,6 +135,7 @@ const PaymentModal = ({ open, onOpenChange }: PaymentModalProps) => {
       await queryClient.invalidateQueries({
         queryKey: ["notifications", profile?.business_id],
       });
+      await queryClient.invalidateQueries({ queryKey: ["inventory"] });
       toast.success(
         `Transaction ${transaction.transaction_number} completed successfully!`,
       );

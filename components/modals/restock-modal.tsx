@@ -18,6 +18,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { useActivityLogger } from "@/hooks/useActivityLogger";
 
 interface RestockModalProps {
   open: boolean;
@@ -28,6 +29,7 @@ interface RestockModalProps {
 const RestockModal = ({ open, onOpenChange, item }: RestockModalProps) => {
   const supabase = createClient();
   const queryClient = useQueryClient();
+  const { log } = useActivityLogger();
 
   const form = useForm<RestockFormValues>({
     resolver: zodResolver(restockSchema),
@@ -65,6 +67,17 @@ const RestockModal = ({ open, onOpenChange, item }: RestockModalProps) => {
         .eq("id", item.id);
 
       if (updateError) throw updateError;
+
+      await log({
+        action: "update",
+        subject: "inventory",
+        entityId: item.id,
+        entityName: item.products?.name,
+        changes: {
+          old: { quantity: item.quantity },
+          new: { quantity: newQuantity },
+        },
+      });
 
       toast.success(`Successfully restocked ${item.products?.name}`);
       await queryClient.invalidateQueries({ queryKey: ["inventory"] });

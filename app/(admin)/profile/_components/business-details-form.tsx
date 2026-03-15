@@ -20,6 +20,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { useActivityLogger } from "@/hooks/useActivityLogger";
 
 const businessSchema = z.object({
   name: z.string().min(2, "Business name must be at least 2 characters"),
@@ -39,6 +40,7 @@ type BusinessDetailsFormProps = {
 
 export function BusinessDetailsForm({ business }: BusinessDetailsFormProps) {
   const [isPending, startTransition] = useTransition();
+  const { log } = useActivityLogger();
 
   const form = useForm<BusinessFormData>({
     resolver: zodResolver(businessSchema),
@@ -56,6 +58,24 @@ export function BusinessDetailsForm({ business }: BusinessDetailsFormProps) {
       if (result.error) {
         toast.error(result.error);
       } else {
+        await log({
+          action: "update",
+          subject: "business",
+          entityName: data.name,
+          changes: {
+            old: {
+              name: business.name,
+              address: business.address,
+              phone: business.phone,
+            },
+            new: {
+              name: data.name,
+              address: data.address,
+              phone: data.phone,
+            },
+          },
+        });
+
         toast.success("Business details updated successfully");
       }
     });

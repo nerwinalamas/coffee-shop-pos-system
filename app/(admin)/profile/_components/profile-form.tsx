@@ -17,6 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { useActivityLogger } from "@/hooks/useActivityLogger";
 
 const profileSchema = z.object({
   first_name: z.string().min(2, "First name must be at least 2 characters"),
@@ -31,6 +32,7 @@ type ProfileFormProps = {
 
 export function ProfileForm({ profile }: ProfileFormProps) {
   const [isPending, startTransition] = useTransition();
+  const { log } = useActivityLogger();
 
   const form = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
@@ -44,6 +46,24 @@ export function ProfileForm({ profile }: ProfileFormProps) {
       if (result.error) {
         toast.error(result.error);
       } else {
+        await log({
+          action: "update",
+          subject: "profile",
+          entityName: `${data.first_name} ${data.last_name}`,
+          changes: {
+            old: {
+              first_name: profile.first_name,
+              last_name: profile.last_name,
+              phone: profile.phone,
+            },
+            new: {
+              first_name: data.first_name,
+              last_name: data.last_name,
+              phone: data.phone,
+            },
+          },
+        });
+
         toast.success("Profile updated successfully");
       }
     });

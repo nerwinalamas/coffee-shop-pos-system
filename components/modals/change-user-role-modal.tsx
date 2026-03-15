@@ -18,6 +18,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { useActivityLogger } from "@/hooks/useActivityLogger";
 
 interface ChangeUserRoleModalProps {
   open: boolean;
@@ -31,6 +32,7 @@ const ChangeUserRoleModal = ({
   user,
 }: ChangeUserRoleModalProps) => {
   const queryClient = useQueryClient();
+  const { log } = useActivityLogger();
 
   const form = useForm<ChangeRoleFormValues>({
     resolver: zodResolver(changeRoleSchema),
@@ -63,6 +65,17 @@ const ChangeUserRoleModal = ({
       if (result.error) {
         throw new Error(result.error);
       }
+
+      await log({
+        action: "update",
+        subject: "user",
+        entityId: user.id,
+        entityName: `${user.first_name} ${user.last_name}`,
+        changes: {
+          old: { role: user.role },
+          new: { role: values.role },
+        },
+      });
 
       await queryClient.invalidateQueries({ queryKey: ["profiles"] });
       toast.success(`Role changed to ${values.role} successfully`);

@@ -15,6 +15,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { useActivityLogger } from "@/hooks/useActivityLogger";
 
 interface EditUserModalProps {
   open: boolean;
@@ -24,6 +25,7 @@ interface EditUserModalProps {
 
 const EditUserModal = ({ open, onOpenChange, user }: EditUserModalProps) => {
   const queryClient = useQueryClient();
+  const { log } = useActivityLogger();
 
   const form = useForm<UserFormValues>({
     resolver: zodResolver(userSchema),
@@ -63,6 +65,25 @@ const EditUserModal = ({ open, onOpenChange, user }: EditUserModalProps) => {
       if (result.error) {
         throw new Error(result.error);
       }
+
+      await log({
+        action: "update",
+        subject: "user",
+        entityId: user.id,
+        entityName: `${values.firstName} ${values.lastName}`,
+        changes: {
+          old: {
+            first_name: user.first_name,
+            last_name: user.last_name,
+            phone: user.phone,
+          },
+          new: {
+            first_name: values.firstName,
+            last_name: values.lastName,
+            phone: values.phone,
+          },
+        },
+      });
 
       await queryClient.invalidateQueries({ queryKey: ["profiles"] });
       toast.success("User updated successfully");

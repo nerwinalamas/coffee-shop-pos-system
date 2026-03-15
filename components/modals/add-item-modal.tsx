@@ -13,6 +13,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { useActivityLogger } from "@/hooks/useActivityLogger";
+import { useProfile } from "@/hooks/useProfile";
 
 interface AddItemModalProps {
   open: boolean;
@@ -22,6 +24,8 @@ interface AddItemModalProps {
 const AddItemModal = ({ open, onOpenChange }: AddItemModalProps) => {
   const supabase = createClient();
   const queryClient = useQueryClient();
+  const { log } = useActivityLogger();
+  const { data: profile } = useProfile();
 
   const form = useForm<ItemFormValues>({
     resolver: zodResolver(itemSchema),
@@ -56,19 +60,34 @@ const AddItemModal = ({ open, onOpenChange }: AddItemModalProps) => {
         .toUpperCase()}-${Date.now().toString().slice(-6)}`;
 
       // Insert inventory item
-      const { error: insertError } = await supabase.from("inventory").insert({
-        product_id: values.productId,
-        sku: sku,
-        quantity: values.quantity,
-        reorder_level: values.reorderLevel,
-      });
+      const { data: newItem, error: insertError } = await supabase
+        .from("inventory")
+        .insert({
+          business_id: profile?.business_id,
+          product_id: values.productId,
+          sku,
+          quantity: values.quantity,
+          reorder_level: values.reorderLevel,
+        })
+        .select()
+        .single();
 
       if (insertError) throw insertError;
+
+      await log({
+        action: "create",
+        subject: "inventory",
+        entityId: newItem.id,
+        entityName: product.name,
+      });
 
       toast.success("Inventory item added successfully");
       await queryClient.invalidateQueries({ queryKey: ["inventory"] });
       await queryClient.invalidateQueries({
         queryKey: ["products-with-inventory"],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ["products-without-inventory"],
       });
       onOpenChange(false);
       form.reset();

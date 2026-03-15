@@ -16,9 +16,11 @@ import DateRangeFilter, {
 import { useState, useMemo } from "react";
 import { toast } from "sonner";
 import DataTableFilter from "@/components/data-table-filter";
+import { useActivityLogger } from "@/hooks/useActivityLogger";
 
 const TransactionHistoryTable = () => {
   const { data: transactions = [], isLoading, error } = useTransactions();
+  const { log } = useActivityLogger();
 
   const [
     isViewTransactionDetailsModalOpen,
@@ -63,9 +65,18 @@ const TransactionHistoryTable = () => {
     toast.success("Transaction ID copied to clipboard!");
   };
 
-  const handleViewTransactionDetails = (transaction: TransactionWithItems) => {
+  const handleViewTransactionDetails = async (
+    transaction: TransactionWithItems,
+  ) => {
     setSelectedTransaction(transaction);
     setIsViewTransactionDetailsModalOpen(true);
+
+    await log({
+      action: "view",
+      subject: "transaction",
+      entityId: transaction.id,
+      entityName: transaction.transaction_number,
+    });
   };
 
   const handlePrintReceipt = (transaction: TransactionWithItems) => {
@@ -197,7 +208,7 @@ const TransactionHistoryTable = () => {
               filterType="transaction"
               onFilterChange={(f) =>
                 setFilters({
-                  statuses: f.statuses,
+                  statuses: f.statuses ?? [],
                   paymentMethods: f.paymentMethods ?? [],
                 })
               }

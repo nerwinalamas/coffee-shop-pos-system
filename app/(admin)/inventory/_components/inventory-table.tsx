@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Package, RotateCw, Plus, Trash2 } from "lucide-react";
 import { useInventory } from "@/hooks/useInventory";
+import { useActivityLogger } from "@/hooks/useActivityLogger";
 
 const InventoryTable = () => {
   const [isAddItemModalOpen, setIsAddItemModalOpen] = useState(false);
@@ -27,6 +28,7 @@ const InventoryTable = () => {
   );
 
   const { data: inventory, isLoading, error } = useInventory();
+  const { log } = useActivityLogger();
 
   const [filters, setFilters] = useState<{
     categories: string[];
@@ -41,9 +43,16 @@ const InventoryTable = () => {
     setIsRestockModalOpen(true);
   };
 
-  const handleViewDetails = (item: InventoryWithProduct) => {
+  const handleViewDetails = async (item: InventoryWithProduct) => {
     setSelectedItem(item);
     setIsViewDetailsModalOpen(true);
+
+    await log({
+      action: "view",
+      subject: "inventory",
+      entityId: item.id,
+      entityName: item.products?.name,
+    });
   };
 
   const handleDelete = (item: InventoryWithProduct) => {
@@ -213,7 +222,15 @@ const InventoryTable = () => {
         columns={columns}
         data={filteredData}
         filterComponent={
-          <DataTableFilter filterType="inventory" onFilterChange={setFilters} />
+          <DataTableFilter
+            filterType="inventory"
+            onFilterChange={(f) =>
+              setFilters({
+                categories: f.categories ?? [],
+                statuses: f.statuses ?? [],
+              })
+            }
+          />
         }
         headerActions={
           <Button

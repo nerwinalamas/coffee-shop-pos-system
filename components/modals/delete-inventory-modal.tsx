@@ -15,6 +15,7 @@ import {
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
+import { useActivityLogger } from "@/hooks/useActivityLogger";
 
 interface DeleteInventoryModalProps {
   open: boolean;
@@ -29,6 +30,7 @@ const DeleteInventoryModal = ({
 }: DeleteInventoryModalProps) => {
   const supabase = createClient();
   const queryClient = useQueryClient();
+  const { log } = useActivityLogger();
 
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -44,9 +46,19 @@ const DeleteInventoryModal = ({
 
       if (error) throw error;
 
+      await log({
+        action: "delete",
+        subject: "inventory",
+        entityId: item.id,
+        entityName: item.products?.name,
+      });
+
       await queryClient.invalidateQueries({ queryKey: ["inventory"] });
       await queryClient.invalidateQueries({
         queryKey: ["products-with-inventory"],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ["products-without-inventory"],
       });
       toast.success("Inventory item deleted successfully");
       onOpenChange(false);

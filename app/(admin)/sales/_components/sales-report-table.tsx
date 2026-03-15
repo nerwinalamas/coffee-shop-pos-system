@@ -22,6 +22,7 @@ import DateRangeFilter, {
 } from "@/components/date-range-filter";
 import { format } from "date-fns";
 import DataTableFilter from "@/components/data-table-filter";
+import { useActivityLogger } from "@/hooks/useActivityLogger";
 
 const statusVariant = (status: string) => {
   if (status === "Completed") return "default";
@@ -43,6 +44,7 @@ const SalesReportTable = () => {
   });
 
   const { data: report, isLoading, error } = useSalesReport(dateRange);
+  const { log } = useActivityLogger();
 
   const handleDateRangeChange = (range: DateRangeValue) => {
     setDateRange(range);
@@ -217,7 +219,15 @@ const SalesReportTable = () => {
             size="sm"
             className="gap-2 text-sm cursor-pointer"
             disabled={!report || isLoading}
-            onClick={() => report && exportToCSV(report)}
+            onClick={async () => {
+              if (!report) return;
+              exportToCSV(report);
+              await log({
+                action: "view",
+                subject: "transaction",
+                entityName: `CSV Export - ${periodLabel}`,
+              });
+            }}
           >
             <FileDown className="h-3.5 w-3.5" />
             CSV
@@ -226,7 +236,15 @@ const SalesReportTable = () => {
             size="sm"
             className="gap-2 text-sm cursor-pointer"
             disabled={!report || isLoading}
-            onClick={() => report && exportToPDF(report)}
+            onClick={async () => {
+              if (!report) return;
+              exportToPDF(report);
+              await log({
+                action: "view",
+                subject: "transaction",
+                entityName: `PDF Export - ${periodLabel}`,
+              });
+            }}
           >
             <FileText className="h-3.5 w-3.5" />
             PDF
@@ -310,7 +328,7 @@ const SalesReportTable = () => {
             filterType="transaction"
             onFilterChange={(f) =>
               setFilters({
-                statuses: f.statuses,
+                statuses: f.statuses ?? [],
                 paymentMethods: f.paymentMethods ?? [],
               })
             }

@@ -18,6 +18,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { useActivityLogger } from "@/hooks/useActivityLogger";
 
 interface UserStatusModalProps {
   user: Profiles | null;
@@ -31,6 +32,7 @@ const UserStatusModal = ({
   onOpenChange,
 }: UserStatusModalProps) => {
   const queryClient = useQueryClient();
+  const { log } = useActivityLogger();
 
   const form = useForm<UserStatusFormValues>({
     resolver: zodResolver(userStatusSchema),
@@ -64,6 +66,17 @@ const UserStatusModal = ({
       if (result.error) {
         throw new Error(result.error);
       }
+
+      await log({
+        action: "update",
+        subject: "user",
+        entityId: user.id,
+        entityName: `${user.first_name} ${user.last_name}`,
+        changes: {
+          old: { status: user.status },
+          new: { status: values.status },
+        },
+      });
 
       await queryClient.invalidateQueries({ queryKey: ["profiles"] });
       toast.success(`User status updated to ${values.status}`);
