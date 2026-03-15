@@ -285,36 +285,65 @@ where business_id = 'f1b2c3d4-e5f6-7890-abcd-ef1234567890';
 
 
 -- ============================================================
+-- PROMO CODES
+-- ============================================================
+
+insert into public.promo_codes (business_id, code, type, value, min_order, is_active) values
+  -- Percentage discounts
+  ('f1b2c3d4-e5f6-7890-abcd-ef1234567890', 'WELCOME10',  'percentage', 10.00,  0.00,  true),
+  ('f1b2c3d4-e5f6-7890-abcd-ef1234567890', 'SAVE15',     'percentage', 15.00,  20.00, true),
+  ('f1b2c3d4-e5f6-7890-abcd-ef1234567890', 'BIGSPEND20', 'percentage', 20.00,  50.00, true),
+  ('f1b2c3d4-e5f6-7890-abcd-ef1234567890', 'STAFF50',    'percentage', 50.00,  0.00,  true),
+  ('f1b2c3d4-e5f6-7890-abcd-ef1234567890', 'OLDPROMO',   'percentage', 10.00,  0.00,  false),
+  -- Fixed discounts
+  ('f1b2c3d4-e5f6-7890-abcd-ef1234567890', 'FLAT5',      'fixed',       5.00,  15.00, true),
+  ('f1b2c3d4-e5f6-7890-abcd-ef1234567890', 'FLAT10',     'fixed',      10.00,  30.00, true),
+  ('f1b2c3d4-e5f6-7890-abcd-ef1234567890', 'TREAT3',     'fixed',       3.00,   0.00, true),
+  ('f1b2c3d4-e5f6-7890-abcd-ef1234567890', 'EXPIREDFIX', 'fixed',       5.00,   0.00, false)
+on conflict (business_id, code) do update set
+  type      = excluded.type,
+  value     = excluded.value,
+  min_order = excluded.min_order,
+  is_active = excluded.is_active;
+
+
+-- ============================================================
 -- TRANSACTIONS + TRANSACTION ITEMS
 -- 30 transactions over the last 30 days
 -- ============================================================
 
 do $$
 declare
-  v_business_id uuid := 'f1b2c3d4-e5f6-7890-abcd-ef1234567890';
-  v_staff_ids   uuid[] := array[
+  v_business_id   uuid    := 'f1b2c3d4-e5f6-7890-abcd-ef1234567890';
+  v_staff_ids     uuid[]  := array[
     'd1b2c3d4-e5f6-7890-abcd-ef1234567890',
     'e1b2c3d4-e5f6-7890-abcd-ef1234567890'
   ];
-  v_tx_id       uuid;
-  v_tx_number   text;
-  v_subtotal    numeric(10,2);
-  v_product     record;
-  v_qty         int;
+  v_tx_id         uuid;
+  v_tx_number     text;
+  v_subtotal      numeric(10,2);
+  v_discount      numeric(10,2);
+  v_promo         record;
+  v_product       record;
+  v_qty           int;
   v_item_subtotal numeric(10,2);
-  v_item_count  int;
-  v_payments    payment_method[]      := array['Cash', 'Credit Card', 'Debit Card', 'E-Wallet']::payment_method[];
-  v_statuses    transaction_status[]  := array['Completed', 'Completed', 'Completed', 'Completed', 'Completed', 'Completed', 'Completed', 'Pending', 'Pending', 'Cancelled']::transaction_status[];
-  v_customers   text[]                := array['Maria', 'Jose', 'Anna', 'Carlo', 'Lea', 'Rico', 'Diana', 'Mark', 'Sofia', 'Luis', null, null, null];
+  v_item_count    int;
+  v_payments      payment_method[]     := array['Cash', 'Credit Card', 'Debit Card', 'E-Wallet']::payment_method[];
+  v_statuses      transaction_status[] := array['Completed', 'Completed', 'Completed', 'Completed', 'Completed', 'Completed', 'Completed', 'Pending', 'Pending', 'Cancelled']::transaction_status[];
+  v_customers     text[]               := array['Maria', 'Jose', 'Anna', 'Carlo', 'Lea', 'Rico', 'Diana', 'Mark', 'Sofia', 'Luis', null, null, null];
+  -- Promo codes to rotate through (only active ones, mix of types)
+  v_promo_codes   text[]               := array['WELCOME10', 'FLAT5', 'SAVE15', 'FLAT10', 'TREAT3', null, null, null, null, null];
 begin
   for i in 1..30 loop
     v_tx_id     := gen_random_uuid();
     v_tx_number := 'TRX-2026-' || lpad(i::text, 6, '0');
     v_subtotal  := 0;
+    v_discount  := 0;
 
     insert into public.transactions (
       id, business_id, transaction_number, customer_name,
-      subtotal, tax_rate, tax_amount, total_amount,
+      subtotal, discount_amount, promo_code,
+      tax_rate, tax_amount, total_amount,
       payment_method, status, user_id,
       created_at, updated_at
     ) values (
@@ -322,10 +351,11 @@ begin
       v_business_id,
       v_tx_number,
       v_customers[1 + (i % array_length(v_customers, 1))],
-      0, 0.12, 0, 0,
+      0, 0, null,
+      0.12, 0, 0,
       v_payments[1 + (i % array_length(v_payments, 1))],
       v_statuses[1 + (i % array_length(v_statuses, 1))],
-      v_staff_ids[1 + (i % array_length(v_staff_ids, 1))], -- alternates between staff1 and staff2
+      v_staff_ids[1 + (i % array_length(v_staff_ids, 1))],
       now() - ((30 - i) || ' days')::interval,
       now() - ((30 - i) || ' days')::interval
     );
@@ -353,11 +383,31 @@ begin
       );
     end loop;
 
+    -- Apply a promo code to every 3rd transaction (realistic usage rate)
+    if v_promo_codes[1 + (i % array_length(v_promo_codes, 1))] is not null then
+      select * into v_promo
+      from public.promo_codes
+      where business_id = v_business_id
+        and code = v_promo_codes[1 + (i % array_length(v_promo_codes, 1))]
+        and v_subtotal >= min_order;
+
+      if found then
+        v_discount := case
+          when v_promo.type = 'percentage'
+            then round(v_subtotal * v_promo.value / 100, 2)
+          else
+            least(v_promo.value, v_subtotal)
+        end;
+      end if;
+    end if;
+
     update public.transactions
     set
-      subtotal     = v_subtotal,
-      tax_amount   = round(v_subtotal * 0.12, 2),
-      total_amount = round(v_subtotal * 1.12, 2)
+      subtotal      = v_subtotal,
+      discount_amount = v_discount,
+      promo_code    = case when v_discount > 0 then v_promo_codes[1 + (i % array_length(v_promo_codes, 1))] else null end,
+      tax_amount    = round((v_subtotal - v_discount) * 0.12, 2),
+      total_amount  = round((v_subtotal - v_discount) * 1.12, 2)
     where id = v_tx_id;
 
   end loop;
