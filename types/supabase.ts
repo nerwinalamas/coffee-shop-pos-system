@@ -308,6 +308,95 @@ export type Database = {
           },
         ]
       }
+      promo_codes: {
+        Row: {
+          business_id: string
+          code: string
+          created_at: string | null
+          id: string
+          is_active: boolean
+          min_order: number
+          type: string
+          updated_at: string | null
+          value: number
+        }
+        Insert: {
+          business_id: string
+          code: string
+          created_at?: string | null
+          id?: string
+          is_active?: boolean
+          min_order?: number
+          type: string
+          updated_at?: string | null
+          value: number
+        }
+        Update: {
+          business_id?: string
+          code?: string
+          created_at?: string | null
+          id?: string
+          is_active?: boolean
+          min_order?: number
+          type?: string
+          updated_at?: string | null
+          value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "promo_codes_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sales_targets: {
+        Row: {
+          business_id: string
+          created_at: string | null
+          created_by: string | null
+          id: string
+          month: string
+          target_amount: number
+          updated_at: string | null
+        }
+        Insert: {
+          business_id: string
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          month: string
+          target_amount: number
+          updated_at?: string | null
+        }
+        Update: {
+          business_id?: string
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          month?: string
+          target_amount?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sales_targets_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_targets_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       transaction_items: {
         Row: {
           created_at: string | null
@@ -361,8 +450,10 @@ export type Database = {
           business_id: string
           created_at: string | null
           customer_name: string | null
+          discount_amount: number
           id: string
           payment_method: Database["public"]["Enums"]["payment_method"]
+          promo_code: string | null
           status: Database["public"]["Enums"]["transaction_status"]
           subtotal: number
           tax_amount: number
@@ -376,8 +467,10 @@ export type Database = {
           business_id: string
           created_at?: string | null
           customer_name?: string | null
+          discount_amount?: number
           id?: string
           payment_method: Database["public"]["Enums"]["payment_method"]
+          promo_code?: string | null
           status?: Database["public"]["Enums"]["transaction_status"]
           subtotal: number
           tax_amount: number
@@ -391,8 +484,10 @@ export type Database = {
           business_id?: string
           created_at?: string | null
           customer_name?: string | null
+          discount_amount?: number
           id?: string
           payment_method?: Database["public"]["Enums"]["payment_method"]
+          promo_code?: string | null
           status?: Database["public"]["Enums"]["transaction_status"]
           subtotal?: number
           tax_amount?: number
