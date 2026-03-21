@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Products } from "@/types/product.types";
+import { ProductImage, Products } from "@/types/product.types";
 import ProductForm, {
   ProductFormValues,
   productSchema,
@@ -18,7 +18,9 @@ import {
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
+import { useProfile } from "@/hooks/useProfile";
 import { useActivityLogger } from "@/hooks/useActivityLogger";
+import { uploadProductImage } from "@/lib/upload-product-image";
 
 interface EditProductModalProps {
   open: boolean;
@@ -33,6 +35,7 @@ const EditProductModal = ({
 }: EditProductModalProps) => {
   const supabase = createClient();
   const queryClient = useQueryClient();
+  const { data: profile } = useProfile();
   const { log } = useActivityLogger();
 
   const form = useForm<ProductFormValues>({
@@ -40,7 +43,7 @@ const EditProductModal = ({
     defaultValues: {
       name: "",
       price: 0,
-      image: "",
+      image: null,
       category: "",
     },
   });
@@ -50,7 +53,7 @@ const EditProductModal = ({
       form.reset({
         name: product.name,
         price: product.price,
-        image: product.image || "",
+        image: product.image ?? null,
         category: product.category,
       });
     }
@@ -61,43 +64,14 @@ const EditProductModal = ({
     form.reset();
   };
 
-  const handleImageUpload = async (file: File): Promise<string> => {
-    try {
-      // Delete old image if exists
-      if (product?.image) {
-        const oldImagePath = product.image.split("/").pop();
-        if (oldImagePath) {
-          await supabase.storage.from("product_images").remove([oldImagePath]);
-        }
-      }
-
-      // Create unique filename
-      const fileExt = file.name.split(".").pop();
-      const fileName = `${Date.now()}-${Math.random()
-        .toString(36)
-        .substring(7)}.${fileExt}`;
-      const filePath = fileName;
-
-      // Upload to Supabase Storage
-      const { data, error } = await supabase.storage
-        .from("product_images")
-        .upload(filePath, file, {
-          cacheControl: "3600",
-          upsert: false,
-        });
-
-      if (error) throw error;
-
-      // Get public URL
-      const {
-        data: { publicUrl },
-      } = supabase.storage.from("product_images").getPublicUrl(data.path);
-
-      return publicUrl;
-    } catch (error) {
-      console.error("Upload error:", error);
-      throw new Error("Failed to upload image");
-    }
+  const handleImageUpload = async (file: File): Promise<ProductImage> => {
+    if (!profile?.business_id) throw new Error("No business ID");
+    return uploadProductImage({
+      supabase,
+      file,
+      businessId: profile.business_id,
+      previousImageUrl: product?.image?.url,
+    });
   };
 
   const onSubmit = async (values: ProductFormValues) => {
@@ -106,7 +80,12 @@ const EditProductModal = ({
     try {
       const { data, error } = await supabase
         .from("products")
-        .update(values)
+        .update({
+          name: values.name,
+          price: values.price,
+          category: values.category,
+          image: values.image,
+        })
         .eq("id", product.id)
         .select()
         .single();
@@ -123,13 +102,13 @@ const EditProductModal = ({
             name: product.name,
             price: product.price,
             category: product.category,
-            image: product.image,
+            image: product.image?.url ?? null,
           },
           new: {
             name: data.name,
             price: data.price,
             category: data.category,
-            image: data.image,
+            image: (data.image as ProductImage | null)?.url ?? null,
           },
         },
       });
@@ -158,7 +137,7 @@ const EditProductModal = ({
           submitLabel="Update Product"
           submitLoadingLabel="Updating Product..."
           onImageUpload={handleImageUpload}
-          initialImageUrl={product?.image || ""}
+          initialImage={product?.image ?? null}
         />
       </DialogContent>
     </Dialog>

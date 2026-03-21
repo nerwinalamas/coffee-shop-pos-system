@@ -22,11 +22,21 @@ import {
 import { useState, useEffect } from "react";
 import { X, Upload } from "lucide-react";
 import Image from "next/image";
+import { ProductImage } from "@/types/product.types";
+
+const productImageSchema = z.object({
+  file_name: z.string(),
+  file_size: z.number(),
+  mime_type: z.string(),
+  url: z.string().url(),
+});
 
 export const productSchema = z.object({
   name: z.string().min(1, "Product name is required"),
   price: z.number().positive("Price must be greater than 0"),
-  image: z.string().min(1, "Image is required"),
+  image: productImageSchema.nullable().refine((v) => v !== null, {
+    message: "Image is required",
+  }),
   category: z.string().min(1, "Category is required"),
 });
 
@@ -38,8 +48,8 @@ interface ProductFormProps {
   handleCancel: () => void;
   submitLabel: string;
   submitLoadingLabel: string;
-  onImageUpload: (file: File) => Promise<string>;
-  initialImageUrl?: string;
+  onImageUpload: (file: File) => Promise<ProductImage>;
+  initialImage?: ProductImage | null;
 }
 
 const ProductForm = ({
@@ -49,19 +59,15 @@ const ProductForm = ({
   submitLabel,
   submitLoadingLabel,
   onImageUpload,
-  initialImageUrl,
+  initialImage,
 }: ProductFormProps) => {
   const isSubmitting = form.formState.isSubmitting;
   const [imagePreview, setImagePreview] = useState<string>("");
   const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
-    if (initialImageUrl) {
-      setImagePreview(initialImageUrl);
-    } else {
-      setImagePreview("");
-    }
-  }, [initialImageUrl]);
+    setImagePreview(initialImage?.url ?? "");
+  }, [initialImage]);
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -82,21 +88,19 @@ const ProductForm = ({
     try {
       setIsUploading(true);
 
-      // Create preview
+      // Show local preview immediately
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
+      reader.onloadend = () => setImagePreview(reader.result as string);
       reader.readAsDataURL(file);
 
-      // Upload to Supabase
-      const imageUrl = await onImageUpload(file);
-      form.setValue("image", imageUrl);
+      const imageMetadata = await onImageUpload(file);
+      form.setValue("image", imageMetadata);
       form.clearErrors("image");
+      setImagePreview(imageMetadata.url);
     } catch (error) {
       console.error("Image upload error:", error);
       form.setError("image", { message: "Failed to upload image" });
-      setImagePreview(initialImageUrl || "");
+      setImagePreview(initialImage?.url ?? "");
     } finally {
       setIsUploading(false);
     }
@@ -104,7 +108,7 @@ const ProductForm = ({
 
   const handleRemoveImage = () => {
     setImagePreview("");
-    form.setValue("image", "");
+    form.setValue("image", null as unknown as ProductFormValues["image"]);
   };
 
   return (

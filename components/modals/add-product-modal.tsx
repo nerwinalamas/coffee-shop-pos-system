@@ -18,6 +18,8 @@ import { createClient } from "@/lib/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { useProfile } from "@/hooks/useProfile";
 import { useActivityLogger } from "@/hooks/useActivityLogger";
+import { uploadProductImage } from "@/lib/upload-product-image";
+import { ProductImage } from "@/types/product.types";
 
 interface AddProductModalProps {
   open: boolean;
@@ -35,7 +37,7 @@ const AddProductModal = ({ open, onOpenChange }: AddProductModalProps) => {
     defaultValues: {
       name: "",
       price: 0,
-      image: "",
+      image: null,
       category: "",
     },
   });
@@ -45,42 +47,28 @@ const AddProductModal = ({ open, onOpenChange }: AddProductModalProps) => {
     form.reset();
   };
 
-  const handleImageUpload = async (file: File): Promise<string> => {
-    try {
-      // Create unique filename
-      const fileExt = file.name.split(".").pop();
-      const fileName = `${Date.now()}-${Math.random()
-        .toString(36)
-        .substring(7)}.${fileExt}`;
-      const filePath = fileName;
-
-      // Upload to Supabase Storage
-      const { data, error } = await supabase.storage
-        .from("product_images")
-        .upload(filePath, file, {
-          cacheControl: "3600",
-          upsert: false,
-        });
-
-      if (error) throw error;
-
-      // Get public URL
-      const {
-        data: { publicUrl },
-      } = supabase.storage.from("product_images").getPublicUrl(data.path);
-
-      return publicUrl;
-    } catch (error) {
-      console.error("Upload error:", error);
-      throw new Error("Failed to upload image");
-    }
+  const handleImageUpload = async (file: File): Promise<ProductImage> => {
+    if (!profile?.business_id) throw new Error("No business ID");
+    return uploadProductImage({
+      supabase,
+      file,
+      businessId: profile.business_id,
+    });
   };
 
   const onSubmit = async (values: ProductFormValues) => {
     try {
       const { data, error } = await supabase
         .from("products")
-        .insert([{ ...values, business_id: profile?.business_id }])
+        .insert([
+          {
+            name: values.name,
+            price: values.price,
+            category: values.category,
+            image: values.image, // jsonb: { file_name, file_size, mime_type, url }
+            business_id: profile?.business_id,
+          },
+        ])
         .select()
         .single();
 
