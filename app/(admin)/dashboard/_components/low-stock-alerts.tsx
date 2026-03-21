@@ -49,9 +49,9 @@ const LowStockAlerts = ({ data, isLoading }: LowStockAlertsProps) => {
                 key={item.id}
                 className="flex items-center gap-3 px-6 py-3 hover:bg-gray-50/60 transition-colors"
               >
-                {item.product?.image ? (
+                {item.product?.image?.url ? (
                   <Image
-                    src={item.product.image}
+                    src={item.product.image.url}
                     alt={item.product.name}
                     width={36}
                     height={36}

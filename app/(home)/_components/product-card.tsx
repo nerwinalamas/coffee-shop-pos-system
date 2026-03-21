@@ -39,7 +39,7 @@ const ProductCard = ({ product, isOutOfStock }: ProductCardProps) => {
     >
       <div className="relative">
         <ReusableImage
-          src={product.image || ""}
+          src={product.image?.url || ""}
           alt={product.name}
           className="w-full aspect-[3/2] object-cover rounded"
           fallbackText={product.name}

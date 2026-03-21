@@ -42,9 +42,9 @@ const TopProducts = ({ data, isLoading }: TopProductsProps) => {
                 <span className="text-xs font-semibold text-gray-300 w-4 shrink-0">
                   {index + 1}
                 </span>
-                {product.image ? (
+                {product.image?.url ? (
                   <Image
-                    src={product.image}
+                    src={product.image.url}
                     alt={product.product_name}
                     width={36}
                     height={36}

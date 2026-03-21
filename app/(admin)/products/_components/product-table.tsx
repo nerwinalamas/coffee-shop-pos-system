@@ -78,7 +78,7 @@ const ProductTable = () => {
       cell: ({ row }) =>
         row.original.image ? (
           <Image
-            src={row.original.image}
+            src={row.original.image?.url ?? ""}
             alt={row.original.name}
             className="w-14 h-14 rounded-lg object-cover"
             width={56}

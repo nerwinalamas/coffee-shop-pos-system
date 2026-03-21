@@ -40,7 +40,7 @@ const ViewProductDetailsModal = ({
           {/* Product Image and Basic Info */}
           <div className="flex gap-6">
             <Image
-              src={product.image || "/placeholder.png"}
+              src={product.image?.url || "/placeholder.png"}
               alt={product.name}
               className="w-32 h-32 rounded-lg object-cover"
               width={128}

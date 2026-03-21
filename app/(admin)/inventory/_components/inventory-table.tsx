@@ -87,7 +87,7 @@ const InventoryTable = () => {
       size: 80,
       cell: ({ row }) => (
         <Image
-          src={row.original.products?.image || ""}
+          src={row.original.products?.image?.url || ""}
           alt={row.original.products?.name || "Product Image"}
           className="w-14 h-14 rounded-lg"
           width={1000}

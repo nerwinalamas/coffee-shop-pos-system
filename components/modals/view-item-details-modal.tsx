@@ -49,7 +49,7 @@ const ViewItemDetailsModal = ({
           {/* Product Image and Basic Info */}
           <div className="flex gap-6">
             <Image
-              src={item.products?.image || "/placeholder.png"}
+              src={item.products?.image?.url || "/placeholder.png"}
               alt={item.products?.name || "Product Image"}
               className="w-32 h-32 rounded-lg object-cover"
               width={200}
