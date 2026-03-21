@@ -13,6 +13,12 @@ export type ActivitySubject =
   | "profile"
   | "other";
 
-export type ActivityLogsWithProfile = ActivityLogs & {
+export type ActivityLogChanges = {
+  old?: Record<string, unknown>;
+  new?: Record<string, unknown>;
+};
+
+export type ActivityLogsWithProfile = Omit<ActivityLogs, "changes"> & {
+  changes: ActivityLogChanges | null;
   profiles: Pick<Profiles, "first_name" | "last_name" | "email"> | null;
 };
