@@ -7,7 +7,7 @@ create table if not exists products (
   business_id uuid not null references businesses(id) on delete cascade,
   name text not null,
   price numeric(10, 2) not null check (price >= 0),
-  image text,
+  image jsonb,
   category product_category not null,
   created_at timestamptz default now(),
   updated_at timestamptz default now()
