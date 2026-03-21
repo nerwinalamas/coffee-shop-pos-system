@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/client";
 import { useQuery } from "@tanstack/react-query";
+import { ProductImage } from "@/types/product.types";
 
 export interface SalesTrendPoint {
   date: string;
@@ -33,7 +34,7 @@ export interface LowStockItem {
   product: {
     id: string;
     name: string;
-    image: string | null;
+    image: ProductImage | null;
     category: string;
   };
 }
@@ -42,7 +43,7 @@ export interface TopProduct {
   product_id: string;
   product_name: string;
   category: string;
-  image: string | null;
+  image: ProductImage | null;
   total_quantity: number;
   total_revenue: number;
 }
@@ -105,7 +106,7 @@ interface InventoryWithProductRow {
   products: {
     id: string;
     name: string;
-    image: string | null;
+    image: ProductImage | null;
     category: string;
   } | null;
 }
@@ -117,7 +118,7 @@ interface TxItemRow {
   subtotal: number;
   products: {
     category: string;
-    image: string | null;
+    image: ProductImage | null;
   } | null;
 }
 
