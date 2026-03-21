@@ -8,10 +8,15 @@ import { DataTable } from "@/components/data-table";
 import { useActivityLogs } from "@/hooks/useActivityLogs";
 import { getActionColor } from "@/lib/utils";
 import { useMemo, useState } from "react";
-import DataTableFilter from "../../../../components/data-table-filter";
+import ActivityLogDetailsSheet from "@/components/sheets/activity-log-details-sheet";
+import DataTableFilter from "@/components/data-table-filter";
 
 const ActivityLogsTable = () => {
   const { data, isLoading, error } = useActivityLogs();
+
+  const [selectedLog, setSelectedLog] =
+    useState<ActivityLogsWithProfile | null>(null);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   const [filters, setFilters] = useState<{
     actions: string[];
@@ -86,27 +91,39 @@ const ActivityLogsTable = () => {
   ];
 
   return (
-    <DataTable
-      columns={columns}
-      data={filteredData}
-      filterComponent={
-        <DataTableFilter
-          filterType="activity"
-          onFilterChange={(f) =>
-            setFilters({
-              actions: f.actions ?? [],
-              subjects: f.subjects ?? [],
-            })
-          }
-        />
-      }
-      emptyMessage="No activity logs found."
-      searchPlaceholder="Search by user or subject"
-      isLoading={isLoading}
-      loadingText="Loading activity logs..."
-      error={error}
-      errorText="Error loading activity logs"
-    />
+    <>
+      <DataTable
+        columns={columns}
+        data={filteredData}
+        filterComponent={
+          <DataTableFilter
+            filterType="activity"
+            onFilterChange={(f) =>
+              setFilters({
+                actions: f.actions ?? [],
+                subjects: f.subjects ?? [],
+              })
+            }
+          />
+        }
+        onRowClick={(row) => {
+          setSelectedLog(row);
+          setIsSheetOpen(true);
+        }}
+        emptyMessage="No activity logs found."
+        searchPlaceholder="Search by user or subject"
+        isLoading={isLoading}
+        loadingText="Loading activity logs..."
+        error={error}
+        errorText="Error loading activity logs"
+      />
+
+      <ActivityLogDetailsSheet
+        open={isSheetOpen}
+        onOpenChange={setIsSheetOpen}
+        log={selectedLog}
+      />
+    </>
   );
 };
 
