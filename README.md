@@ -9,6 +9,10 @@ A full-featured Point of Sale system built with Next.js + Supabase for coffee sh
 - POS workflows: add item, checkout, print receipt, transaction history
 - Activity log tracking and role-based user management
 
+## 🎥 Demo
+
+Watch the full demo on YouTube: https://youtu.be/ovFr8oOkfIc
+
 ## 🧰 Tech Stack
 
 - Frontend: Next.js 15 + React 19 + TypeScript
