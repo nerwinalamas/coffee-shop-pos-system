@@ -116,13 +116,19 @@ const SalesReportTable = () => {
     {
       id: "items",
       header: "Items",
+      size: 200,
       cell: ({ row }) => {
         const items = row.original.items;
+        const text =
+          items.length === 0
+            ? "—"
+            : items.map((i) => `${i.product_name} ×${i.quantity}`).join(", ");
         return (
-          <span className="text-sm text-gray-600">
-            {items.length === 0
-              ? "—"
-              : items.map((i) => `${i.product_name} ×${i.quantity}`).join(", ")}
+          <span
+            className="text-sm text-gray-600 block max-w-[200px] truncate"
+            title={text}
+          >
+            {text}
           </span>
         );
       },
