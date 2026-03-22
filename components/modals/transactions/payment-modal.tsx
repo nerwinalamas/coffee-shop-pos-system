@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import PaymentForm, {
   PaymentFormValues,
   paymentSchema,
-} from "../forms/payment-form";
+} from "@/components/forms/payment-form";
 import {
   Dialog,
   DialogContent,

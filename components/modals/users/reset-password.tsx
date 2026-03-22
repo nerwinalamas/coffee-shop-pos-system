@@ -1,15 +1,14 @@
 "use client";
 
-import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useQueryClient } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { updateUserStatus } from "@/actions/user-actions";
+import { resetUserPassword } from "@/actions/user-actions";
 import { Profiles } from "@/types/profiles.types";
-import UserStatusForm, {
-  UserStatusFormValues,
-  userStatusSchema,
-} from "../forms/user-status-form";
+import ResetPasswordForm, {
+  resetPasswordSchema,
+  ResetPasswordValues,
+} from "../../forms/reset-password-form";
 import {
   Dialog,
   DialogContent,
@@ -20,47 +19,39 @@ import {
 import { toast } from "sonner";
 import { useActivityLogger } from "@/hooks/useActivityLogger";
 
-interface UserStatusModalProps {
-  user: Profiles | null;
+interface ResetPasswordModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  user: Profiles | null;
 }
 
-const UserStatusModal = ({
-  user,
+const ResetPasswordModal = ({
   open,
   onOpenChange,
-}: UserStatusModalProps) => {
+  user,
+}: ResetPasswordModalProps) => {
   const queryClient = useQueryClient();
   const { log } = useActivityLogger();
 
-  const form = useForm<UserStatusFormValues>({
-    resolver: zodResolver(userStatusSchema),
+  const form = useForm<ResetPasswordValues>({
+    resolver: zodResolver(resetPasswordSchema),
     defaultValues: {
-      status: "Active",
+      newPassword: "",
+      confirmPassword: "",
     },
   });
-
-  // Update form when user changes
-  useEffect(() => {
-    if (user) {
-      form.reset({
-        status: user.status,
-      });
-    }
-  }, [user, form]);
 
   const handleDialogChange = () => {
     onOpenChange(false);
     form.reset();
   };
 
-  const onSubmit = async (values: UserStatusFormValues) => {
+  const onSubmit = async (values: ResetPasswordValues) => {
     if (!user) return;
 
     try {
-      const result = await updateUserStatus(user.id, {
-        status: values.status,
+      const result = await resetUserPassword(user.id, {
+        newPassword: values.newPassword,
       });
 
       if (result.error) {
@@ -72,45 +63,47 @@ const UserStatusModal = ({
         subject: "user",
         entityId: user.id,
         entityName: `${user.first_name} ${user.last_name}`,
-        changes: {
-          old: { status: user.status },
-          new: { status: values.status },
-        },
       });
 
       await queryClient.invalidateQueries({ queryKey: ["profiles"] });
-      toast.success(`User status updated to ${values.status}`);
+      toast.success("Password reset successfully");
       onOpenChange(false);
       form.reset();
     } catch (error) {
-      console.error("Update status error:", error);
-      toast.error("Failed to update status. Please try again.");
+      console.error("Reset password error:", error);
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Failed to reset password. Please try again.",
+      );
     }
   };
+
+  if (!user) return null;
 
   return (
     <Dialog open={open} onOpenChange={handleDialogChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Update User Status</DialogTitle>
+          <DialogTitle>Reset Password</DialogTitle>
           <DialogDescription>
-            Change the status for{" "}
+            Reset the password for{" "}
             <strong>
-              {user?.first_name} {user?.last_name}
+              {user.first_name} {user.last_name}
             </strong>
             .
           </DialogDescription>
         </DialogHeader>
-        <UserStatusForm
+        <ResetPasswordForm
           form={form}
           onSubmit={onSubmit}
           handleCancel={handleDialogChange}
-          submitLabel="Update Status"
-          submitLoadingLabel="Updating..."
+          submitLabel="Reset Password"
+          submitLoadingLabel="Resetting..."
         />
       </DialogContent>
     </Dialog>
   );
 };
 
-export default UserStatusModal;
+export default ResetPasswordModal;

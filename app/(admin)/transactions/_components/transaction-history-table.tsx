@@ -7,8 +7,8 @@ import ActionsDropdown, { ActionItem } from "@/components/actions-dropdown";
 import { DataTable } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Copy, Eye, Printer } from "lucide-react";
-import ViewTransactionDetailsModal from "@/components/modals/view-transaction-details-modal";
-import PrintReceiptModal from "@/components/modals/print-receipt-modal";
+import ViewTransactionDetailsModal from "@/components/modals/transactions/view-transaction-details-modal";
+import PrintReceiptModal from "@/components/modals/transactions/print-receipt-modal";
 import DateRangeFilter, {
   DateRangeValue,
   getPresetDateRange,

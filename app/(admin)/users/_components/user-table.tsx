@@ -9,12 +9,12 @@ import { Button } from "@/components/ui/button";
 import DataTableFilter from "@/components/data-table-filter";
 import { DataTable } from "@/components/data-table";
 import ActionsDropdown, { ActionItem } from "@/components/actions-dropdown";
-import AddUserModal from "@/components/modals/add-user-modal";
-import ChangeUserRoleModal from "@/components/modals/change-user-role-modal";
-import DeleteUserModal from "@/components/modals/delete-user-modal";
-import EditUserModal from "@/components/modals/edit-user-modal";
-import ResetPasswordModal from "@/components/modals/reset-password";
-import UserStatusModal from "@/components/modals/user-status-modal";
+import AddUserModal from "@/components/modals/users/add-user-modal";
+import ChangeUserRoleModal from "@/components/modals/users/change-user-role-modal";
+import DeleteUserModal from "@/components/modals/users/delete-user-modal";
+import EditUserModal from "@/components/modals/users/edit-user-modal";
+import ResetPasswordModal from "@/components/modals/users/reset-password";
+import UserStatusModal from "@/components/modals/users/user-status-modal";
 import {
   Edit2,
   KeyRound,

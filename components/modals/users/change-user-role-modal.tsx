@@ -9,7 +9,7 @@ import { Profiles } from "@/types/profiles.types";
 import UserRoleForm, {
   ChangeRoleFormValues,
   changeRoleSchema,
-} from "../forms/user-role-form";
+} from "@/components/forms/user-role-form";
 import {
   Dialog,
   DialogContent,

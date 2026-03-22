@@ -7,15 +7,15 @@ import { Products } from "@/types/product.types";
 import { getCategoryVariant } from "@/lib/utils";
 import { DataTable } from "@/components/data-table";
 import ActionsDropdown, { ActionItem } from "@/components/actions-dropdown";
-import AddProductModal from "@/components/modals/add-product-modal";
-import EditProductModal from "@/components/modals/edit-product-modal";
-import DeleteProductModal from "@/components/modals/delete-product-modal";
+import AddProductModal from "@/components/modals/products/add-product-modal";
+import EditProductModal from "@/components/modals/products/edit-product-modal";
+import DeleteProductModal from "@/components/modals/products/delete-product-modal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Edit2, Trash2, Plus, Eye } from "lucide-react";
 import DataTableFilter from "@/components/data-table-filter";
 import { useProducts } from "@/hooks/useProducts";
-import ViewProductDetailsModal from "@/components/modals/view-product-details-modal";
+import ViewProductDetailsModal from "@/components/modals/products/view-product-details-modal";
 import { useActivityLogger } from "@/hooks/useActivityLogger";
 
 const ProductTable = () => {

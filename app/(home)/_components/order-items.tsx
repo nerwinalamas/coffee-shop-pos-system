@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Minus, Plus } from "lucide-react";
 import { useOrderStore } from "@/store/order";
 import { useState } from "react";
-import QuantityModal from "@/components/modals/quantity-modal";
+import QuantityModal from "@/components/modals/transactions/quantity-modal";
 
 interface OrderItemsProps {
   id: string;

@@ -9,7 +9,7 @@ import { InventoryWithProduct } from "@/types/inventory.types";
 import RestockForm, {
   RestockFormValues,
   restockSchema,
-} from "../forms/restock-form";
+} from "../../forms/restock-form";
 import {
   Dialog,
   DialogContent,

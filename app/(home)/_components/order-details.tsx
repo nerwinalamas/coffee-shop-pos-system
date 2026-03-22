@@ -5,7 +5,7 @@ import Heading from "@/components/heading";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import OrderItems from "./order-items";
-import PaymentModal from "@/components/modals/payment-modal";
+import PaymentModal from "@/components/modals/transactions/payment-modal";
 import { useState } from "react";
 import { AnimatePresence } from "framer-motion";
 

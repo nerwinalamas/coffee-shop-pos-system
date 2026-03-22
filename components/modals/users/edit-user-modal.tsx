@@ -4,7 +4,10 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Profiles } from "@/types/profiles.types";
-import UserForm, { UserFormValues, userSchema } from "../forms/user-form";
+import UserForm, {
+  UserFormValues,
+  userSchema,
+} from "@/components/forms/user-form";
 import { updateUser } from "@/actions/user-actions";
 import { useQueryClient } from "@tanstack/react-query";
 import {

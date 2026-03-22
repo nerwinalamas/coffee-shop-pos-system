@@ -1,13 +1,11 @@
 "use client";
 
-import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ProductImage, Products } from "@/types/product.types";
 import ProductForm, {
   ProductFormValues,
   productSchema,
-} from "../forms/product-form";
+} from "@/components/forms/product-form";
 import {
   Dialog,
   DialogContent,
@@ -21,18 +19,14 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useProfile } from "@/hooks/useProfile";
 import { useActivityLogger } from "@/hooks/useActivityLogger";
 import { uploadProductImage } from "@/lib/upload-product-image";
+import { ProductImage } from "@/types/product.types";
 
-interface EditProductModalProps {
+interface AddProductModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  product: Products | null;
 }
 
-const EditProductModal = ({
-  open,
-  onOpenChange,
-  product,
-}: EditProductModalProps) => {
+const AddProductModal = ({ open, onOpenChange }: AddProductModalProps) => {
   const supabase = createClient();
   const queryClient = useQueryClient();
   const { data: profile } = useProfile();
@@ -48,17 +42,6 @@ const EditProductModal = ({
     },
   });
 
-  useEffect(() => {
-    if (product && open) {
-      form.reset({
-        name: product.name,
-        price: product.price,
-        image: product.image ?? null,
-        category: product.category,
-      });
-    }
-  }, [product, open, form]);
-
   const handleDialogChange = () => {
     onOpenChange(false);
     form.reset();
@@ -70,56 +53,41 @@ const EditProductModal = ({
       supabase,
       file,
       businessId: profile.business_id,
-      previousImageUrl: product?.image?.url,
     });
   };
 
   const onSubmit = async (values: ProductFormValues) => {
-    if (!product) return;
-
     try {
       const { data, error } = await supabase
         .from("products")
-        .update({
-          name: values.name,
-          price: values.price,
-          category: values.category,
-          image: values.image,
-        })
-        .eq("id", product.id)
+        .insert([
+          {
+            name: values.name,
+            price: values.price,
+            category: values.category,
+            image: values.image, // jsonb: { file_name, file_size, mime_type, url }
+            business_id: profile?.business_id,
+          },
+        ])
         .select()
         .single();
 
       if (error) throw error;
 
       await log({
-        action: "update",
+        action: "create",
         subject: "product",
-        entityId: product.id,
+        entityId: data.id,
         entityName: data.name,
-        changes: {
-          old: {
-            name: product.name,
-            price: product.price,
-            category: product.category,
-            image: product.image?.url ?? null,
-          },
-          new: {
-            name: data.name,
-            price: data.price,
-            category: data.category,
-            image: (data.image as ProductImage | null)?.url ?? null,
-          },
-        },
       });
 
       await queryClient.invalidateQueries({ queryKey: ["products"] });
-      toast.success("Product updated successfully");
+      toast.success("Product added successfully");
       onOpenChange(false);
       form.reset();
     } catch (error) {
-      console.error("Edit product error:", error);
-      toast.error("Failed to update product. Please try again.");
+      console.error("Add product error:", error);
+      toast.error("Failed to add product. Please try again.");
     }
   };
 
@@ -127,21 +95,22 @@ const EditProductModal = ({
     <Dialog open={open} onOpenChange={handleDialogChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Edit Product</DialogTitle>
-          <DialogDescription>Update the product information</DialogDescription>
+          <DialogTitle>Add Product</DialogTitle>
+          <DialogDescription>
+            Add a new product to your inventory
+          </DialogDescription>
         </DialogHeader>
         <ProductForm
           form={form}
           onSubmit={onSubmit}
           handleCancel={handleDialogChange}
-          submitLabel="Update Product"
-          submitLoadingLabel="Updating Product..."
+          submitLabel="Add Product"
+          submitLoadingLabel="Adding Product..."
           onImageUpload={handleImageUpload}
-          initialImage={product?.image ?? null}
         />
       </DialogContent>
     </Dialog>
   );
 };
 
-export default EditProductModal;
+export default AddProductModal;

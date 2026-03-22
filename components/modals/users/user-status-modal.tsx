@@ -1,14 +1,15 @@
 "use client";
 
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useQueryClient } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { resetUserPassword } from "@/actions/user-actions";
+import { updateUserStatus } from "@/actions/user-actions";
 import { Profiles } from "@/types/profiles.types";
-import ResetPasswordForm, {
-  resetPasswordSchema,
-  ResetPasswordValues,
-} from "../forms/reset-password-form";
+import UserStatusForm, {
+  UserStatusFormValues,
+  userStatusSchema,
+} from "@/components/forms/user-status-form";
 import {
   Dialog,
   DialogContent,
@@ -19,39 +20,47 @@ import {
 import { toast } from "sonner";
 import { useActivityLogger } from "@/hooks/useActivityLogger";
 
-interface ResetPasswordModalProps {
+interface UserStatusModalProps {
+  user: Profiles | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  user: Profiles | null;
 }
 
-const ResetPasswordModal = ({
+const UserStatusModal = ({
+  user,
   open,
   onOpenChange,
-  user,
-}: ResetPasswordModalProps) => {
+}: UserStatusModalProps) => {
   const queryClient = useQueryClient();
   const { log } = useActivityLogger();
 
-  const form = useForm<ResetPasswordValues>({
-    resolver: zodResolver(resetPasswordSchema),
+  const form = useForm<UserStatusFormValues>({
+    resolver: zodResolver(userStatusSchema),
     defaultValues: {
-      newPassword: "",
-      confirmPassword: "",
+      status: "Active",
     },
   });
+
+  // Update form when user changes
+  useEffect(() => {
+    if (user) {
+      form.reset({
+        status: user.status,
+      });
+    }
+  }, [user, form]);
 
   const handleDialogChange = () => {
     onOpenChange(false);
     form.reset();
   };
 
-  const onSubmit = async (values: ResetPasswordValues) => {
+  const onSubmit = async (values: UserStatusFormValues) => {
     if (!user) return;
 
     try {
-      const result = await resetUserPassword(user.id, {
-        newPassword: values.newPassword,
+      const result = await updateUserStatus(user.id, {
+        status: values.status,
       });
 
       if (result.error) {
@@ -63,47 +72,45 @@ const ResetPasswordModal = ({
         subject: "user",
         entityId: user.id,
         entityName: `${user.first_name} ${user.last_name}`,
+        changes: {
+          old: { status: user.status },
+          new: { status: values.status },
+        },
       });
 
       await queryClient.invalidateQueries({ queryKey: ["profiles"] });
-      toast.success("Password reset successfully");
+      toast.success(`User status updated to ${values.status}`);
       onOpenChange(false);
       form.reset();
     } catch (error) {
-      console.error("Reset password error:", error);
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : "Failed to reset password. Please try again.",
-      );
+      console.error("Update status error:", error);
+      toast.error("Failed to update status. Please try again.");
     }
   };
-
-  if (!user) return null;
 
   return (
     <Dialog open={open} onOpenChange={handleDialogChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Reset Password</DialogTitle>
+          <DialogTitle>Update User Status</DialogTitle>
           <DialogDescription>
-            Reset the password for{" "}
+            Change the status for{" "}
             <strong>
-              {user.first_name} {user.last_name}
+              {user?.first_name} {user?.last_name}
             </strong>
             .
           </DialogDescription>
         </DialogHeader>
-        <ResetPasswordForm
+        <UserStatusForm
           form={form}
           onSubmit={onSubmit}
           handleCancel={handleDialogChange}
-          submitLabel="Reset Password"
-          submitLoadingLabel="Resetting..."
+          submitLabel="Update Status"
+          submitLoadingLabel="Updating..."
         />
       </DialogContent>
     </Dialog>
   );
 };
 
-export default ResetPasswordModal;
+export default UserStatusModal;

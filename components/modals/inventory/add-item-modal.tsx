@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createClient } from "@/lib/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
-import ItemForm, { ItemFormValues, itemSchema } from "../forms/item-form";
+import ItemForm, { ItemFormValues, itemSchema } from "../../forms/item-form";
 import {
   Dialog,
   DialogContent,
