@@ -43,6 +43,7 @@ const ProductCard = ({ product, isOutOfStock }: ProductCardProps) => {
           alt={product.name}
           className="w-full aspect-[3/2] object-cover rounded"
           fallbackText={product.name}
+          priority
         />
         {isOutOfStock && (
           <Badge variant="destructive" className="absolute top-2 right-2">
