@@ -119,6 +119,7 @@ export function DataTable<TData, TValue>({
                 searchQuery={globalFilter}
                 setSearchQuery={setGlobalFilter}
                 placeholder={searchPlaceholder}
+                className="w-full md:w-96"
               />
             )}
             {filterComponent && (
