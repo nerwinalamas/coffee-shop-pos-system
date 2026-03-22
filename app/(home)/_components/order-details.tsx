@@ -15,7 +15,7 @@ const OrderDetails = () => {
 
   return (
     <>
-      <div className="hidden col-span-4 xl:col-span-3 md:flex flex-col bg-white rounded-lg shadow-sm h-full p-4 space-y-4 max-h-screen">
+      <div className="col-span-12 md:col-span-4 xl:col-span-3 md:flex flex-col bg-white rounded-lg shadow-sm h-full p-4 space-y-4 max-h-screen">
         <Heading title="Order Details" />
 
         {/* Order items */}

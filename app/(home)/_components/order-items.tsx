@@ -45,9 +45,9 @@ const OrderItems = ({
         animate={{ opacity: 1, x: 0 }}
         exit={{ opacity: 0, x: 20 }}
         transition={{ duration: 0.2, ease: "easeOut" as const }}
-        className="flex justify-between items-center text-sm"
+        className="flex justify-between items-center text-sm flex-wrap"
       >
-        <div className="flex items-center gap-2">
+        <div className="w-full flex gap-2">
           <ReusableImage
             src={imageUrl}
             alt={name}
@@ -55,37 +55,42 @@ const OrderItems = ({
             fallbackText={name}
             priority
           />
-          <div className="flex flex-col gap-2">
-            <span className="text-sm">{name}</span>
-            <span className="font-semibold text-base">${price.toFixed(2)}</span>
+          <div className="w-full flex flex-col xl:justify-between xl:flex-row gap-2">
+            <div className="flex flex-col gap-2">
+              <span className="text-sm">{name}</span>
+              <span className="font-semibold text-base">
+                ${price.toFixed(2)}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <Button
+                size="icon"
+                className="rounded-full cursor-pointer"
+                variant="outline"
+                onClick={handleDecrement}
+              >
+                <Minus className="w-4 h-4" />
+              </Button>
+
+              <span
+                className="font-semibold min-w-[20px] text-center cursor-pointer hover:bg-gray-100 rounded px-1 py-0.5 transition-colors"
+                onClick={() => setIsQtyModalOpen(true)}
+                title="Click to edit quantity"
+              >
+                {quantity}
+              </span>
+
+              <Button
+                size="icon"
+                className="rounded-full cursor-pointer"
+                onClick={handleIncrement}
+                disabled={quantity >= maxQuantity}
+              >
+                <Plus className="w-4 h-4" />
+              </Button>
+            </div>
           </div>
-        </div>
-        <div className="flex items-center gap-3">
-          <Button
-            size="icon"
-            className="rounded-full cursor-pointer"
-            variant="outline"
-            onClick={handleDecrement}
-          >
-            <Minus className="w-4 h-4" />
-          </Button>
-
-          <span
-            className="font-semibold min-w-[20px] text-center cursor-pointer hover:bg-gray-100 rounded px-1 py-0.5 transition-colors"
-            onClick={() => setIsQtyModalOpen(true)}
-            title="Click to edit quantity"
-          >
-            {quantity}
-          </span>
-
-          <Button
-            size="icon"
-            className="rounded-full cursor-pointer"
-            onClick={handleIncrement}
-            disabled={quantity >= maxQuantity}
-          >
-            <Plus className="w-4 h-4" />
-          </Button>
         </div>
       </motion.div>
 

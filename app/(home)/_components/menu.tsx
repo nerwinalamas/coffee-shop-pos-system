@@ -116,12 +116,12 @@ const Menu = ({ posUser, onSignOut }: MenuProps) => {
 
   return (
     <div className="col-span-12 md:col-span-8 xl:col-span-9 bg-white rounded-lg shadow-sm h-full p-4 space-y-4">
-      <div className="flex items-center justify-between border-b pb-3">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b pb-3">
         <div>
           <p className="text-sm font-medium text-gray-900">{posUser.name}</p>
           <p className="text-xs text-muted-foreground">{posUser.role}</p>
         </div>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center justify-between gap-1">
           {canAccessDashboard && (
             <Button
               variant="ghost"
@@ -147,15 +147,16 @@ const Menu = ({ posUser, onSignOut }: MenuProps) => {
         </div>
       </div>
 
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div className="flex flex-col gap-4 xl:flex-row xl:justify-between xl:items-center">
         <CategoryTabs
           selectedCategory={selectedCategory}
           setSelectedCategory={setSelectedCategory}
         />
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col gap-4 sm:flex-row">
           <SearchInput
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
+            className="md:w-96"
           />
           <AvailabilityFilter
             availabilityFilter={availabilityFilter}
