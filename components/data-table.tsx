@@ -111,8 +111,9 @@ export function DataTable<TData, TValue>({
   return (
     <div className="flex flex-col gap-4">
       {(showSearch || filterComponent || headerActions) && (
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          {/* Search + Filter — left group */}
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:flex-1">
             {showSearch && (
               <SearchInput
                 searchQuery={globalFilter}
@@ -120,9 +121,21 @@ export function DataTable<TData, TValue>({
                 placeholder={searchPlaceholder}
               />
             )}
-            {filterComponent && <div>{filterComponent}</div>}
+            {filterComponent && (
+              <div className="flex items-center justify-between sm:justify-start gap-2">
+                {filterComponent}
+                {/* Add button dito sa mobile lang */}
+                {headerActions && (
+                  <div className="sm:hidden">{headerActions}</div>
+                )}
+              </div>
+            )}
           </div>
-          {headerActions && <div>{headerActions}</div>}
+
+          {/* Add button — right, desktop lang */}
+          {headerActions && (
+            <div className="hidden sm:flex shrink-0">{headerActions}</div>
+          )}
         </div>
       )}
 
@@ -135,7 +148,10 @@ export function DataTable<TData, TValue>({
                   <TableHead
                     key={header.id}
                     className="h-10"
-                    style={{ width: header.getSize() }}
+                    style={{
+                      width: header.getSize(),
+                      minWidth: header.getSize(),
+                    }}
                   >
                     {header.isPlaceholder
                       ? null
@@ -177,7 +193,10 @@ export function DataTable<TData, TValue>({
                   onClick={() => onRowClick?.(row.original)}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell
+                      key={cell.id}
+                      style={{ minWidth: cell.column.getSize() }}
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext(),
