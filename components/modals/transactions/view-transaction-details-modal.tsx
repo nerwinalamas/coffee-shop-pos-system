@@ -31,8 +31,8 @@ const ViewTransactionDetailsModal = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
+      <DialogContent className="max-h-[90vh] overflow-y-auto">
+        <DialogHeader className="text-left">
           <DialogTitle>Transaction Details</DialogTitle>
           <DialogDescription>
             Complete information for transaction{" "}
@@ -43,7 +43,7 @@ const ViewTransactionDetailsModal = ({
         <div className="space-y-6">
           {/* Transaction Header */}
           <div className="space-y-3">
-            <div className="flex justify-between items-start">
+            <div className="flex flex-col gap-y-2 sm:flex-row sm:justify-between sm:items-start">
               <div>
                 <h3 className="text-2xl font-semibold">
                   {transaction.transaction_number}

@@ -37,8 +37,8 @@ const ViewItemDetailsModal = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl">
-        <DialogHeader>
+      <DialogContent className="max-h-[90vh] overflow-y-auto">
+        <DialogHeader className="text-left">
           <DialogTitle>Item Details</DialogTitle>
           <DialogDescription>
             Complete information for {item.products?.name}
@@ -47,7 +47,7 @@ const ViewItemDetailsModal = ({
 
         <div className="space-y-6">
           {/* Product Image and Basic Info */}
-          <div className="flex gap-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">
             <Image
               src={item.products?.image?.url || "/placeholder.png"}
               alt={item.products?.name || "Product Image"}
@@ -142,7 +142,7 @@ const ViewItemDetailsModal = ({
             <h4 className="text-sm font-semibold text-muted-foreground uppercase">
               Additional Information
             </h4>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid sm:grid-cols-2 gap-4">
               <div className="space-y-1">
                 <p className="text-sm text-muted-foreground">Last Restocked</p>
                 <p className="text-base font-medium">

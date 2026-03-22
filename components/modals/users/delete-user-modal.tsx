@@ -67,7 +67,7 @@ const DeleteUserModal = ({
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
-        <AlertDialogHeader>
+        <AlertDialogHeader className="text-left">
           <AlertDialogTitle>Delete User</AlertDialogTitle>
           <AlertDialogDescription>
             Are you sure you want to delete{" "}
@@ -78,7 +78,7 @@ const DeleteUserModal = ({
             removed.
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <AlertDialogFooter>
+        <AlertDialogFooter className="flex-row justify-end gap-2">
           <AlertDialogCancel disabled={isLoading} className="cursor-pointer">
             Cancel
           </AlertDialogCancel>

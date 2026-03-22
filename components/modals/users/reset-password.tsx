@@ -84,7 +84,7 @@ const ResetPasswordModal = ({
   return (
     <Dialog open={open} onOpenChange={handleDialogChange}>
       <DialogContent>
-        <DialogHeader>
+        <DialogHeader className="text-left">
           <DialogTitle>Reset Password</DialogTitle>
           <DialogDescription>
             Reset the password for{" "}

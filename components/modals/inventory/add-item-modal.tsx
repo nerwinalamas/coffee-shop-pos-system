@@ -100,7 +100,7 @@ const AddItemModal = ({ open, onOpenChange }: AddItemModalProps) => {
   return (
     <Dialog open={open} onOpenChange={handleDialogChange}>
       <DialogContent>
-        <DialogHeader>
+        <DialogHeader className="text-left">
           <DialogTitle>Add Item</DialogTitle>
           <DialogDescription>
             Add a new item to your inventory

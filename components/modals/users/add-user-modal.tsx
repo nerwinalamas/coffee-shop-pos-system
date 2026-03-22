@@ -82,8 +82,8 @@ const AddUserModal = ({ open, onOpenChange }: AddUserModalProps) => {
 
   return (
     <Dialog open={open} onOpenChange={handleDialogChange}>
-      <DialogContent>
-        <DialogHeader>
+      <DialogContent className="max-h-[90vh] overflow-y-auto">
+        <DialogHeader className="text-left">
           <DialogTitle>Add User</DialogTitle>
           <DialogDescription>
             Fill in the details below to add a new user to the system.

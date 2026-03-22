@@ -94,7 +94,7 @@ const AddProductModal = ({ open, onOpenChange }: AddProductModalProps) => {
   return (
     <Dialog open={open} onOpenChange={handleDialogChange}>
       <DialogContent>
-        <DialogHeader>
+        <DialogHeader className="text-left">
           <DialogTitle>Add Product</DialogTitle>
           <DialogDescription>
             Add a new product to your inventory

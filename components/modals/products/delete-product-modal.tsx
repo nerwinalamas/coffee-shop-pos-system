@@ -67,7 +67,7 @@ const DeleteProductModal = ({
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
-        <AlertDialogHeader>
+        <AlertDialogHeader className="text-left">
           <AlertDialogTitle>Are you sure?</AlertDialogTitle>
           <AlertDialogDescription>
             This will permanently delete{" "}
@@ -77,7 +77,7 @@ const DeleteProductModal = ({
             . This action cannot be undone.
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <AlertDialogFooter>
+        <AlertDialogFooter className="flex-row justify-end gap-2">
           <AlertDialogCancel disabled={isDeleting} className="cursor-pointer">
             Cancel
           </AlertDialogCancel>

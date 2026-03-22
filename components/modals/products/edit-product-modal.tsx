@@ -126,7 +126,7 @@ const EditProductModal = ({
   return (
     <Dialog open={open} onOpenChange={handleDialogChange}>
       <DialogContent>
-        <DialogHeader>
+        <DialogHeader className="text-left">
           <DialogTitle>Edit Product</DialogTitle>
           <DialogDescription>Update the product information</DialogDescription>
         </DialogHeader>

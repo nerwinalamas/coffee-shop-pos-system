@@ -56,8 +56,8 @@ const QuantityModal = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-xs">
-        <DialogHeader>
+      <DialogContent className="max-w-xs" aria-describedby={undefined}>
+        <DialogHeader className="text-left">
           <DialogTitle className="text-base">Edit Quantity</DialogTitle>
         </DialogHeader>
         <p className="text-sm text-muted-foreground -mt-2 truncate">{name}</p>

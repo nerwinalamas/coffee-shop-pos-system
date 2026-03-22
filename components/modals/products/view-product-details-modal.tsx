@@ -28,8 +28,8 @@ const ViewProductDetailsModal = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl">
-        <DialogHeader>
+      <DialogContent className="max-h-[90vh] overflow-y-auto">
+        <DialogHeader className="text-left">
           <DialogTitle>Product Details</DialogTitle>
           <DialogDescription>
             Complete information for {product.name}
@@ -38,7 +38,7 @@ const ViewProductDetailsModal = ({
 
         <div className="space-y-6">
           {/* Product Image and Basic Info */}
-          <div className="flex gap-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">
             <Image
               src={product.image?.url || "/placeholder.png"}
               alt={product.name}
@@ -90,7 +90,7 @@ const ViewProductDetailsModal = ({
             <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
               Product Information
             </h4>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid sm:grid-cols-2 gap-4">
               <div className="space-y-1">
                 <p className="text-sm text-muted-foreground">Created</p>
                 <p className="text-base font-medium">

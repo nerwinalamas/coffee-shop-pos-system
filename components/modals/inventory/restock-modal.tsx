@@ -96,8 +96,8 @@ const RestockModal = ({ open, onOpenChange, item }: RestockModalProps) => {
 
   return (
     <Dialog open={open} onOpenChange={handleDialogChange}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
+      <DialogContent>
+        <DialogHeader className="text-left">
           <DialogTitle>Restock Item</DialogTitle>
           <DialogDescription>
             Add stock for {item.products?.name}

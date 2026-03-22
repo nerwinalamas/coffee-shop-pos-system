@@ -50,8 +50,8 @@ const PrintReceiptModal = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
+      <DialogContent>
+        <DialogHeader className="text-left">
           <DialogTitle>Print Receipt</DialogTitle>
           <DialogDescription>
             Preview and print receipt for {transaction.transaction_number}

@@ -91,7 +91,7 @@ const UserStatusModal = ({
   return (
     <Dialog open={open} onOpenChange={handleDialogChange}>
       <DialogContent>
-        <DialogHeader>
+        <DialogHeader className="text-left">
           <DialogTitle>Update User Status</DialogTitle>
           <DialogDescription>
             Change the status for{" "}

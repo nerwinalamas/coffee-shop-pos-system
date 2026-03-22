@@ -101,7 +101,7 @@ const EditUserModal = ({ open, onOpenChange, user }: EditUserModalProps) => {
   return (
     <Dialog open={open} onOpenChange={handleDialogChange}>
       <DialogContent>
-        <DialogHeader>
+        <DialogHeader className="text-left">
           <DialogTitle>Edit User</DialogTitle>
           <DialogDescription>
             Update the user information below and save your changes.

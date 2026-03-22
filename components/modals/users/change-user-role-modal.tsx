@@ -92,7 +92,7 @@ const ChangeUserRoleModal = ({
   return (
     <Dialog open={open} onOpenChange={handleDialogChange}>
       <DialogContent>
-        <DialogHeader>
+        <DialogHeader className="text-left">
           <DialogTitle>Change Role</DialogTitle>
           <DialogDescription>
             Change the role for{" "}

@@ -155,7 +155,7 @@ const PaymentModal = ({ open, onOpenChange }: PaymentModalProps) => {
   return (
     <Dialog open={open} onOpenChange={handleDialogChange}>
       <DialogContent>
-        <DialogHeader>
+        <DialogHeader className="text-left">
           <DialogTitle>Complete Payment</DialogTitle>
           <DialogDescription>
             Enter customer details and select payment method
