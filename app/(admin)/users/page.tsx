@@ -4,7 +4,7 @@ import UserTable from "./_components/user-table";
 const UsersPage = () => {
   return (
     <PageTransition>
-      <UserTable />;
+      <UserTable />
     </PageTransition>
   );
 };
